@@ -1,8 +1,8 @@
-const CACHE_NAME = 'gekecy-v1.5.336';
+const CACHE_NAME = 'gekecy-v1.5.337';
 
 const CORE_ASSETS = [
   './',
-  './index(1.5.336-测).html',
+  './index.html',
   './manifest.json',
   './1774103627050.png'
 ];
