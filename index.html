@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
     <title>GeKeCy浏览器 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
-    <!-- Ver: 1.5.337-测 -->
+    <!-- Ver: 1.6.338 -->
     <meta name="keywords" content="GeKeCy,GeKeCy浏览器,极简浏览器,无广告浏览器,好用的手机浏览器,自定义网页导航,多引擎搜索,AI搜索网站,极速浏览器,纯净版浏览器">
     <meta name="description" content="受够了臃肿和广告？GeKeCy 是一款极致纯净、完全无广告的极简浏览器网页版。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
@@ -47,7 +47,6 @@ body.font-loading .logo {
     visibility: hidden;
 }
 
-    <!-- 全网实时推送接入 -->
     <meta name="referrer" content="no-referrer">
 </style>
 
@@ -1494,34 +1493,7 @@ function init() {
     init();
 
 
-// === 搜索引擎聚合实时推送引擎 ===
-(function() {
-    const siteUrl = window.location.href;
-
-    // 1. 百度实时推送
-    (function(){
-        var bp = document.createElement('script');
-        var curProtocol = window.location.protocol.split(':')[0];
-        if (curProtocol === 'https') {
-            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-        } else {
-            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-        }
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(bp, s);
-    })();
-
-    // 2. 必应 (Bing) 实时索引建议（无需验证，通过触发脚本实现）
-    (function(){
-        const bing = document.createElement('link');
-        bing.rel = 'index';
-        bing.href = siteUrl;
-        document.head.appendChild(bing);
-    })();
-})();
-
-
-    // PWA Service Worker 注册
+// PWA Service Worker 注册
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     }
