@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
     <title>GeKeCy浏览器 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
-    <!-- Ver: 1.6.338 -->
+    <!-- Ver: 1.6.341 -->
     <meta name="keywords" content="GeKeCy,GeKeCy浏览器,极简浏览器,无广告浏览器,好用的手机浏览器,自定义网页导航,多引擎搜索,AI搜索网站,极速浏览器,纯净版浏览器">
     <meta name="description" content="受够了臃肿和广告？GeKeCy 是一款极致纯净、完全无广告的极简浏览器网页版。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
@@ -65,16 +65,25 @@ body.font-loading .logo {
         .s-box, .panel, .r-group, .scroll-container { contain: layout style; }
         
         .top-bar { width: 100%; padding: calc(10px + var(--safe-top)) 15px 10px; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; z-index: 1000; background: var(--bg); }
-        .text-btn { background: var(--box); border: none; color: var(--text); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; -webkit-appearance: none; }
+        .text-btn { background: var(--box); border: none; color: var(--text); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; -webkit-appearance: none; transition: transform 0.1s ease; }
+        .text-btn:active { transform: scale(0.95); }
+        .menu-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: transparent; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; flex-shrink: 0; color: rgba(0, 0, 0, 0.8); }
+        .menu-btn:hover { background-color: rgba(0, 0, 0, 0.08); }
+        .menu-btn:active { background-color: rgba(0, 0, 0, 0.12); transform: scale(0.95); }
+        .menu-btn:focus { outline: none; }
+        .menu-btn svg { width: 27px; height: 26px; }
+        [data-theme="dark"] .menu-btn { color: rgba(255, 255, 255, 0.9); }
+        [data-theme="dark"] .menu-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="dark"] .menu-btn:active { background-color: rgba(255, 255, 255, 0.15); }
         .v-switcher, .theme-switcher { position: relative; background: var(--box); display: flex; border-radius: 8px; padding: 2px; flex-shrink: 0; }
         .theme-switcher { display: inline-flex; margin-bottom: 20px; margin-left: auto; margin-right: auto; }
         .v-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 55px; text-align: center; white-space: nowrap; }
         .theme-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 60px; text-align: center; white-space: nowrap; }
         .v-opt.active, .theme-opt.active { color: #fff; }
-        .v-slider { position: absolute; top: 2px; left: 2px; width: 55px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1); }
-        .theme-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1); }
+        .v-slider { position: absolute; top: 2px; left: 2px; width: 55px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .theme-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .perf-switcher { position: relative; background: var(--box); display: inline-flex; border-radius: 8px; padding: 2px; margin-bottom: 20px; margin-left: auto; margin-right: auto; flex-shrink: 0; }
-        .perf-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1); }
+        .perf-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .perf-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 60px; text-align: center; white-space: nowrap; }
         .perf-opt.active { color: #fff; }
 
@@ -84,7 +93,8 @@ body.font-loading .logo {
         @keyframes flow { to { background-position: 200% center; } }
         
         .s-wrap { width: 92%; max-width: 550px; margin-bottom: 10px; flex-shrink: 0; }
-        .s-box { background: var(--box); border-radius: 12px; padding: 8px 15px; display: flex; align-items: center; position: relative; }
+        .s-box { background: var(--box); border-radius: 12px; padding: 8px 15px; display: flex; align-items: center; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: box-shadow 0.2s ease; }
+        .s-box:focus-within { box-shadow: 0 0 0 3px rgba(0,122,255,0.2); }
         .s-box input { flex: 1; border: none; background: transparent; color: var(--text); font-size: 15px; padding: 5px; font-family: inherit; }
         .s-ops { display: flex; gap: 12px; font-size: 13px; font-weight: bold; }
         .s-go { color: var(--accent); cursor: pointer; }
@@ -94,16 +104,19 @@ body.font-loading .logo {
         .scroll-container::-webkit-scrollbar { display: none; }
         .scroll-content { display: inline-flex; padding: 10px 20px; gap: 8px; align-items: center; width: 100%; max-width: 550px; justify-content: flex-start; }
         @media (max-width: 580px) { .scroll-container { justify-content: flex-start; } .scroll-content { max-width: none; padding: 10px 20px; } }
-        .circle-tool { width: 30px; height: 30px; border: 1.5px solid var(--text); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; }
-        .e-item { padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; flex-shrink: 0; }
-        .e-item.active { background: var(--accent); color: #fff; }
+        .circle-tool { width: 30px; height: 30px; border: 1.5px solid var(--text); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; transition: transform 0.1s ease; }
+        .circle-tool:active { transform: scale(0.9); }
+        .e-item { padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; flex-shrink: 0; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .e-item.active { background: var(--accent); color: #fff; transform: scale(1.05); }
         
         .panel { width: 100%; display: none; margin-top: 5px; }
         .panel.active { display: block; }
         .r-group { margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; }
         .r-title { width: 100%; max-width: 550px; padding-left: 10px; font-size: 11px; font-weight: bold; color: var(--accent); margin-bottom: 5px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         @media (min-width: 600px) { .r-title { padding-left: 0; } }
-        .n-link { background: var(--box); padding: 10px 15px; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 12px; position: relative; display: inline-block; contain: layout style; }
+        .n-link { background: var(--box); padding: 10px 15px; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 12px; position: relative; display: inline-block; contain: layout style; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .n-link:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .n-link:active { transform: translateY(0); box-shadow: none; }
 
         /* 1.5.310-修复版：确保在宽屏下多行展开，在手机窄屏下单行滑动 */
         #eng-list-wrap {
@@ -170,9 +183,11 @@ body.font-loading .logo {
         .gekecy-help-close { margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
         
         .m-h { font-size: 11px; color: #888; margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+        .side-menu > .m-h:not(.m-blue) { border-left: 3px solid var(--accent); padding-left: 10px; }
         .m-desc { font-size: 11px; color: #888; margin-bottom: 20px; line-height: 1.4; }
         .m-blue { color: var(--accent) !important; }
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); padding: 20px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); z-index: 5000; display: none; width: 85%; max-width: 340px; }
+        @keyframes modalIn { from { opacity:0; transform: translate(-50%,-50%) scale(0.92) } to { opacity:1; transform: translate(-50%,-50%) scale(1) } }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); padding: 20px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); z-index: 5000; display: none; width: 85%; max-width: 340px; animation: modalIn 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .modal .in-wrap { position: relative; display: flex; align-items: center; background: var(--box); border-radius: 8px; margin: 10px 0; padding: 2px 10px; }
         .modal input { flex: 1; padding: 10px 0; border: none; background: transparent; color: var(--text); font-size: 14px; font-family: inherit; }
         .modal h3 { margin-top: 0; font-size: 16px; }
@@ -199,6 +214,13 @@ body.font-loading .logo {
         .n-link.highlighted { background: #fff9c4 !important; }
         [data-theme="dark"] .e-item.highlighted { background: #4a4200 !important; }
         [data-theme="dark"] .n-link.highlighted { background: #4a4200 !important; }
+        [data-theme="dark"] .s-box { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        [data-theme="dark"] .s-box:focus-within { box-shadow: 0 0 0 3px rgba(10,132,255,0.3); }
+        [data-theme="dark"] .n-link { box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        [data-theme="dark"] .n-link:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        [data-theme="dark"] .side-menu { box-shadow: 5px 0 20px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .overlay { background: rgba(0,0,0,0.5); }
+        [data-theme="dark"] .modal { box-shadow: 0 15px 50px rgba(0,0,0,0.6); }
     </style>
 </head>
 <body data-theme="light" class="font-loading">
@@ -211,7 +233,13 @@ body.font-loading .logo {
     <div id="app-root" style="height: 100%; display: flex; flex-direction: column;">
         <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
         <div class="top-bar">
-            <button class="text-btn" id="btn-set" onclick="toggleMenu()">设置/設置/Setting</button>
+            <button class="menu-btn" id="btn-set" aria-label="打开菜单" type="button" onclick="toggleMenu()">
+                <svg viewBox="0 0 27 26" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.094,7H5.094" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    <path d="M21.094,13H5.094" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    <path d="M17.094,19H5.094" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                </svg>
+            </button>
             <div class="v-switcher">
                 <div class="v-slider" id="v-slider"></div>
                 <div class="v-opt" onclick="setV(0)" id="v0-txt">简洁</div>
@@ -517,40 +545,34 @@ body.font-loading .logo {
     // === 搜索引擎自动平滑居中逻辑（1.5.302-测 修正版） ===
     function scrollActiveEngineIntoView() {
     if (window.innerWidth > 768) return;
-    // 使用 requestAnimationFrame 保证在下一帧绘制前执行
-    requestAnimationFrame(() => {
-        const activeTab = document.querySelector('#eng-list .e-item.active');
-        const scrollContainer = document.getElementById('eng-list-wrap');
-        if (!activeTab || !scrollContainer) return;
+    const activeTab = document.querySelector('#eng-list .e-item.active');
+    const scrollContainer = document.getElementById('eng-list-wrap');
+    if (!activeTab || !scrollContainer) return;
 
-        const containerWidth = scrollContainer.clientWidth;
-        const tabRect = activeTab.getBoundingClientRect();
-        const containerRect = scrollContainer.getBoundingClientRect();
+    const containerWidth = scrollContainer.clientWidth;
+    const tabRect = activeTab.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
 
-        const targetScrollLeft = scrollContainer.scrollLeft +
-            (tabRect.left - containerRect.left) -
-            (containerWidth / 2) +
-            (tabRect.width / 2);
+    const targetScrollLeft = scrollContainer.scrollLeft +
+        (tabRect.left - containerRect.left) -
+        (containerWidth / 2) +
+        (tabRect.width / 2);
 
-        const startScrollLeft = scrollContainer.scrollLeft;
-        const distance = targetScrollLeft - startScrollLeft;
-        const duration = 120; // 动画持续时间（毫秒）— 非常快但仍有过渡感
-        const startTime = performance.now();
+    const startScrollLeft = scrollContainer.scrollLeft;
+    const distance = targetScrollLeft - startScrollLeft;
+    if (Math.abs(distance) < 2) return;
+    const duration = 120;
+    const startTime = performance.now();
 
-        function step(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(1, elapsed / duration);
-            // 使用 easeOutQuad 缓动，开始快结束慢，感官上更干脆
-            const easeProgress = 1 - (1 - progress) * (1 - progress);
-            const newScrollLeft = startScrollLeft + distance * easeProgress;
-            scrollContainer.scrollLeft = newScrollLeft;
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            }
-        }
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const easeProgress = 1 - (1 - progress) * (1 - progress);
+        scrollContainer.scrollLeft = startScrollLeft + distance * easeProgress;
+        if (progress < 1) requestAnimationFrame(step);
+    }
 
-        requestAnimationFrame(step);
-    });
+    requestAnimationFrame(step);
    }
 
     // 核心工具函数
@@ -581,7 +603,7 @@ body.font-loading .logo {
     function setLangMode(m) { st.langMode = m; save(); applyLanguage(); }
 
     function applyLanguage() {
-        const l = i18n[getEffectiveLanguage()]; if (!l) return;['si-placeholder:hold', 'si-cl:clear', 'btn-set:set', 'v0-txt:v0', 'v1-txt:v1', 'v2-txt:v2', 'menu-theme-txt:mTheme', 'm-lang-title:mLang', 'menu-st-txt:mSt', 'st-desc:stDesc', 'menu-dev-txt:mDev', 'dev-desc:devDesc', 'btn-restore-entry:resB', 'at-txt:addCustomT', 'an-cl:clear', 'au-cl:clear', 'btn-cancel:cancel', 'btn-ok:ok', 'sm-title:sort', 'btn-sort-cancel:cancel', 'btn-save:save', 'conf-title:conf', 'conf-msg:delMsg', 'conf-cancel:cancel', 'btn-conf-ok:ok', 'res-title:resT', 'res-msg:resM', 'res-cancel:cancel', 'btn-export:export', 'btn-import:import', 'import-export-header:importExportHeader', 'mod-title:modCustomT', 'btn-mod-cancel:cancel', 'btn-mod-ok:ok', 'mn-cl:clear', 'mu-cl:clear', 'at-eng-txt:addEngT', 'aen-cl:clear', 'aeu-cl:clear', 'btn-eng-cancel:cancel', 'btn-eng-ok:ok', 'mod-eng-title:modEngT', 'men-cl:clear', 'meu-cl:clear', 'btn-mod-eng-cancel:cancel', 'btn-mod-eng-ok:ok'].forEach(pair => {
+        const l = i18n[getEffectiveLanguage()]; if (!l) return;['si-placeholder:hold', 'si-cl:clear', 'v0-txt:v0', 'v1-txt:v1', 'v2-txt:v2', 'menu-theme-txt:mTheme', 'm-lang-title:mLang', 'menu-st-txt:mSt', 'st-desc:stDesc', 'menu-dev-txt:mDev', 'dev-desc:devDesc', 'btn-restore-entry:resB', 'at-txt:addCustomT', 'an-cl:clear', 'au-cl:clear', 'btn-cancel:cancel', 'btn-ok:ok', 'sm-title:sort', 'btn-sort-cancel:cancel', 'btn-save:save', 'conf-title:conf', 'conf-msg:delMsg', 'conf-cancel:cancel', 'btn-conf-ok:ok', 'res-title:resT', 'res-msg:resM', 'res-cancel:cancel', 'btn-export:export', 'btn-import:import', 'import-export-header:importExportHeader', 'mod-title:modCustomT', 'btn-mod-cancel:cancel', 'btn-mod-ok:ok', 'mn-cl:clear', 'mu-cl:clear', 'at-eng-txt:addEngT', 'aen-cl:clear', 'aeu-cl:clear', 'btn-eng-cancel:cancel', 'btn-eng-ok:ok', 'mod-eng-title:modEngT', 'men-cl:clear', 'meu-cl:clear', 'btn-mod-eng-cancel:cancel', 'btn-mod-eng-ok:ok'].forEach(pair => {
             const[id, key] = pair.split(':');
             const targetId = id.includes('placeholder') ? id.split('-')[0] : id;
             const el = document.getElementById(targetId);
@@ -836,32 +858,43 @@ body.font-loading .logo {
     function renderEngs() {
         const box = document.getElementById('eng-list'); if(!box) return;
         const lang = getEffectiveLanguage();
-        let h = '';
-        // 先添加两个固定功能按钮（三 和 +）
-        h += `<div class="circle-tool" onclick="openSort('eng')" title="排序">三</div>`;
-        h += `<div class="circle-tool" onclick="openAdd('eng')" title="添加">+</div>`;
+        const frag = document.createDocumentFragment();
+        const sortBtn = document.createElement('div');
+        sortBtn.className = 'circle-tool';
+        sortBtn.textContent = '三';
+        sortBtn.title = '排序';
+        sortBtn.addEventListener('click', function() { openSort('eng'); });
+        frag.appendChild(sortBtn);
+        const addBtn = document.createElement('div');
+        addBtn.className = 'circle-tool';
+        addBtn.textContent = '+';
+        addBtn.title = '添加';
+        addBtn.addEventListener('click', function() { openAdd('eng'); });
+        frag.appendChild(addBtn);
         st.Engs.forEach((e, i) => {
             const rawN = engNames[e.id] ? engNames[e.id][lang] : e.n;
-            const n = escapeHTML(rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN);
-            const act = st.curE === e.id ? 'active' : '';
-            const hlKey = 'eng:' + (e.id || i);
-            const hd = isHighlighted(hlKey) ? ' highlighted' : '';
-            h += `<div class="e-item ${act}${hd}" data-id="${e.id}" data-index="${i}" data-type="eng" data-hl-key="${hlKey}"
-                  onclick="clkE('${e.id}', this)" 
-                  oncontextmenu="onCtx(event, ${i}, 'eng')"
-                  ontouchstart="lpStart(event, ${i}, 'eng')" ontouchend="lpEnd()" ontouchmove="lpEnd()">${n}</div>`;
+            const n = rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN;
+            const div = document.createElement('div');
+            div.className = 'e-item' + (st.curE === e.id ? ' active' : '') + (isHighlighted('eng:' + (e.id || i)) ? ' highlighted' : '');
+            div.dataset.id = e.id;
+            div.dataset.index = i;
+            div.dataset.type = 'eng';
+            div.dataset.hlKey = 'eng:' + (e.id || i);
+            div.textContent = n;
+            div.addEventListener('click', function() { clkE(e.id, this); });
+            div.addEventListener('contextmenu', function(ev) { onCtx(ev, i, 'eng'); });
+            frag.appendChild(div);
         });
-        h += `<div style="width:1mm; flex-shrink:0;"></div>`;
-
-        // 电脑端折叠，手机端水平滚动
+        const spacer = document.createElement('div');
+        spacer.style.width = '1mm';
+        spacer.style.flexShrink = '0';
+        frag.appendChild(spacer);
         if (document.documentElement.classList.contains('is-desktop')) {
             box.style.flexWrap = 'wrap';
         } else {
             box.style.flexWrap = 'nowrap';
         }
-
-        box.innerHTML = h;
-
+        box.replaceChildren(frag);
         if (!document.documentElement.classList.contains('is-desktop')) {
             alignEngList();
             scrollActiveEngineIntoView();
@@ -872,29 +905,61 @@ body.font-loading .logo {
         if(st.v===0) return;
         const box = document.getElementById('pro-content'); if(!box) return;
         const lang = getEffectiveLanguage(), l = i18n[lang];
-        let h = '';
+        const frag = document.createDocumentFragment();
         if(st.v >= 1){
-            // 为自定义内容区域添加 class="custom-group"，方便电脑端单独控制
-            h += `<div class="r-group custom-group"><div class="r-title">${l.custom}</div><div class="scroll-container"><div class="scroll-content">`;
-            if(st.custom.length > 0) h += `<div class="circle-tool" onclick="openSort('custom')">三</div>`;
-            h += `<div class="circle-tool" onclick="openAdd('link')">+</div>`;
+            const rGroup = document.createElement('div');
+            rGroup.className = 'r-group custom-group';
+            const rTitle = document.createElement('div');
+            rTitle.className = 'r-title';
+            rTitle.textContent = l.custom;
+            rGroup.appendChild(rTitle);
+            const scrollContainer = document.createElement('div');
+            scrollContainer.className = 'scroll-container';
+            const scrollContent = document.createElement('div');
+            scrollContent.className = 'scroll-content';
+            if(st.custom.length > 0){
+                const sortBtn = document.createElement('div');
+                sortBtn.className = 'circle-tool';
+                sortBtn.textContent = '三';
+                sortBtn.addEventListener('click', function() { openSort('custom'); });
+                scrollContent.appendChild(sortBtn);
+            }
+            const addBtn = document.createElement('div');
+            addBtn.className = 'circle-tool';
+            addBtn.textContent = '+';
+            addBtn.addEventListener('click', function() { openAdd('link'); });
+            scrollContent.appendChild(addBtn);
             st.custom.forEach((c, i) => {
                 const rawN = c.n;
-                const dispN = escapeHTML(rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN);
+                const dispN = rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN;
                 const hlKey = 'custom:' + (c.uid || i);
-                const hd = isHighlighted(hlKey) ? ' highlighted' : '';
-                h += `<div class="n-link${hd}" data-index="${i}" data-type="custom" data-hl-key="${hlKey}"
-                      oncontextmenu="onCtx(event, ${i}, 'custom')"
-                      ontouchstart="lpStart(event, ${i}, 'custom')" ontouchend="lpEnd()" ontouchmove="lpEnd()">
-                      <a href="${encodeURI(c.u)}" target="_blank" style="color:inherit;text-decoration:none" 
-                         onclick="if(window.lpFired){event.preventDefault();return false;}">${dispN}</a></div>`;
+                const nLink = document.createElement('div');
+                nLink.className = 'n-link' + (isHighlighted(hlKey) ? ' highlighted' : '');
+                nLink.dataset.index = i;
+                nLink.dataset.type = 'custom';
+                nLink.dataset.hlKey = hlKey;
+                nLink.addEventListener('contextmenu', function(ev) { onCtx(ev, i, 'custom'); });
+                const a = document.createElement('a');
+                a.href = encodeURI(c.u);
+                a.target = '_blank';
+                a.style.color = 'inherit';
+                a.style.textDecoration = 'none';
+                a.textContent = dispN;
+                a.addEventListener('click', function(ev) { if(window.lpFired){ev.preventDefault();return false;} });
+                nLink.appendChild(a);
+                scrollContent.appendChild(nLink);
             });
-            h += `<div style="width:1mm; flex-shrink:0;"></div></div></div></div>`;
+            const spacer = document.createElement('div');
+            spacer.style.width = '1mm';
+            spacer.style.flexShrink = '0';
+            scrollContent.appendChild(spacer);
+            scrollContainer.appendChild(scrollContent);
+            rGroup.appendChild(scrollContainer);
+            frag.appendChild(rGroup);
         }
         if(st.v === 2){
             const mode = st.perfMode || 'compatible';
             ultraData.forEach((col, colIdx) => {
-                // 根据模式过滤栏目
                 let filtered = col.d;
                 if (mode === 'china') {
                     const chinaBlockedIds = [
@@ -918,26 +983,47 @@ body.font-loading .logo {
                     ];
                     filtered = col.d.filter(app => !internationalBlockedIds.includes(app.n.en));
                 }
-                // 如果整个栏目过滤后为空，跳过
                 if (filtered.length === 0) return;
-
-                h += `<div class="r-group"><div class="r-title">${col.k[lang]}</div><div class="scroll-container"><div class="scroll-content">`;
+                const rGroup = document.createElement('div');
+                rGroup.className = 'r-group';
+                const rTitle = document.createElement('div');
+                rTitle.className = 'r-title';
+                rTitle.textContent = col.k[lang];
+                rGroup.appendChild(rTitle);
+                const scrollContainer = document.createElement('div');
+                scrollContainer.className = 'scroll-container';
+                const scrollContent = document.createElement('div');
+                scrollContent.className = 'scroll-content';
                 filtered.forEach((app, itemIdx) => {
                     const rawN = app.n[lang];
-                    // 仅允许 The Weather Channel 超过15字不截断
-                    const dispN = escapeHTML((rawN === 'The Weather Channel' || rawN === 'The Weather Channel') ? rawN : (rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN));
+                    const dispN = (rawN === 'The Weather Channel') ? rawN : (rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN);
                     const hlKey = 'pro:' + colIdx + ':' + itemIdx;
-                    const hd = isHighlighted(hlKey) ? ' highlighted' : '';
-                    h += `<div class="n-link${hd}" data-type="pro" data-hl-key="${hlKey}"
-                          oncontextmenu="onCtx(event, '${colIdx}:${itemIdx}', 'pro')"
-                          ontouchstart="lpStart(event, '${colIdx}:${itemIdx}', 'pro')" ontouchend="lpEnd()" ontouchmove="lpEnd()">
-                          <a href="${encodeURI(app.u)}" target="_blank" style="color:inherit;text-decoration:none"
-                             onclick="if(window.lpFired){event.preventDefault();return false;}">${dispN}</a></div>`;
+                    const nLink = document.createElement('div');
+                    nLink.className = 'n-link' + (isHighlighted(hlKey) ? ' highlighted' : '');
+                    nLink.dataset.type = 'pro';
+                    nLink.dataset.hlKey = hlKey;
+                    nLink.dataset.index = colIdx + ':' + itemIdx;
+                    nLink.addEventListener('contextmenu', function(ev) { onCtx(ev, colIdx + ':' + itemIdx, 'pro'); });
+                    const a = document.createElement('a');
+                    a.href = encodeURI(app.u);
+                    a.target = '_blank';
+                    a.style.color = 'inherit';
+                    a.style.textDecoration = 'none';
+                    a.textContent = dispN;
+                    a.addEventListener('click', function(ev) { if(window.lpFired){ev.preventDefault();return false;} });
+                    nLink.appendChild(a);
+                    scrollContent.appendChild(nLink);
                 });
-                h += `<div style="width:1mm; flex-shrink:0;"></div></div></div></div>`;
+                const spacer = document.createElement('div');
+                spacer.style.width = '1mm';
+                spacer.style.flexShrink = '0';
+                scrollContent.appendChild(spacer);
+                scrollContainer.appendChild(scrollContent);
+                rGroup.appendChild(scrollContainer);
+                frag.appendChild(rGroup);
             });
         }
-        box.innerHTML = h;
+        box.replaceChildren(frag);
         alignEngList();
     }
 
@@ -1213,7 +1299,7 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
     let dragEl = null, dragGhost = null, dragList = null;
     let dragStartY = 0, dragCurrentY = 0, dragOffsetY = 0;
     let autoScrollTimer = null;
-    let dragSrcIdx = -1, targetIdx = -1, rowStep = 0, rowHeight = 0;
+    let dragSrcIdx = -1, targetIdx = -1, rowStep = 0, rowHeight = 0, lastTargetIdx = -1;
     let initialScrollTop = 0, containerTop = 0, containerBottom = 0, nItems = 0;
 
     function initDragSort() {
@@ -1275,7 +1361,10 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
         const scrollDy = dragList.scrollTop - initialScrollTop;
         const effectiveDy = fingerDy + scrollDy;
         const offset = Math.round(effectiveDy / rowStep);
-        targetIdx = Math.max(0, Math.min(nItems - 1, dragSrcIdx + offset));
+        const newTargetIdx = Math.max(0, Math.min(nItems - 1, dragSrcIdx + offset));
+        if (newTargetIdx === lastTargetIdx) return;
+        lastTargetIdx = newTargetIdx;
+        targetIdx = newTargetIdx;
 
         const rows = dragList.querySelectorAll('.sort-row');
         for (var i = 0; i < rows.length; i++) {
@@ -1300,6 +1389,7 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
         dragOffsetY = clientY - row.getBoundingClientRect().top;
         dragSrcIdx = parseInt(row.dataset.index);
         targetIdx = dragSrcIdx;
+        lastTargetIdx = -1;
 
         document.body.style.userSelect = 'none';
         document.body.style.webkitUserSelect = 'none';
@@ -1425,6 +1515,34 @@ function init() {
         if(si) { si.addEventListener('input', updateSearchButton); si.addEventListener('keydown', e => { if(e.key === 'Enter') doAction(); }); }['si','an','au','aen','aeu','mn','mu','men','meu'].forEach(id => { const i = document.getElementById(id); if(i)['input','compositionend'].forEach(ev => i.addEventListener(ev, () => updateInputBtnStatus(id))); });
         updateInputBtnStatus('si');
 
+        const engList = document.getElementById('eng-list');
+        if (engList) {
+            engList.addEventListener('touchstart', function(e) {
+                const item = e.target.closest('.e-item');
+                if (item) {
+                    const idx = item.dataset.index;
+                    const type = item.dataset.type;
+                    if (idx !== undefined && type) lpStart(e, isNaN(parseInt(idx)) ? idx : parseInt(idx), type);
+                }
+            }, { passive: true });
+            engList.addEventListener('touchend', function(e) {
+                if (e.target.closest('.e-item')) lpEnd();
+            }, { passive: true });
+        }
+        const proContent = document.getElementById('pro-content');
+        if (proContent) {
+            proContent.addEventListener('touchstart', function(e) {
+                const item = e.target.closest('.n-link');
+                if (item) {
+                    const idx = item.dataset.index;
+                    const type = item.dataset.type;
+                    if (idx !== undefined && type) lpStart(e, idx, type);
+                }
+            }, { passive: true });
+            proContent.addEventListener('touchend', function(e) {
+                if (e.target.closest('.n-link')) lpEnd();
+            }, { passive: true });
+        }
     
     }
 
@@ -1438,6 +1556,7 @@ function init() {
     });
     document.addEventListener('touchmove', function(e) {
         hideCtxMenu();
+        lpEnd();
     }, { passive: true });
     document.addEventListener('scroll', function(e) {
         hideCtxMenu();
