@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="no-ua">
+<html lang="zh-CN" class="no-ua page-init">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
     <title>GeKeCy浏览器 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
-    <!-- Ver: 1.6.341 -->
+    <!-- Ver: 1.6.343 -->
     <meta name="keywords" content="GeKeCy,GeKeCy浏览器,极简浏览器,无广告浏览器,好用的手机浏览器,自定义网页导航,多引擎搜索,AI搜索网站,极速浏览器,纯净版浏览器">
     <meta name="description" content="受够了臃肿和广告？GeKeCy 是一款极致纯净、完全无广告的极简浏览器网页版。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
@@ -58,6 +58,7 @@ body.font-loading .logo {
         a, button, input, select, .circle-tool, .e-item, .v-opt, .theme-opt, .n-link, .help-icon, .brand-help-icon, label { touch-action: manipulation; }
         input:focus, textarea:focus { outline: none; caret-color: #007aff; }
         
+        .page-init .v-slider, .page-init .theme-slider, .page-init .perf-slider { transition: none !important; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; touch-action: manipulation; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; text-rendering: optimizeSpeed; -webkit-font-smoothing: antialiased; }
         
                 .main-view { display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; padding-top: calc(60px + var(--safe-top)); overflow-y: auto; -webkit-overflow-scrolling: touch; contain: content; }
@@ -80,10 +81,10 @@ body.font-loading .logo {
         .v-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 55px; text-align: center; white-space: nowrap; }
         .theme-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 60px; text-align: center; white-space: nowrap; }
         .v-opt.active, .theme-opt.active { color: #fff; }
-        .v-slider { position: absolute; top: 2px; left: 2px; width: 55px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .theme-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .v-slider { position: absolute; top: 2px; left: 2px; width: 55px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; }
+        .theme-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; }
         .perf-switcher { position: relative; background: var(--box); display: inline-flex; border-radius: 8px; padding: 2px; margin-bottom: 20px; margin-left: auto; margin-right: auto; flex-shrink: 0; }
-        .perf-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .perf-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; }
         .perf-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 60px; text-align: center; white-space: nowrap; }
         .perf-opt.active { color: #fff; }
 
@@ -592,11 +593,12 @@ body.font-loading .logo {
     function getEffectiveLanguage() { return st.langMode === 'auto' ? getSystemLanguage() : st.langMode; }
     function getEffectiveTheme() { return st.themeMode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : st.themeMode; }
     function isUrl(str) { if (!str) return false; str = str.trim(); if (/^https?:\/\//i.test(str)) return true; try { const url = new URL(str); return url.protocol === 'http:' || url.protocol === 'https:'; } catch(e) {} return (str.includes('.') && !/\s/.test(str) && !/[\u4e00-\u9fa5]/.test(str)) || /^localhost$/i.test(str) || /^[\w.-]+:\d{1,5}$/.test(str); }
+    function slideTo(el, x) { if (!el) return; el.style.transform = 'translateX(' + x + 'px)'; el.style.transition = 'transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1)'; }
 
     function applyTheme() {
         document.body.setAttribute('data-theme', getEffectiveTheme());
         const tIdx = st.themeMode === 'auto' ? 0 : (st.themeMode === 'light' ? 1 : 2);
-        const ts = document.getElementById('theme-slider'); if (ts) ts.style.transform = `translateX(${tIdx * 60}px)`;
+        const ts = document.getElementById('theme-slider'); if (ts) slideTo(ts, tIdx * 60);
         document.querySelectorAll('.theme-opt').forEach((o, i) => o.classList.toggle('active', i === tIdx));
     }
     function setThemeMode(m) { st.themeMode = m; save(); applyTheme(); }
@@ -1037,7 +1039,7 @@ body.font-loading .logo {
 
     function setV(v){
         st.v = v;
-        const sl = document.getElementById('v-slider'); if(sl) sl.style.transform = `translateX(${v*55}px)`;
+        const sl = document.getElementById('v-slider'); if(sl) slideTo(sl, v*55);
         document.querySelectorAll('.v-opt').forEach((o,i) => o.classList.toggle('active',i===v));
         const pp = document.getElementById('panel-pro'); if(pp) pp.classList.toggle('active', v>0);
         save(); renderPro();
@@ -1054,7 +1056,7 @@ body.font-loading .logo {
         const mode = st.perfMode || 'compatible';
         const pIdx = mode === 'compatible' ? 0 : (mode === 'china' ? 1 : 2);
         const ps = document.getElementById('perf-slider');
-        if(ps) ps.style.transform = `translateX(${pIdx * 60}px)`;
+        if(ps) slideTo(ps, pIdx * 60);
         document.querySelectorAll('.perf-opt').forEach((o,i) => o.classList.toggle('active', i === pIdx));
     }
 
@@ -1512,7 +1514,8 @@ function init() {
         document.getElementById('btn-import')?.addEventListener('click', () => { if(!isImporting) { isImporting=true; const f = document.getElementById('import-file-input'); f.value=''; f.click(); setTimeout(()=>isImporting=false,1000); } });
         document.getElementById('import-file-input')?.addEventListener('change', handleImportFile);
         const si = document.getElementById('si');
-        if(si) { si.addEventListener('input', updateSearchButton); si.addEventListener('keydown', e => { if(e.key === 'Enter') doAction(); }); }['si','an','au','aen','aeu','mn','mu','men','meu'].forEach(id => { const i = document.getElementById(id); if(i)['input','compositionend'].forEach(ev => i.addEventListener(ev, () => updateInputBtnStatus(id))); });
+        if(si) { si.addEventListener('input', updateSearchButton); si.addEventListener('keydown', e => { if(e.key === 'Enter') doAction(); }); }
+        ['si','an','au','aen','aeu','mn','mu','men','meu'].forEach(id => { const i = document.getElementById(id); if(i) { ['input','compositionend'].forEach(ev => i.addEventListener(ev, () => updateInputBtnStatus(id))); } });
         updateInputBtnStatus('si');
 
         const engList = document.getElementById('eng-list');
@@ -1544,6 +1547,7 @@ function init() {
             }, { passive: true });
         }
     
+        document.documentElement.classList.remove('page-init');
     }
 
     function hideCtxMenu() {
