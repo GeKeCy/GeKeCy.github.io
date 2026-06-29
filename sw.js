@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gekecy-v1.6.343';
+const CACHE_NAME = 'gekecy-v1.6.345';
 
 const CORE_ASSETS = [
   './',

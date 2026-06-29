@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="no-ua page-init">
+<html lang="zh-CN" class="no-ua">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
     <title>GeKeCy浏览器 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
-    <!-- Ver: 1.6.343 -->
+    <!-- Ver: 1.6.345 -->
     <meta name="keywords" content="GeKeCy,GeKeCy浏览器,极简浏览器,无广告浏览器,好用的手机浏览器,自定义网页导航,多引擎搜索,AI搜索网站,极速浏览器,纯净版浏览器">
     <meta name="description" content="受够了臃肿和广告？GeKeCy 是一款极致纯净、完全无广告的极简浏览器网页版。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
@@ -58,7 +58,6 @@ body.font-loading .logo {
         a, button, input, select, .circle-tool, .e-item, .v-opt, .theme-opt, .n-link, .help-icon, .brand-help-icon, label { touch-action: manipulation; }
         input:focus, textarea:focus { outline: none; caret-color: #007aff; }
         
-        .page-init .v-slider, .page-init .theme-slider, .page-init .perf-slider { transition: none !important; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; touch-action: manipulation; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; text-rendering: optimizeSpeed; -webkit-font-smoothing: antialiased; }
         
                 .main-view { display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; padding-top: calc(60px + var(--safe-top)); overflow-y: auto; -webkit-overflow-scrolling: touch; contain: content; }
@@ -81,6 +80,7 @@ body.font-loading .logo {
         .v-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 55px; text-align: center; white-space: nowrap; }
         .theme-opt { padding: 5px 0; font-size: 11px; cursor: pointer; position: relative; z-index: 2; width: 60px; text-align: center; white-space: nowrap; }
         .v-opt.active, .theme-opt.active { color: #fff; }
+        .ready .v-slider, .ready .theme-slider, .ready .perf-slider { transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .v-slider { position: absolute; top: 2px; left: 2px; width: 55px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; }
         .theme-slider { position: absolute; top: 2px; left: 2px; width: 60px; height: calc(100% - 4px); background: var(--accent); border-radius: 6px; z-index: 1; }
         .perf-switcher { position: relative; background: var(--box); display: inline-flex; border-radius: 8px; padding: 2px; margin-bottom: 20px; margin-left: auto; margin-right: auto; flex-shrink: 0; }
@@ -425,6 +425,107 @@ body.font-loading .logo {
     </div>
 
 <script>
+    if (!Element.prototype.closest) {
+        Element.prototype.closest = function(s) {
+            var el = this;
+            while (el) {
+                if (el.matches && el.matches(s)) return el;
+                el = el.parentElement || el.parentNode;
+            }
+            return null;
+        };
+    }
+    if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+    }
+    if (!String.prototype.padStart) {
+        String.prototype.padStart = function(targetLength, padString) {
+            targetLength = Math.floor(targetLength) || 0;
+            if (this.length >= targetLength) return String(this);
+            padString = padString !== undefined ? String(padString) : ' ';
+            var padLen = targetLength - this.length;
+            if (padLen > padString.length) {
+                padString += new Array(Math.ceil(padLen / padString.length) + 1).join(padString);
+            }
+            return padString.slice(0, padLen) + String(this);
+        };
+    }
+    if (!String.prototype.padEnd) {
+        String.prototype.padEnd = function(targetLength, padString) {
+            targetLength = Math.floor(targetLength) || 0;
+            if (this.length >= targetLength) return String(this);
+            padString = padString !== undefined ? String(padString) : ' ';
+            var padLen = targetLength - this.length;
+            if (padLen > padString.length) {
+                padString += new Array(Math.ceil(padLen / padString.length) + 1).join(padString);
+            }
+            return String(this) + padString.slice(0, padLen);
+        };
+    }
+    if (!Array.prototype.includes) {
+        Array.prototype.includes = function(searchElement, fromIndex) {
+            if (this == null) throw new TypeError('Array.prototype.includes called on null or undefined');
+            var O = Object(this);
+            var len = parseInt(O.length, 10) || 0;
+            if (len === 0) return false;
+            var n = parseInt(arguments[1], 10) || 0;
+            var k;
+            if (n >= 0) k = n;
+            else { k = len + n; if (k < 0) k = 0; }
+            var currentElement;
+            while (k < len) {
+                currentElement = O[k];
+                if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) return true;
+                k++;
+            }
+            return false;
+        };
+    }
+    if (!String.prototype.includes) {
+        String.prototype.includes = function(search, start) {
+            if (typeof start !== 'number') start = 0;
+            if (start + search.length > this.length) return false;
+            return this.indexOf(search, start) !== -1;
+        };
+    }
+    if (!String.prototype.startsWith) {
+        String.prototype.startsWith = function(search, pos) {
+            return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+        };
+    }
+    if (!String.prototype.endsWith) {
+        String.prototype.endsWith = function(search, this_len) {
+            if (this_len === undefined || this_len > this.length) this_len = this.length;
+            return this.substring(this_len - search.length, this_len) === search;
+        };
+    }
+    if (window.NodeList && !NodeList.prototype.forEach) {
+        NodeList.prototype.forEach = function(callback, thisArg) {
+            thisArg = thisArg || window;
+            for (var i = 0; i < this.length; i++) {
+                callback.call(thisArg, this[i], i, this);
+            }
+        };
+    }
+    if (!Object.assign) {
+        Object.assign = function(target) {
+            if (target === undefined || target === null) {
+                throw new TypeError('Cannot convert undefined or null to object');
+            }
+            var output = Object(target);
+            for (var index = 1; index < arguments.length; index++) {
+                var source = arguments[index];
+                if (source !== undefined && source !== null) {
+                    for (var nextKey in source) {
+                        if (Object.prototype.hasOwnProperty.call(source, nextKey)) {
+                            output[nextKey] = source[nextKey];
+                        }
+                    }
+                }
+            }
+            return output;
+        };
+    }
     const i18n={
         zh:{ set:"设置/設置/Setting", storageErr:"存储空间已满", v0:"简洁", v1:"性能", v2:"高性能", hold:"搜索或输入网址", clear:"清空", go:"搜索", visit:"访问", add:"添加", addCustomT:"添加自定义标签", perfMode:"高性能模式 Performance", perfCompatible:"兼容", perfChina:"中国", perfInternational:"国际", addEngT:"添加搜索引擎", cancel:"取消", ok:"确定", save:"保存", conf:"提示", delMsg:"确认要删除吗？", mTheme:"主题 Theme", tLight:"浅色", tDark:"深色", tAuto:"系统", mLang:"语言 Language", langAuto:"跟随系统", mSt:"持久化 Persistence", stDesc:"偏好、顺序及自定义内容自动保存在您的本地存储中。", mDev:"开发者说明 Dev Note", devDesc:"如果你对我们的开发有所兴趣或想参与我们的开发，那么请联系 forest2580@qq.com，感谢你们的热情！", custom:"自定义内容", sort:"管理顺序", del:"删除", urlErr:"请输入可用的名称或URL", urlExists:"URL 已存在", nameExists:"已有相同名称项", engUrlErr:"请输入可用的名称或搜索引擎链接", engUrlExists:"搜索引擎链接已存在", resT:"确定要恢复原始设置吗？", resM:"此设置会完全删除你所有保存在此应用的数据。", resB:"恢复原始设置", export:"导出", import:"导入", importExportHeader: "设置恢复 Setup recovery", helpTitle: "关于导入导出的解说", helpMsg: "由于本浏览器无服务器(目前资金不够)所以保存所有设置、标签和其它的功能就由导入导出html备份文件的形式替代。你的所有设置、标签和其它的功能都会保存在一个html备份文件里，请将它原封不动的在需要导入的其它设备/浏览器里导入。", iUnderstand: "我知道了", exportTitle:"导出设置文件标签", exportSuccessMsg:"现在已经弹出了下载请求或已开始下载。", exportFailTitle:"导出设置文件失败", exportFailMsg:"当前未知问题，请联系forest2580@qq.com进行反馈解决。", importFailTitle:"导入设置文件失败", importFailMsg:"文件格式/内容不正确-请检查导入的文件是否为之前导出的html文件。", importVerifyFail:"导入验证失败：文件不是有效的GeKeCy备份文件。", importConfirmTitle: "确认导入", importConfirmMsg: "导入将覆盖当前所有设置，是否继续？", cancelImport: "取消导入", confirmImport: "确认导入", refreshOverlayTitle: "请刷新页面", refreshOverlayMsg: "如您点击确认后页面无反应，即为刷新指令被拦截，请点击下方按钮手动刷新。如按钮无效，请使用浏览器自带的刷新功能。", refreshOverlayBtn: "点击刷新", refreshOverlayBtn2: "使用浏览器刷新", aboutTitle: "关于 GeKeCy", aboutContent: "<span class=\'text-blue\'>GeKeCy是一个<span class=\'text-red\'>浏览器</span></span><span class=\'text-red\'>，它的</span><span class=\'text-red\'>发音(音标)是/dʒɪkəsiː/</span>。<br><br>欢迎您使用我开发的浏览器，我是一个13岁来自于四川广安普通的学生。这是我自己开发的一个网页端浏览器，<span class=\'text-blue\'>遇到问题<span class=\'text-red\'>欢迎向我反馈</span>，我的邮箱是<span class=\'text-red\'> forest2580@qq.com</span></span>。<br><br><span class=\'text-blue\'>由于我只是一个普通学生</span>，<span class=\'text-blue\'>没有足够的资金买到服务器</span><span class=\'text-blue\'>，所以</span><span class=\'text-blue\'>现在靠浏览器本地持久化、导入导出都需要依靠文件</span><span class=\'text-red\'>，所以</span><span class=\'text-red\'>在重要时刻(如换机/换新浏览器)需要导出备份文件，在新的设备的浏览器上再导入</span>，反馈也只能联系我的邮箱(forest2580@qq.com)。", logoSectionTitle:"LOGO自定义", logoCycle:"彩色循环(默认)", logoCustomOpt:"自定义", logoColorModalTitle:"LOGO颜色自定义", logoCancel:"取消", logoReCustom:"再次自定义 >", sortNote:"【注】在自定义内容/搜索引擎/其他栏目里长按/右键对应按钮可开启编辑操作窗口。[自定义内容：重点标记/修改/删除；搜索引擎：修改/删除；其他栏目：重点标记/添加到自定义（其他栏目指的是除自定义/搜索引擎以外的栏目）]", highlight:"重点标记", unhighlight:"取消标记", addedToCustom:"添加到自定义", addedToCustomMsg:"所选中的内容已添加至自定义内容末尾。", addedToCustomBtn:"好的" },
         zt:{ set:"设置/設置/Setting", storageErr:"存儲空間已滿", v0:"簡潔", v1:"性能", v2:"高性能", hold:"搜索或輸入網址", clear:"清空", go:"搜索", visit:"訪問", add:"添加", addCustomT:"添加自訂標籤", perfMode:"高性能模式 Performance", perfCompatible:"兼容", perfChina:"中國", perfInternational:"國際", addEngT:"添加搜索引擎", cancel:"取消", ok:"確定", save:"保存", conf:"提示", delMsg:"確認要刪除嗎？", mTheme:"主題 Theme", tLight:"淺色", tDark:"深色", tAuto:"系統", mLang:"語言 Language", langAuto:"跟隨系統", mSt:"持久化 Persistence", stDesc:"偏好、順序及自定義內容自動保存在您的本地存儲中。", mDev:"開發者說明 Dev Note", devDesc:"如果你對我們的開發有所興趣或想參與我們的開發，那麼請聯繫 forest2580@qq.com，感謝你們的热情！", custom:"自定義內容", sort:"管理順序", del:"刪除", urlErr:"請輸入可用的名稱或URL", urlExists:"URL 已存在", nameExists:"已有相同名稱項", engUrlErr:"請輸入可用的名稱或搜索引擎連結", engUrlExists:"搜索引擎連結已存在", resT:"確定要恢復原始設置嗎？", resM:"此設置會完全刪除你所有保存在此應用的數據。", resB:"恢復原始設置", export:"匯出", import:"匯入", importExportHeader: "設定恢復 Setup recovery", helpTitle: "關於匯入匯出的解說", helpMsg: "由於本瀏覽器無伺服器(目前資金不夠)所以保存所有設定、標籤和其它的功能就由匯入匯出html備份檔案的形式替代。你的所有設定、標籤和其它的功能都會保存在一個html備份檔案裡，請將它原封不動的在需要匯入的其它設備/瀏覽器裡匯入。", iUnderstand: "我知道了", exportTitle:"匯出設定檔案標籤", exportSuccessMsg:"現在已經彈出了下載請求或已開始下載。", exportFailTitle:"匯出設定檔案失敗", exportFailMsg:"當前未知問題，請聯繫forest2580@qq.com進行回饋解決。", importFailTitle:"匯入設定檔案失敗", importFailMsg:"檔案格式/內容不正確-請檢查匯入的檔案是否為之前匯出的html檔案。", importVerifyFail:"匯入驗證失敗：檔案不是有效的GeKeCy備份檔案。", importConfirmTitle: "確認匯入", importConfirmMsg: "匯入將覆蓋當前所有設定，是否繼續？", cancelImport: "取消匯入", confirmImport: "確認匯入", refreshOverlayTitle: "請刷新頁面", refreshOverlayMsg: "如您點擊確認後頁面無反應，即為刷新指令被攔截，請點擊下方按鈕手動刷新。如按鈕無效，請使用瀏覽器自帶的刷新功能。", refreshOverlayBtn: "點擊刷新", refreshOverlayBtn2: "使用瀏覽器刷新", aboutTitle: "關於 GeKeCy", aboutContent: "<span class=\'text-blue\'>GeKeCy是一個<span class=\'text-red\'>瀏覽器</span></span><span class=\'text-red\'>，它的</span><span class=\'text-red\'>發音(音標)是/dʒɪkəsiː/</span>。<br><br>歡迎您使用我開發的瀏覽器，我是一個13歲來自於四川廣安普通的學生。這是我自己開發的一個網頁端瀏覽器，<span class=\'text-blue\'>遇到問題<span class=\'text-red\'>歡迎向我反饋</span>，我的郵箱是<span class=\'text-red\'> forest2580@qq.com</span></span>。<br><br><span class=\'text-blue\'>由於我只是一個普通學生</span>，<span class=\'text-blue\'>沒有足夠的資金買到伺服器</span><span class=\'text-blue\'>，所以</span><span class=\'text-blue\'>現在靠瀏覽器本地持久化、導入匯出都需要依靠檔案</span><span class=\'text-red\'>，所以</span><span class=\'text-red\'>在重要時刻(如換機/換新瀏覽器)需要導出備份檔案，在新的設備的瀏覽器上再匯入</span>，反饋也只能聯繫我的郵箱(forest2580@qq.com)。", logoSectionTitle:"LOGO自訂", logoCycle:"彩色循環(默認)", logoCustomOpt:"自訂", logoColorModalTitle:"LOGO顏色自訂", logoCancel:"取消", logoReCustom:"再次自訂 >", sortNote:"【注】在自訂內容/搜尋引擎/其他欄目裡長按/右鍵對應按鈕可開啟編輯操作視窗。[自訂內容：重點標記/修改/刪除；搜尋引擎：修改/刪除；其他欄目：重點標記/新增到自訂（其他欄目指的是除自訂/搜尋引擎以外的欄目）]", modify:"修改", modT:"修改", modCustomT:"修改自訂標籤", modEngT:"修改搜索引擎", highlight:"重點標記", unhighlight:"取消標記", addedToCustom:"添加到自訂", addedToCustomMsg:"所選中的內容已添加至自訂內容末尾。", addedToCustomBtn:"好的" },
@@ -434,7 +535,7 @@ body.font-loading .logo {
     const defEngs=[{id:'bd',u:'https://www.baidu.com/s?wd=%s'},{id:'gg',u:'https://www.google.com/search?q=%s'},{id:'qk',u:'https://m.quark.cn/s?q=%s'},{id:'bi',u:'https://www.bing.com/search?q=%s'},{id:'dg',u:'https://duckduckgo.com/?q=%s'},{id:'s360',u:'https://www.so.com/s?q=%s'},{id:'yh',u:'https://search.yahoo.com/search?p=%s'},{id:'tt',u:'https://so.toutiao.com/search?keyword=%s'},{id:'dy',u:'https://www.douyin.com/search/%s'},{id:'gh',u:'https://github.com/search?q=%s'},{id:'zh',u:'https://www.zhihu.com/search?q=%s'},{id:'mt',u:'https://metaso.cn/?q=%s'},{id:'sg',u:'https://www.sogou.com/web?query=%s'},{id:'sm',u:'https://m.sm.cn/s?q=%s'}];
     const ultraData=[{k:{zh:'Google专栏', zt:'Google專欄', en:'Google Column'}, d:[{n:{zh:'Gemini',zt:'Gemini',en:'Gemini'}, u:'https://gemini.google.com/app'},{n:{zh:'AI Studio',zt:'AI Studio',en:'AI Studio'}, u:'https://aistudio.google.com/'},{n:{zh:'Gmail',zt:'Gmail',en:'Gmail'}, u:'https://mail.google.com/'},{n:{zh:'Drive',zt:'Drive',en:'Drive'}, u:'https://drive.google.com/'},{n:{zh:'Maps',zt:'Maps',en:'Maps'}, u:'https://www.google.com/maps'},{n:{zh:'YouTube',zt:'YouTube',en:'YouTube'}, u:'https://www.youtube.com/'},{n:{zh:'Waze',zt:'Waze',en:'Waze'}, u:'https://www.waze.com/'},{n:{zh:'Google Play',zt:'Google Play',en:'Google Play'}, u:'https://play.google.com/store/games'},{n:{zh:'翻译',zt:'翻譯',en:'Translate'}, u:'https://translate.google.com/'},{n:{zh:'Google搜索',zt:'Google搜索',en:'Google Search'}, u:'https://www.google.com'}]},{k:{zh:'AI 网页版', zt:'AI 網頁版', en:'AI Web'}, d:[{n:{zh:'Trae',zt:'Trae',en:'Trae'}, u:'https://solo.trae.cn/'},{n:{zh:'Kimi',zt:'Kimi',en:'Kimi'}, u:'https://www.kimi.com/'},{n:{zh:'DeepSeek',zt:'DeepSeek',en:'DeepSeek'}, u:'https://chat.deepseek.com/'},{n:{zh:'千问',zt:'千問',en:'QwenAI'}, u:'https://tongyi.aliyun.com/'},{n:{zh:'文心',zt:'文心',en:'ERNIE Bot'}, u:'https://yiyan.baidu.com/'},{n:{zh:'豆包',zt:'豆包',en:'Doubao'}, u:'https://www.doubao.com/'},{n:{zh:'秘塔AI',zt:'秘塔AI',en:'MetasoAI'}, u:'https://metaso.cn/'},{n:{zh:'ChatGPT',zt:'ChatGPT',en:'ChatGPT'}, u:'https://chat.openai.com/'},{n:{zh:'Claude',zt:'Claude',en:'Claude'}, u:'https://claude.ai/new'}]},{k:{zh:'世界热门', zt:'世界熱門', en:'World Trends'}, d:[{n:{zh:'GitHub',zt:'GitHub',en:'GitHub'}, u:'https://github.com/'},{n:{zh:'X/Twitter',zt:'X/Twitter',en:'X/Twitter'}, u:'https://x.com/'},{n:{zh:'Facebook',zt:'Facebook',en:'Facebook'}, u:'https://m.facebook.com'},{n:{zh:'Yahoo!',zt:'Yahoo!',en:'Yahoo!'}, u:'https://tw.yahoo.com/'},{n:{zh:'Wikipedia',zt:'Wikipedia',en:'Wikipedia'}, u:'https://www.wikipedia.org/'},{n:{zh:'Reddit',zt:'Reddit',en:'Reddit'}, u:'https://www.reddit.com/'},{n:{zh:'OpenStreetMap',zt:'OpenStreetMap',en:'OpenStreetMap'}, u:'https://www.openstreetmap.org/'},{n:{zh:'HERE WeGo',zt:'HERE WeGo',en:'HERE WeGo'}, u:'https://wego.here.com/'}]},{k:{zh:'财经', zt:'財經', en:'Finance'}, d:[{n:{zh:'同花顺',zt:'同花順',en:'Flush'}, u:'https://www.10jqka.com.cn/'},{n:{zh:'东方财富',zt:'東方財富',en:'Eastmoney'}, u:'https://wap.eastmoney.com/'},{n:{zh:'雪球网',zt:'雪球網',en:'Xueqiu'}, u:'https://xueqiu.com/'},{n:{zh:'腾讯财经',zt:'騰訊財經',en:'Tencent Finance'}, u:'https://finance.qq.com/'},{n:{zh:'新浪财经',zt:'新浪財經',en:'Sina Finance'}, u:'https://finance.sina.com.cn/'}]},{k:{zh:'实时新闻', zt:'實時新聞', en:'Live News'}, d:[{n:{zh:'财联社',zt:'財聯社',en:'CLS News'}, u:'https://m.cls.cn/'},{n:{zh:'华尔街见闻',zt:'華爾街見聞',en:'Wallstreetcn'}, u:'https://wallstreetcn.com/'},{n:{zh:'36氪',zt:'36氪',en:'36Kr'}, u:'https://36kr.com/'},{n:{zh:'澎湃新闻',zt:'澎湃新聞',en:'The Paper'}, u:'https://www.thepaper.cn/'},{n:{zh:'新华社',zt:'新華社',en:'Xinhua'}, u:'https://www.xinhuanet.com/'},{n:{zh:'中国新闻网',zt:'中國新聞網',en:'Chinanews'}, u:'https://www.chinanews.com/'}]},{k:{zh:'天气服务', zt:'天氣服務', en:'Weather'}, d:[{n:{zh:'彩云天气',zt:'彩雲天氣',en:'Caiyun'}, u:'https://www.caiyunapp.com/map/'},{n:{zh:'墨迹天气',zt:'墨跡天氣',en:'Moji'}, u:'https://tianqi.moji.com/'},{n:{zh:'中国天气网',zt:'中國天氣網',en:'Weather China'}, u:'https://m.weather.com.cn/'},{n:{zh:'和风天气',zt:'和風天氣',en:'QWeather'}, u:'https://www.qweather.com/'},{n:{zh:'The Weather Channel',zt:'The Weather Channel',en:'The Weather Channel'}, u:'https://weather.com/'},{n:{zh:'AccuWeather',zt:'AccuWeather',en:'AccuWeather'}, u:'https://www.accuweather.com/'}]},{k:{zh:'在线地图', zt:'在線地圖', en:'Maps'}, d:[{n:{zh:'百度地图',zt:'百度地圖',en:'Baidu Maps'}, u:'https://map.baidu.com/'},{n:{zh:'高德地图',zt:'高德地圖',en:'Amap'}, u:'https://www.amap.com/'},{n:{zh:'腾讯地图',zt:'騰訊地圖',en:'Tencent Maps'}, u:'https://map.qq.com/'},{n:{zh:'Bing Maps',zt:'Bing Maps',en:'Bing Maps'}, u:'https://www.bing.com/maps'}]},{k:{zh:'生活', zt:'生活', en:'Life'}, d:[{n:{zh:'美团',zt:'美團',en:'Meituan'}, u:'https://i.meituan.com/mttouch/page/home'},{n:{zh:'58同城',zt:'58同城',en:'58.com'}, u:'https://m.58.com'},{n:{zh:'大众点评',zt:'大眾點評',en:'Dianping'}, u:'https://www.dianping.com'},{n:{zh:'携程',zt:'攜程',en:'Ctrip'}, u:'https://m.ctrip.com'}]},{k:{zh:'体育', zt:'體育', en:'Sports'}, d:[{n:{zh:'直播吧',zt:'直播吧',en:'Zhibo8'}, u:'https://www.zhibo8.com'},{n:{zh:'懂球帝',zt:'懂球帝',en:'Dongqiudi'}, u:'https://www.dongqiudi.com'},{n:{zh:'腾讯体育',zt:'騰訊體育',en:'Tencent Sports'}, u:'https://sports.qq.com'},{n:{zh:'网易体育',zt:'網易體育',en:'NetEase Sports'}, u:'https://m.163.com/touch/sports/'},{n:{zh:'新浪体育',zt:'新浪體育',en:'Sina Sports'}, u:'https://sports.sina.cn/'}]},{k:{zh:'看剧必备', zt:'看劇必備', en:'Streaming'}, d:[{n:{zh:'哔哩哔哩',zt:'嗶哩嗶哩',en:'Bilibili'}, u:'https://www.bilibili.com/'},{n:{zh:'爱奇艺',zt:'愛奇藝',en:'iQiyi'}, u:'https://www.iqiyi.com/'},{n:{zh:'腾讯视频',zt:'騰訊視頻',en:'Tencent Video'}, u:'https://v.qq.com/'},{n:{zh:'芒果tv',zt:'芒果tv',en:'Mango TV'}, u:'https://www.mgtv.com/'},{n:{zh:'优酷视频',zt:'優酷視頻',en:'Youku'}, u:'https://www.youku.com/'}]},{k:{zh:'游戏', zt:'遊戲', en:'Games'}, d:[{n:{zh:'4399',zt:'4399',en:'4399'}, u:'https://h.4399.com/?topc'},{n:{zh:'7723',zt:'7723',en:'7723'}, u:'https://3g.7723.cn'},{n:{zh:'TapTap',zt:'TapTap',en:'TapTap'}, u:'https://www.taptap.cn'},{n:{zh:'游明星空',zt:'遊明星空',en:'Gamersky'}, u:'https://wap.gamersky.com/'}]}];
 
-    let st = { langMode: 'auto', themeMode: 'auto', perfMode: 'compatible', curE: 'bd', Engs: [...defEngs], v: 1, custom:[], highlighted:[], logoMode:'cycle', logoColor:'#ff0055' };
+    var st = { langMode: 'auto', themeMode: 'auto', perfMode: 'compatible', curE: 'bd', Engs: defEngs.slice(), v: 1, custom:[], highlighted:[], logoMode:'cycle', logoColor:'#ff0055' };
     const dbSaveKey = 'geke_cy_perfect_ver_max_zero';
     let resTimer = null;
     let systemThemeListener = null;
@@ -562,6 +663,12 @@ body.font-loading .logo {
     const startScrollLeft = scrollContainer.scrollLeft;
     const distance = targetScrollLeft - startScrollLeft;
     if (Math.abs(distance) < 2) return;
+
+    if (!document.documentElement.classList.contains('ready')) {
+        scrollContainer.scrollLeft = targetScrollLeft;
+        return;
+    }
+
     const duration = 120;
     const startTime = performance.now();
 
@@ -574,7 +681,7 @@ body.font-loading .logo {
     }
 
     requestAnimationFrame(step);
-   }
+}
 
     // 核心工具函数
     function escapeHTML(str) {
@@ -593,7 +700,7 @@ body.font-loading .logo {
     function getEffectiveLanguage() { return st.langMode === 'auto' ? getSystemLanguage() : st.langMode; }
     function getEffectiveTheme() { return st.themeMode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : st.themeMode; }
     function isUrl(str) { if (!str) return false; str = str.trim(); if (/^https?:\/\//i.test(str)) return true; try { const url = new URL(str); return url.protocol === 'http:' || url.protocol === 'https:'; } catch(e) {} return (str.includes('.') && !/\s/.test(str) && !/[\u4e00-\u9fa5]/.test(str)) || /^localhost$/i.test(str) || /^[\w.-]+:\d{1,5}$/.test(str); }
-    function slideTo(el, x) { if (!el) return; el.style.transform = 'translateX(' + x + 'px)'; el.style.transition = 'transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1)'; }
+    function slideTo(el, x) { if (el) el.style.transform = 'translateX(' + x + 'px)'; }
 
     function applyTheme() {
         document.body.setAttribute('data-theme', getEffectiveTheme());
@@ -605,16 +712,17 @@ body.font-loading .logo {
     function setLangMode(m) { st.langMode = m; save(); applyLanguage(); }
 
     function applyLanguage() {
-        const l = i18n[getEffectiveLanguage()]; if (!l) return;['si-placeholder:hold', 'si-cl:clear', 'v0-txt:v0', 'v1-txt:v1', 'v2-txt:v2', 'menu-theme-txt:mTheme', 'm-lang-title:mLang', 'menu-st-txt:mSt', 'st-desc:stDesc', 'menu-dev-txt:mDev', 'dev-desc:devDesc', 'btn-restore-entry:resB', 'at-txt:addCustomT', 'an-cl:clear', 'au-cl:clear', 'btn-cancel:cancel', 'btn-ok:ok', 'sm-title:sort', 'btn-sort-cancel:cancel', 'btn-save:save', 'conf-title:conf', 'conf-msg:delMsg', 'conf-cancel:cancel', 'btn-conf-ok:ok', 'res-title:resT', 'res-msg:resM', 'res-cancel:cancel', 'btn-export:export', 'btn-import:import', 'import-export-header:importExportHeader', 'mod-title:modCustomT', 'btn-mod-cancel:cancel', 'btn-mod-ok:ok', 'mn-cl:clear', 'mu-cl:clear', 'at-eng-txt:addEngT', 'aen-cl:clear', 'aeu-cl:clear', 'btn-eng-cancel:cancel', 'btn-eng-ok:ok', 'mod-eng-title:modEngT', 'men-cl:clear', 'meu-cl:clear', 'btn-mod-eng-cancel:cancel', 'btn-mod-eng-ok:ok'].forEach(pair => {
-            const[id, key] = pair.split(':');
-            const targetId = id.includes('placeholder') ? id.split('-')[0] : id;
-            const el = document.getElementById(targetId);
-            if (el) { if(id.includes('placeholder')) el.placeholder = l[key]; else el.innerText = l[key]; }
+        var l = i18n[getEffectiveLanguage()]; if (!l) return;['si-placeholder:hold', 'si-cl:clear', 'v0-txt:v0', 'v1-txt:v1', 'v2-txt:v2', 'menu-theme-txt:mTheme', 'm-lang-title:mLang', 'menu-st-txt:mSt', 'st-desc:stDesc', 'menu-dev-txt:mDev', 'dev-desc:devDesc', 'btn-restore-entry:resB', 'at-txt:addCustomT', 'an-cl:clear', 'au-cl:clear', 'btn-cancel:cancel', 'btn-ok:ok', 'sm-title:sort', 'btn-sort-cancel:cancel', 'btn-save:save', 'conf-title:conf', 'conf-msg:delMsg', 'conf-cancel:cancel', 'btn-conf-ok:ok', 'res-title:resT', 'res-msg:resM', 'res-cancel:cancel', 'btn-export:export', 'btn-import:import', 'import-export-header:importExportHeader', 'mod-title:modCustomT', 'btn-mod-cancel:cancel', 'btn-mod-ok:ok', 'mn-cl:clear', 'mu-cl:clear', 'at-eng-txt:addEngT', 'aen-cl:clear', 'aeu-cl:clear', 'btn-eng-cancel:cancel', 'btn-eng-ok:ok', 'mod-eng-title:modEngT', 'men-cl:clear', 'meu-cl:clear', 'btn-mod-eng-cancel:cancel', 'btn-mod-eng-ok:ok'].forEach(function(pair) {
+            var parts = pair.split(':');
+            var id = parts[0], key = parts[1];
+            var targetId = id.indexOf('placeholder') !== -1 ? id.split('-')[0] : id;
+            var el = document.getElementById(targetId);
+            if (el) { if(id.indexOf('placeholder') !== -1) el.placeholder = l[key]; else el.innerText = l[key]; }
         });
         const perfTitle = document.getElementById('perf-mode-txt'); if(perfTitle) perfTitle.innerText = l.perfMode;
         const pOpts = document.querySelectorAll('.perf-opt');
         if (pOpts.length === 3) { pOpts[0].innerText = l.perfCompatible; pOpts[1].innerText = l.perfChina; pOpts[2].innerText = l.perfInternational; }
-        const autoLb = document.querySelector('label[for="lang-auto"]') || document.querySelector('input[value="auto"]')?.parentNode;
+        const autoLb = document.querySelector('label[for="lang-auto"]') || (document.querySelector('input[value="auto"]') && document.querySelector('input[value="auto"]').parentNode);
         if (autoLb) autoLb.childNodes[0].nodeValue = l.langAuto + ' ';
         const r = document.querySelector(`input[name="L"][value="${st.langMode}"]`); if (r) r.checked = true;
         const opts = document.querySelectorAll('.theme-opt');
@@ -896,7 +1004,7 @@ body.font-loading .logo {
         } else {
             box.style.flexWrap = 'nowrap';
         }
-        box.replaceChildren(frag);
+        box.innerHTML = ''; box.appendChild(frag);
         if (!document.documentElement.classList.contains('is-desktop')) {
             alignEngList();
             scrollActiveEngineIntoView();
@@ -1025,7 +1133,7 @@ body.font-loading .logo {
                 frag.appendChild(rGroup);
             });
         }
-        box.replaceChildren(frag);
+        box.innerHTML = ''; box.appendChild(frag);
         alignEngList();
     }
 
@@ -1307,7 +1415,7 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
     function initDragSort() {
         const list = document.getElementById('sort-list');
         if (!list) return;
-        Array.from(list.querySelectorAll('.sort-row')).forEach(row => {
+        [].slice.call(list.querySelectorAll('.sort-row')).forEach(row => {
             const handle = row.querySelector('.drag-handle');
             if (!handle) return;
             handle.addEventListener('touchstart', onDragStart, { passive: false });
@@ -1458,7 +1566,7 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
         const m = document.getElementById('modal-import-export'), tEl = document.getElementById('ie-title'), mEl = document.getElementById('ie-msg'), bDiv = document.getElementById('ie-buttons'), lg = getEffectiveLanguage();
         if (!m || !tEl || !mEl || !bDiv) return;
         tEl.innerText = typeof tit === 'function' ? tit(lg) : tit; mEl.innerText = typeof msg === 'function' ? msg(lg) : msg; bDiv.innerHTML = '';
-        if (btns) { btns.forEach(c => { const b = document.createElement('button'); b.className = 'text-btn'; b.innerText = typeof c.text === 'function' ? c.text(lg) : c.text; b.style.background = c.background || 'var(--box)'; b.style.color = c.color || 'var(--text)'; if (c.isAccent) { b.style.background = 'var(--accent)'; b.style.color = '#fff'; } b.onclick = () => { Array.from(bDiv.children).forEach(cb => { cb.disabled = true; cb.style.opacity = '0.5'; }); m.style.display = 'none'; if (c.onClick) c.onClick(); }; bDiv.appendChild(b); }); } 
+        if (btns) { btns.forEach(c => { const b = document.createElement('button'); b.className = 'text-btn'; b.innerText = typeof c.text === 'function' ? c.text(lg) : c.text; b.style.background = c.background || 'var(--box)'; b.style.color = c.color || 'var(--text)'; if (c.isAccent) { b.style.background = 'var(--accent)'; b.style.color = '#fff'; } b.onclick = () => { [].slice.call(bDiv.children).forEach(cb => { cb.disabled = true; cb.style.opacity = '0.5'; }); m.style.display = 'none'; if (c.onClick) c.onClick(); }; bDiv.appendChild(b); }); } 
         else { const oBtn = document.createElement('button'); oBtn.className = 'text-btn'; oBtn.style.background = 'var(--accent)'; oBtn.style.color = '#fff'; oBtn.innerText = i18n[lg].ok; oBtn.onclick = () => m.style.display = 'none'; bDiv.appendChild(oBtn); }
         m.style.display = 'block';
     }
@@ -1473,7 +1581,7 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
     }
     function handleImportFile(e) {
         const f = e.target.files[0]; if (!f) return; const r = new FileReader();
-        r.onload = ev => { try { const lines = ev.target.result.split('\n'); if (lines[0].trim() !== EXPORT_VERIFY_STRING) throw new Error('Verify Fail'); const imp = JSON.parse(lines.slice(1).join('\n')); showImportExportModal(lg => i18n[lg].importConfirmTitle, lg => i18n[lg].importConfirmMsg,[{ text: lg => i18n[lg].cancelImport }, { text: lg => i18n[lg].confirmImport, isAccent: true, onClick: () => { st.langMode = imp.langMode || 'auto'; st.themeMode = imp.themeMode || 'auto'; st.perfMode = imp.perfMode || 'compatible'; st.curE = imp.curE || 'bd'; st.Engs = Array.isArray(imp.Engs) ? imp.Engs :[...defEngs]; st.v = imp.v !== undefined ? imp.v : 1; st.custom = Array.isArray(imp.custom) ? imp.custom :[]; st.highlighted = Array.isArray(imp.highlighted) ? imp.highlighted :[]; st.logoMode = imp.logoMode || 'cycle'; st.logoColor = imp.logoColor || '#ff0055'; save(); forceRefresh(); } }]); } catch (err) { showImportExportModal(lg => i18n[lg].importFailTitle, lg => i18n[lg].importFailMsg); } finally { e.target.value = ''; } };
+        r.onload = ev => { try { const lines = ev.target.result.split('\n'); if (lines[0].trim() !== EXPORT_VERIFY_STRING) throw new Error('Verify Fail'); const imp = JSON.parse(lines.slice(1).join('\n')); showImportExportModal(lg => i18n[lg].importConfirmTitle, lg => i18n[lg].importConfirmMsg,[{ text: lg => i18n[lg].cancelImport }, { text: lg => i18n[lg].confirmImport, isAccent: true, onClick: () => { st.langMode = imp.langMode || 'auto'; st.themeMode = imp.themeMode || 'auto'; st.perfMode = imp.perfMode || 'compatible'; st.curE = imp.curE || 'bd'; st.Engs = Array.isArray(imp.Engs) ? imp.Engs : defEngs.slice(); st.v = imp.v !== undefined ? imp.v : 1; st.custom = Array.isArray(imp.custom) ? imp.custom :[]; st.highlighted = Array.isArray(imp.highlighted) ? imp.highlighted :[]; st.logoMode = imp.logoMode || 'cycle'; st.logoColor = imp.logoColor || '#ff0055'; save(); forceRefresh(); } }]); } catch (err) { showImportExportModal(lg => i18n[lg].importFailTitle, lg => i18n[lg].importFailMsg); } finally { e.target.value = ''; } };
         r.readAsText(f);
     }
     function forceRefresh() {
@@ -1491,12 +1599,43 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
     }
 
     // 字体预加载：确保 Caveat 字体就绪后再显示 logo
-document.fonts.load('700 1em Caveat').then(function() {
-    document.body.classList.remove('font-loading');
-});
+(function() {
+    if (document.fonts && document.fonts.load) {
+        document.fonts.load('700 1em Caveat').then(function() {
+            document.body.classList.remove('font-loading');
+        }).catch(function() {
+            document.body.classList.remove('font-loading');
+        });
+    } else {
+        var startTime = Date.now();
+        var checkFont = function() {
+            if (Date.now() - startTime > 3000) {
+                document.body.classList.remove('font-loading');
+                return;
+            }
+            var testDiv = document.createElement('div');
+            testDiv.style.position = 'absolute';
+            testDiv.style.visibility = 'hidden';
+            testDiv.style.fontSize = '100px';
+            testDiv.style.fontFamily = 'serif';
+            testDiv.innerHTML = 'GeKeCy';
+            document.body.appendChild(testDiv);
+            var serifWidth = testDiv.offsetWidth;
+            testDiv.style.fontFamily = 'Caveat, serif';
+            var caveatWidth = testDiv.offsetWidth;
+            document.body.removeChild(testDiv);
+            if (serifWidth !== caveatWidth) {
+                document.body.classList.remove('font-loading');
+            } else {
+                setTimeout(checkFont, 100);
+            }
+        };
+        setTimeout(checkFont, 100);
+    }
+})();
 
 function init() {
-        try { const s = localStorage.getItem(dbSaveKey); if (s) { const p = JSON.parse(s); st.langMode = p.langMode || 'auto'; st.themeMode = p.themeMode || 'auto'; st.perfMode = p.perfMode || 'compatible'; st.curE = p.curE || 'bd'; st.Engs = p.Engs || [...defEngs]; st.v = p.v !== undefined ? p.v : 1; st.custom = p.custom ||[]; st.highlighted = p.highlighted ||[]; st.logoMode = p.logoMode || 'cycle'; st.logoColor = p.logoColor || '#ff0055'; } } catch(e) {}
+        try { const s = localStorage.getItem(dbSaveKey); if (s) { const p = JSON.parse(s); st.langMode = p.langMode || 'auto'; st.themeMode = p.themeMode || 'auto'; st.perfMode = p.perfMode || 'compatible'; st.curE = p.curE || 'bd'; st.Engs = p.Engs || defEngs.slice(); st.v = p.v !== undefined ? p.v : 1; st.custom = p.custom ||[]; st.highlighted = p.highlighted ||[]; st.logoMode = p.logoMode || 'cycle'; st.logoColor = p.logoColor || '#ff0055'; } } catch(e) {}
         st.custom.forEach(function(c){ if(!c.uid) c.uid = 'c'+Date.now()+Math.random().toString(36).substr(2,6); });
         if (!st.highlighted) st.highlighted = [];
         
@@ -1508,11 +1647,11 @@ function init() {
         applyLogoMode();
         
         // 同步绑定事件，不延迟
-        if(!systemThemeListener) { const m = window.matchMedia('(prefers-color-scheme: dark)'); m.addEventListener('change', () => { if(st.themeMode === 'auto') applyTheme(); }); systemThemeListener = true; }
+        if(!systemThemeListener) { var m = window.matchMedia('(prefers-color-scheme: dark)'); var fn = function() { if(st.themeMode === 'auto') applyTheme(); }; if(m.addEventListener) m.addEventListener('change', fn); else if(m.addListener) m.addListener(fn); systemThemeListener = true; }
         window.addEventListener('languagechange', () => { if (st.langMode === 'auto') applyLanguage(); });
-        document.getElementById('btn-export')?.addEventListener('click', exportSettings);
-        document.getElementById('btn-import')?.addEventListener('click', () => { if(!isImporting) { isImporting=true; const f = document.getElementById('import-file-input'); f.value=''; f.click(); setTimeout(()=>isImporting=false,1000); } });
-        document.getElementById('import-file-input')?.addEventListener('change', handleImportFile);
+        var btnExport = document.getElementById('btn-export'); if (btnExport) btnExport.addEventListener('click', exportSettings);
+        var btnImport = document.getElementById('btn-import'); if (btnImport) btnImport.addEventListener('click', function() { if(!isImporting) { isImporting=true; var f = document.getElementById('import-file-input'); f.value=''; f.click(); setTimeout(function(){isImporting=false;},1000); } });
+        var fileInput = document.getElementById('import-file-input'); if (fileInput) fileInput.addEventListener('change', handleImportFile);
         const si = document.getElementById('si');
         if(si) { si.addEventListener('input', updateSearchButton); si.addEventListener('keydown', e => { if(e.key === 'Enter') doAction(); }); }
         ['si','an','au','aen','aeu','mn','mu','men','meu'].forEach(id => { const i = document.getElementById(id); if(i) { ['input','compositionend'].forEach(ev => i.addEventListener(ev, () => updateInputBtnStatus(id))); } });
@@ -1547,7 +1686,7 @@ function init() {
             }, { passive: true });
         }
     
-        document.documentElement.classList.remove('page-init');
+        document.documentElement.classList.add('ready');
     }
 
     function hideCtxMenu() {
