@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
     <title>GeKeCy浏览器 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
-    <!-- Ver: 1.6.345 -->
+    <!-- Ver: 1.6.347 -->
     <meta name="keywords" content="GeKeCy,GeKeCy浏览器,极简浏览器,无广告浏览器,好用的手机浏览器,自定义网页导航,多引擎搜索,AI搜索网站,极速浏览器,纯净版浏览器">
     <meta name="description" content="受够了臃肿和广告？GeKeCy 是一款极致纯净、完全无广告的极简浏览器网页版。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
@@ -202,7 +202,7 @@ body.font-loading .logo {
         #ctx-menu .ctx-item:active { background: var(--box); filter: brightness(0.9); }
         
         /* 仅对功能按键防选中以保护交互体验，保留输入框正常打字 */
-        .e-item, .n-link, .circle-tool, .text-btn, .v-opt, .theme-opt, .drag-handle, .ctx-item {
+        .e-item, .n-link, .n-link a, .circle-tool, .text-btn, .v-opt, .theme-opt, .drag-handle, .ctx-item {
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
             -webkit-touch-callout: none;
         }
@@ -527,7 +527,7 @@ body.font-loading .logo {
         };
     }
     const i18n={
-        zh:{ set:"设置/設置/Setting", storageErr:"存储空间已满", v0:"简洁", v1:"性能", v2:"高性能", hold:"搜索或输入网址", clear:"清空", go:"搜索", visit:"访问", add:"添加", addCustomT:"添加自定义标签", perfMode:"高性能模式 Performance", perfCompatible:"兼容", perfChina:"中国", perfInternational:"国际", addEngT:"添加搜索引擎", cancel:"取消", ok:"确定", save:"保存", conf:"提示", delMsg:"确认要删除吗？", mTheme:"主题 Theme", tLight:"浅色", tDark:"深色", tAuto:"系统", mLang:"语言 Language", langAuto:"跟随系统", mSt:"持久化 Persistence", stDesc:"偏好、顺序及自定义内容自动保存在您的本地存储中。", mDev:"开发者说明 Dev Note", devDesc:"如果你对我们的开发有所兴趣或想参与我们的开发，那么请联系 forest2580@qq.com，感谢你们的热情！", custom:"自定义内容", sort:"管理顺序", del:"删除", urlErr:"请输入可用的名称或URL", urlExists:"URL 已存在", nameExists:"已有相同名称项", engUrlErr:"请输入可用的名称或搜索引擎链接", engUrlExists:"搜索引擎链接已存在", resT:"确定要恢复原始设置吗？", resM:"此设置会完全删除你所有保存在此应用的数据。", resB:"恢复原始设置", export:"导出", import:"导入", importExportHeader: "设置恢复 Setup recovery", helpTitle: "关于导入导出的解说", helpMsg: "由于本浏览器无服务器(目前资金不够)所以保存所有设置、标签和其它的功能就由导入导出html备份文件的形式替代。你的所有设置、标签和其它的功能都会保存在一个html备份文件里，请将它原封不动的在需要导入的其它设备/浏览器里导入。", iUnderstand: "我知道了", exportTitle:"导出设置文件标签", exportSuccessMsg:"现在已经弹出了下载请求或已开始下载。", exportFailTitle:"导出设置文件失败", exportFailMsg:"当前未知问题，请联系forest2580@qq.com进行反馈解决。", importFailTitle:"导入设置文件失败", importFailMsg:"文件格式/内容不正确-请检查导入的文件是否为之前导出的html文件。", importVerifyFail:"导入验证失败：文件不是有效的GeKeCy备份文件。", importConfirmTitle: "确认导入", importConfirmMsg: "导入将覆盖当前所有设置，是否继续？", cancelImport: "取消导入", confirmImport: "确认导入", refreshOverlayTitle: "请刷新页面", refreshOverlayMsg: "如您点击确认后页面无反应，即为刷新指令被拦截，请点击下方按钮手动刷新。如按钮无效，请使用浏览器自带的刷新功能。", refreshOverlayBtn: "点击刷新", refreshOverlayBtn2: "使用浏览器刷新", aboutTitle: "关于 GeKeCy", aboutContent: "<span class=\'text-blue\'>GeKeCy是一个<span class=\'text-red\'>浏览器</span></span><span class=\'text-red\'>，它的</span><span class=\'text-red\'>发音(音标)是/dʒɪkəsiː/</span>。<br><br>欢迎您使用我开发的浏览器，我是一个13岁来自于四川广安普通的学生。这是我自己开发的一个网页端浏览器，<span class=\'text-blue\'>遇到问题<span class=\'text-red\'>欢迎向我反馈</span>，我的邮箱是<span class=\'text-red\'> forest2580@qq.com</span></span>。<br><br><span class=\'text-blue\'>由于我只是一个普通学生</span>，<span class=\'text-blue\'>没有足够的资金买到服务器</span><span class=\'text-blue\'>，所以</span><span class=\'text-blue\'>现在靠浏览器本地持久化、导入导出都需要依靠文件</span><span class=\'text-red\'>，所以</span><span class=\'text-red\'>在重要时刻(如换机/换新浏览器)需要导出备份文件，在新的设备的浏览器上再导入</span>，反馈也只能联系我的邮箱(forest2580@qq.com)。", logoSectionTitle:"LOGO自定义", logoCycle:"彩色循环(默认)", logoCustomOpt:"自定义", logoColorModalTitle:"LOGO颜色自定义", logoCancel:"取消", logoReCustom:"再次自定义 >", sortNote:"【注】在自定义内容/搜索引擎/其他栏目里长按/右键对应按钮可开启编辑操作窗口。[自定义内容：重点标记/修改/删除；搜索引擎：修改/删除；其他栏目：重点标记/添加到自定义（其他栏目指的是除自定义/搜索引擎以外的栏目）]", highlight:"重点标记", unhighlight:"取消标记", addedToCustom:"添加到自定义", addedToCustomMsg:"所选中的内容已添加至自定义内容末尾。", addedToCustomBtn:"好的" },
+        zh:{ set:"设置/設置/Setting", storageErr:"存储空间已满", v0:"简洁", v1:"性能", v2:"高性能", hold:"搜索或输入网址", clear:"清空", go:"搜索", visit:"访问", add:"添加", addCustomT:"添加自定义标签", perfMode:"高性能模式 Performance", perfCompatible:"兼容", perfChina:"中国", perfInternational:"国际", addEngT:"添加搜索引擎", cancel:"取消", ok:"确定", save:"保存", conf:"提示", delMsg:"确认要删除吗？", mTheme:"主题 Theme", tLight:"浅色", tDark:"深色", tAuto:"系统", mLang:"语言 Language", langAuto:"跟随系统", mSt:"持久化 Persistence", stDesc:"偏好、顺序及自定义内容自动保存在您的本地存储中。", mDev:"开发者说明 Dev Note", devDesc:"如果你对我们的开发有所兴趣或想参与我们的开发，那么请联系 forest2580@qq.com，感谢你们的热情！", custom:"自定义内容", sort:"管理顺序", del:"删除", urlErr:"请输入可用的名称或URL", urlExists:"URL 已存在", nameExists:"已有相同名称项", engUrlErr:"请输入可用的名称或搜索引擎链接", engUrlExists:"搜索引擎链接已存在", resT:"确定要恢复原始设置吗？", resM:"此设置会完全删除你所有保存在此应用的数据。", resB:"恢复原始设置", export:"导出", import:"导入", importExportHeader: "设置恢复 Setup recovery", helpTitle: "关于导入导出的解说", helpMsg: "由于本浏览器无服务器(目前资金不够)所以保存所有设置、标签和其它的功能就由导入导出html备份文件的形式替代。你的所有设置、标签和其它的功能都会保存在一个html备份文件里，请将它原封不动的在需要导入的其它设备/浏览器里导入。", iUnderstand: "我知道了", exportTitle:"导出设置文件标签", exportSuccessMsg:"现在已经弹出了下载请求或已开始下载。", exportFailTitle:"导出设置文件失败", exportFailMsg:"当前未知问题，请联系forest2580@qq.com进行反馈解决。", importFailTitle:"导入设置文件失败", importFailMsg:"文件格式/内容不正确-请检查导入的文件是否为之前导出的html文件。", importVerifyFail:"导入验证失败：文件不是有效的GeKeCy备份文件。", importConfirmTitle: "确认导入", importConfirmMsg: "导入将覆盖当前所有设置，是否继续？", cancelImport: "取消导入", confirmImport: "确认导入", refreshOverlayTitle: "请刷新页面", refreshOverlayMsg: "如您点击确认后页面无反应，即为刷新指令被拦截，请点击下方按钮手动刷新。如按钮无效，请使用浏览器自带的刷新功能。", refreshOverlayBtn: "点击刷新", refreshOverlayBtn2: "使用浏览器刷新", aboutTitle: "关于 GeKeCy", aboutContent: "<span class=\'text-blue\'>GeKeCy是一个<span class=\'text-red\'>浏览器</span></span><span class=\'text-red\'>，它的</span><span class=\'text-red\'>发音(音标)是/dʒɪkəsiː/</span>。<br><br>欢迎您使用我开发的浏览器，我是一个13岁来自于四川广安普通的学生。这是我自己开发的一个网页端浏览器，<span class=\'text-blue\'>遇到问题<span class=\'text-red\'>欢迎向我反馈</span>，我的邮箱是<span class=\'text-red\'> forest2580@qq.com</span></span>。<br><br><span class=\'text-blue\'>由于我只是一个普通学生</span>，<span class=\'text-blue\'>没有足够的资金买到服务器</span><span class=\'text-blue\'>，所以</span><span class=\'text-blue\'>现在靠浏览器本地持久化、导入导出都需要依靠文件</span><span class=\'text-red\'>，所以</span><span class=\'text-red\'>在重要时刻(如换机/换新浏览器)需要导出备份文件，在新的设备的浏览器上再导入</span>，反馈也只能联系我的邮箱(forest2580@qq.com)。", logoSectionTitle:"LOGO自定义", logoCycle:"彩色循环(默认)", logoCustomOpt:"自定义", logoColorModalTitle:"LOGO颜色自定义", logoCancel:"取消", logoReCustom:"再次自定义 >", sortNote:"【注】在自定义内容/搜索引擎/其他栏目里长按/右键对应按钮可开启编辑操作窗口。[自定义内容：重点标记/修改/删除；搜索引擎：修改/删除；其他栏目：重点标记/添加到自定义（其他栏目指的是除自定义/搜索引擎以外的栏目）]", modify:"修改", modT:"修改", modCustomT:"修改自定义标签", modEngT:"修改搜索引擎", highlight:"重点标记", unhighlight:"取消标记", addedToCustom:"添加到自定义", addedToCustomMsg:"所选中的内容已添加至自定义内容末尾。", addedToCustomBtn:"好的" },
         zt:{ set:"设置/設置/Setting", storageErr:"存儲空間已滿", v0:"簡潔", v1:"性能", v2:"高性能", hold:"搜索或輸入網址", clear:"清空", go:"搜索", visit:"訪問", add:"添加", addCustomT:"添加自訂標籤", perfMode:"高性能模式 Performance", perfCompatible:"兼容", perfChina:"中國", perfInternational:"國際", addEngT:"添加搜索引擎", cancel:"取消", ok:"確定", save:"保存", conf:"提示", delMsg:"確認要刪除嗎？", mTheme:"主題 Theme", tLight:"淺色", tDark:"深色", tAuto:"系統", mLang:"語言 Language", langAuto:"跟隨系統", mSt:"持久化 Persistence", stDesc:"偏好、順序及自定義內容自動保存在您的本地存儲中。", mDev:"開發者說明 Dev Note", devDesc:"如果你對我們的開發有所興趣或想參與我們的開發，那麼請聯繫 forest2580@qq.com，感謝你們的热情！", custom:"自定義內容", sort:"管理順序", del:"刪除", urlErr:"請輸入可用的名稱或URL", urlExists:"URL 已存在", nameExists:"已有相同名稱項", engUrlErr:"請輸入可用的名稱或搜索引擎連結", engUrlExists:"搜索引擎連結已存在", resT:"確定要恢復原始設置嗎？", resM:"此設置會完全刪除你所有保存在此應用的數據。", resB:"恢復原始設置", export:"匯出", import:"匯入", importExportHeader: "設定恢復 Setup recovery", helpTitle: "關於匯入匯出的解說", helpMsg: "由於本瀏覽器無伺服器(目前資金不夠)所以保存所有設定、標籤和其它的功能就由匯入匯出html備份檔案的形式替代。你的所有設定、標籤和其它的功能都會保存在一個html備份檔案裡，請將它原封不動的在需要匯入的其它設備/瀏覽器裡匯入。", iUnderstand: "我知道了", exportTitle:"匯出設定檔案標籤", exportSuccessMsg:"現在已經彈出了下載請求或已開始下載。", exportFailTitle:"匯出設定檔案失敗", exportFailMsg:"當前未知問題，請聯繫forest2580@qq.com進行回饋解決。", importFailTitle:"匯入設定檔案失敗", importFailMsg:"檔案格式/內容不正確-請檢查匯入的檔案是否為之前匯出的html檔案。", importVerifyFail:"匯入驗證失敗：檔案不是有效的GeKeCy備份檔案。", importConfirmTitle: "確認匯入", importConfirmMsg: "匯入將覆蓋當前所有設定，是否繼續？", cancelImport: "取消匯入", confirmImport: "確認匯入", refreshOverlayTitle: "請刷新頁面", refreshOverlayMsg: "如您點擊確認後頁面無反應，即為刷新指令被攔截，請點擊下方按鈕手動刷新。如按鈕無效，請使用瀏覽器自帶的刷新功能。", refreshOverlayBtn: "點擊刷新", refreshOverlayBtn2: "使用瀏覽器刷新", aboutTitle: "關於 GeKeCy", aboutContent: "<span class=\'text-blue\'>GeKeCy是一個<span class=\'text-red\'>瀏覽器</span></span><span class=\'text-red\'>，它的</span><span class=\'text-red\'>發音(音標)是/dʒɪkəsiː/</span>。<br><br>歡迎您使用我開發的瀏覽器，我是一個13歲來自於四川廣安普通的學生。這是我自己開發的一個網頁端瀏覽器，<span class=\'text-blue\'>遇到問題<span class=\'text-red\'>歡迎向我反饋</span>，我的郵箱是<span class=\'text-red\'> forest2580@qq.com</span></span>。<br><br><span class=\'text-blue\'>由於我只是一個普通學生</span>，<span class=\'text-blue\'>沒有足夠的資金買到伺服器</span><span class=\'text-blue\'>，所以</span><span class=\'text-blue\'>現在靠瀏覽器本地持久化、導入匯出都需要依靠檔案</span><span class=\'text-red\'>，所以</span><span class=\'text-red\'>在重要時刻(如換機/換新瀏覽器)需要導出備份檔案，在新的設備的瀏覽器上再匯入</span>，反饋也只能聯繫我的郵箱(forest2580@qq.com)。", logoSectionTitle:"LOGO自訂", logoCycle:"彩色循環(默認)", logoCustomOpt:"自訂", logoColorModalTitle:"LOGO顏色自訂", logoCancel:"取消", logoReCustom:"再次自訂 >", sortNote:"【注】在自訂內容/搜尋引擎/其他欄目裡長按/右鍵對應按鈕可開啟編輯操作視窗。[自訂內容：重點標記/修改/刪除；搜尋引擎：修改/刪除；其他欄目：重點標記/新增到自訂（其他欄目指的是除自訂/搜尋引擎以外的欄目）]", modify:"修改", modT:"修改", modCustomT:"修改自訂標籤", modEngT:"修改搜索引擎", highlight:"重點標記", unhighlight:"取消標記", addedToCustom:"添加到自訂", addedToCustomMsg:"所選中的內容已添加至自訂內容末尾。", addedToCustomBtn:"好的" },
         en:{ set:"设置/設置/Setting", storageErr:"Storage is full", v0:"Lite", v1:"Pro", v2:"Ultra", hold:"Search or enter URL", clear:"Clear", go:"Search", visit:"Visit", add:"Add", addCustomT:"Add Custom Tag", perfMode:"Performance Mode", perfCompatible:"All", perfChina:"China", perfInternational:"Global", addEngT:"Add Search Engine", cancel:"Cancel", ok:"Confirm", save:"Save", conf:"Notice", delMsg:"Are you sure?", mTheme:"Theme", tLight:"Light", tDark:"Dark", tAuto:"Auto", mLang:"Language", langAuto:"Auto", mSt:"Persistence", stDesc:"Your preferences, custom links, and search engines are saved locally in your browser..", mDev:"Dev Note", devDesc:"Interested in contributing? Contact us at forest2580@qq.com", custom:"Custom Links", sort:"Manage", del:"Delete", urlErr:"Please enter a valid name or URL", urlExists:"URL already exists", nameExists:"Name already exists", engUrlErr:"Please enter a valid name or search engine URL", engUrlExists:"Search engine URL already exists", resT:"Restore Original Settings?", resM:"This will permanently delete all your saved data.", resB:"Restore Settings", export:"Export", import:"Import", importExportHeader: "Setup recovery", helpTitle: "About Import & Export", helpMsg: "Since this browser has no server, settings are saved via HTML backup files. Please keep them safe to restore.", iUnderstand: "I Understand", exportTitle:"Export Started", exportSuccessMsg:"Download requested.", exportFailTitle:"Export Failed", exportFailMsg:"Contact forest2580@qq.com.", importFailTitle:"Import Failed", importFailMsg:"Invalid file format.", importVerifyFail:"Verification failed.", importConfirmTitle: "Confirm Import", importConfirmMsg: "Overwrite all settings?", cancelImport: "Cancel", confirmImport: "Confirm", refreshOverlayTitle: "Refresh Page", refreshOverlayMsg: "Auto-refresh blocked. Please manually refresh.", refreshOverlayBtn: "Refresh", refreshOverlayBtn2: "Browser Refresh", aboutTitle: "About GeKeCy", aboutContent: "<span class=\'text-blue\'>GeKeCy is a <span class=\'text-red\'>browser</span></span><span class=\'text-red\'>. Pronounced /dʒɪkəsiː/</span>.<br><br>I am a 13-year-old student. <span class=\'text-blue\'>Feedback to<span class=\'text-red\'> forest2580@qq.com</span></span>.<br><br><span class=\'text-blue\'>No server funds</span><span class=\'text-red\'>, so use export/import to backup your data</span>.", logoSectionTitle:"LOGO Customize", logoCycle:"Color Cycle (Default)", logoCustomOpt:"Custom", logoColorModalTitle:"LOGO Color", logoCancel:"Cancel", logoReCustom:"Re-customize >", sortNote:"Note: In the Custom Content/Search Engine/Other Columns, long press/right-click the corresponding button to open the editing operation window. [Custom Content: Highlight/Modify/Delete; Search Engine: Modify/Delete; Other Columns: Highlight/Add to Custom (Other Columns refer to columns other than Custom/Search Engine)]", modify:"Modify", modT:"Modify", modCustomT:"Modify Custom Tag", modEngT:"Edit Search Engine", highlight:"Mark", unhighlight:"Unmark", addedToCustom:"Add to Custom", addedToCustomMsg:"The selected item has been added to the end of custom links.", addedToCustomBtn:"OK" }
     };
@@ -1039,7 +1039,7 @@ body.font-loading .logo {
             addBtn.textContent = '+';
             addBtn.addEventListener('click', function() { openAdd('link'); });
             scrollContent.appendChild(addBtn);
-            st.custom.forEach((c, i) => {
+            st.custom.forEach(function(c, i) {
                 const rawN = c.n;
                 const dispN = rawN.length > 15 ? rawN.substring(0, 15) + '...' : rawN;
                 const hlKey = 'custom:' + (c.uid || i);
@@ -1048,15 +1048,18 @@ body.font-loading .logo {
                 nLink.dataset.index = i;
                 nLink.dataset.type = 'custom';
                 nLink.dataset.hlKey = hlKey;
+                nLink.dataset.url = encodeURI(c.u);
                 nLink.addEventListener('contextmenu', function(ev) { onCtx(ev, i, 'custom'); });
-                const a = document.createElement('a');
-                a.href = encodeURI(c.u);
-                a.target = '_blank';
-                a.style.color = 'inherit';
-                a.style.textDecoration = 'none';
-                a.textContent = dispN;
-                a.addEventListener('click', function(ev) { if(window.lpFired){ev.preventDefault();return false;} });
-                nLink.appendChild(a);
+                const s = document.createElement('span');
+                s.style.color = 'inherit';
+                s.style.textDecoration = 'none';
+                s.textContent = dispN;
+                nLink.appendChild(s);
+                nLink.addEventListener('click', function(ev) {
+                    if(window.lpFired){ ev.preventDefault(); return false; }
+                    var url = nLink.dataset.url;
+                    if(url) window.open(url, '_blank');
+                });
                 scrollContent.appendChild(nLink);
             });
             const spacer = document.createElement('div');
@@ -1113,15 +1116,18 @@ body.font-loading .logo {
                     nLink.dataset.type = 'pro';
                     nLink.dataset.hlKey = hlKey;
                     nLink.dataset.index = colIdx + ':' + itemIdx;
+                    nLink.dataset.url = encodeURI(app.u);
                     nLink.addEventListener('contextmenu', function(ev) { onCtx(ev, colIdx + ':' + itemIdx, 'pro'); });
-                    const a = document.createElement('a');
-                    a.href = encodeURI(app.u);
-                    a.target = '_blank';
-                    a.style.color = 'inherit';
-                    a.style.textDecoration = 'none';
-                    a.textContent = dispN;
-                    a.addEventListener('click', function(ev) { if(window.lpFired){ev.preventDefault();return false;} });
-                    nLink.appendChild(a);
+                    const s = document.createElement('span');
+                    s.style.color = 'inherit';
+                    s.style.textDecoration = 'none';
+                    s.textContent = dispN;
+                    nLink.appendChild(s);
+                    nLink.addEventListener('click', function(ev) {
+                        if(window.lpFired){ ev.preventDefault(); return false; }
+                        var url = nLink.dataset.url;
+                        if(url) window.open(url, '_blank');
+                    });
                     scrollContent.appendChild(nLink);
                 });
                 const spacer = document.createElement('div');
