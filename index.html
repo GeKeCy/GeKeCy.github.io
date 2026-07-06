@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
     <title>GeKeCy浏览器 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
-    <!-- Ver: 1.6.347 -->
+    <!-- Ver: 1.6.348 -->
     <meta name="keywords" content="GeKeCy,GeKeCy浏览器,极简浏览器,无广告浏览器,好用的手机浏览器,自定义网页导航,多引擎搜索,AI搜索网站,极速浏览器,纯净版浏览器">
     <meta name="description" content="受够了臃肿和广告？GeKeCy 是一款极致纯净、完全无广告的极简浏览器网页版。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
@@ -613,11 +613,11 @@ body.font-loading .logo {
 
     function getHlKey(type, idx) {
         if (type === 'eng') {
-            const e = st.Engs[idx];
+            const e = st.Engs[parseInt(idx)];
             return 'eng:' + (e ? e.id : idx);
         }
         if (type === 'custom') {
-            const c = st.custom[idx];
+            const c = st.custom[parseInt(idx)];
             return 'custom:' + (c && c.uid ? c.uid : idx);
         }
         if (type === 'pro') return 'pro:' + idx;
@@ -1329,10 +1329,11 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
     }
     // ==========================================
     
-    window.askMod = (i, type) => {
-        modIdx = i; modType = type;
+    window.askMod = function(i, type) {
+        modIdx = (type === 'eng' || type === 'custom') ? parseInt(i) : i;
+        modType = type;
         const targetArr = type === 'eng' ? st.Engs : st.custom;
-        const e = targetArr[i];
+        const e = targetArr[modIdx];
         const n = type === 'eng' ? (engNames[e.id] ? engNames[e.id][getEffectiveLanguage()] : e.n) : e.n;
         if (type === 'eng') {
             document.getElementById('men').value = n;
@@ -1398,13 +1399,14 @@ if (st.custom.some(i => i.n === n)) { if(err) { err.innerText = l.nameExists; er
         renderEngs();
     };
 
-    window.askDel = (i, type) => {
+    window.askDel = function(i, type) {
+        const idx = (type === 'eng' || type === 'custom') ? parseInt(i) : i;
         const m = document.getElementById('modal-confirm'), b = document.getElementById('btn-conf-ok'); if(!m || !b) return; m.style.display = 'block';
-        b.onclick = () => { 
+        b.onclick = function() { 
             if(type === 'eng') { 
-                if(st.Engs.length > 1) { st.Engs.splice(i,1); st.curE = st.Engs[0].id; renderEngs(); } 
+                if(st.Engs.length > 1) { st.Engs.splice(idx, 1); st.curE = st.Engs[0].id; renderEngs(); } 
             } else { 
-                st.custom.splice(i,1); 
+                st.custom.splice(idx, 1); 
                 renderPro(); 
             } 
             save(); closeConfirm();
