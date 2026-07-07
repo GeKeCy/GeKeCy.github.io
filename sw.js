@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gekecy-v1.6.349';
+const CACHE_NAME = 'gekecy-v1.6.350';
 
 const CORE_ASSETS = [
   './',
@@ -33,20 +33,26 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
 
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      const fetchPromise = fetch(e.request).then(networkRes => {
+    caches.match(e.request).then(function(cached) {
+      if (cached) {
+        fetch(e.request).then(function(networkRes) {
+          if (networkRes && networkRes.ok) {
+            var clone = networkRes.clone();
+            caches.open(CACHE_NAME).then(function(cache) { cache.put(e.request, clone); });
+          }
+        }).catch(function() {});
+        return cached;
+      }
+
+      return fetch(e.request).then(function(networkRes) {
         if (networkRes && networkRes.ok) {
-          const clone = networkRes.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(e.request, clone);
-          });
+          var clone = networkRes.clone();
+          caches.open(CACHE_NAME).then(function(cache) { cache.put(e.request, clone); });
         }
         return networkRes;
-      }).catch(() => {
-        return cached;
+      }).catch(function() {
+        return caches.match('./index.html');
       });
-
-      return cached || fetchPromise;
     })
   );
 });
