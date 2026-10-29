@@ -1,0 +1,1277 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#ffffff">
+<title>GeKeCy-网页查源</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#111111;
+    --gray-1:#f5f5f5;
+    --gray-2:#e5e5e5;
+    --gray-3:#d4d4d4;
+    --gray-text:#737373;
+    --gray-text-2:#a3a3a3;
+    --blue:#2563eb;
+    --radius:10px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;
+    -webkit-text-size-adjust:100%;
+  }
+  ::selection{background:var(--ink);color:#fff;}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    -webkit-overflow-scrolling:touch;
+  }
+  .container{max-width:960px;margin:0 auto;padding:48px 24px 64px;padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px));}
+
+  header{margin-bottom:36px;}
+  header h1{font-size:22px;font-weight:700;letter-spacing:0.5px;line-height:1.3;}
+  header p{font-size:13px;color:var(--gray-text);margin-top:4px;letter-spacing:0.3px;}
+
+  .panel{border:1px solid var(--gray-2);border-radius:var(--radius);padding:20px;background:#fff;}
+  .field-label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;}
+  .input-row{display:flex;gap:12px;}
+  #urlInput{
+    flex:1;min-width:0;height:38px;padding:0 14px;font-size:16px;font-family:var(--mono);
+    border:1px solid var(--gray-3);border-radius:8px;outline:none;
+    transition:border-color .15s, box-shadow .15s;background:#fff;color:var(--ink);
+    -webkit-appearance:none;appearance:none;
+    user-select:text;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;
+  }
+  #urlInput::placeholder{color:var(--gray-text-2);font-family:var(--sans);font-size:14px;}
+  #urlInput:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(17,17,17,.08);}
+  #urlInput:disabled{background:#fafafa;color:var(--gray-text-2);cursor:not-allowed;}
+  #fetchBtn{
+    height:38px;padding:0 18px;font-size:13px;font-weight:500;
+    border:1px solid var(--ink);border-radius:8px;background:var(--ink);color:#fff;
+    cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:7px;flex:none;white-space:nowrap;
+    -webkit-appearance:none;appearance:none;
+  }
+  #fetchBtn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  #fetchBtn:hover:not(:disabled){opacity:.82;}
+  #fetchBtn:active:not(:disabled){transform:scale(.97);}
+  #fetchBtn:disabled{opacity:.4;cursor:not-allowed;}
+
+  .lock-area{position:relative;}
+  .lock-overlay{
+    display:none;
+    position:absolute;
+    inset:0;
+    z-index:5;
+    background:transparent;
+    cursor:not-allowed;
+  }
+  .lock-area.locked .lock-overlay{display:block;}
+
+  .progress-wrap{margin-top:18px;}
+  .progress-meta{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--gray-text);margin-bottom:6px;}
+  #progressText{font-variant-numeric:tabular-nums;}
+
+  .progress-track{
+    height:6px;border-radius:999px;background:var(--gray-1);
+    overflow:hidden;position:relative;
+    -webkit-clip-path: inset(0 round 999px);
+    clip-path: inset(0 round 999px);
+  }
+  .progress-move{
+    height:100%;width:100%;
+    transform:translateX(0%);
+    will-change:transform;
+  }
+  #progressBar{
+    height:100%;width:100%;background:var(--blue);
+    transform-origin:left center;
+    transform:scaleX(0);
+    transition:transform .25s ease;
+    will-change:transform;
+  }
+
+  .progress-track.loading .progress-move{
+    animation:move 1.1s ease-in-out infinite;
+    transition:none;
+  }
+  .progress-track.loading #progressBar{
+    animation:stretch 1.1s ease-in-out infinite;
+    transition:none;
+  }
+
+  @keyframes move{
+    0%   { transform:translateX(0%); }
+    100% { transform:translateX(92%); }
+  }
+  @keyframes stretch{
+    0%   { transform:scaleX(0.08); }
+    50%  { transform:scaleX(0.46); }
+    100% { transform:scaleX(0.08); }
+  }
+
+  .compress-row{margin:12px 0 0;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-text);user-select:none;-webkit-user-select:none;}
+  .compress-row input{accent-color:var(--ink);width:15px;height:15px;cursor:pointer;margin:0;}
+  .compress-row input:disabled{cursor:not-allowed;}
+  .compress-row .tip{font-size:13px;color:var(--gray-text-2);font-weight:400;}
+
+  .encoding-row{
+    margin:12px 0 0;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    font-size:13px;color:var(--gray-text);user-select:none;-webkit-user-select:none;
+  }
+  .encoding-row .group-label{font-weight:600;color:var(--ink);}
+  .encoding-row label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;}
+  .encoding-row input[type=radio]{
+    accent-color:var(--ink);width:14px;height:14px;cursor:pointer;margin:0;
+  }
+  .encoding-row input[type=radio]:disabled{cursor:not-allowed;}
+  .encoding-row .tip{font-size:13px;color:var(--gray-text-2);font-weight:400;}
+
+  #statusLine{margin-top:12px;font-size:13px;color:var(--gray-text);min-height:18px;}
+  #statusLine.ok{color:#16a34a;}
+  #statusLine.err{color:#dc2626;}
+
+  .output-panel{margin-top:28px;}
+  .output-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .output-label-row .field-label{margin-bottom:0;}
+  .code-stats{font-size:12px;color:var(--gray-text);font-variant-numeric:tabular-nums;display:flex;gap:14px;flex-wrap:wrap;}
+  .code-stats b{color:var(--ink);font-weight:600;}
+  #codeBox{
+    border:1px solid var(--gray-2);border-radius:var(--radius);
+    background:#fafafa;max-height:460px;overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  #codeView{
+    display:grid;
+    grid-template-columns: var(--ln-w, 44px) minmax(0, 1fr);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #333;
+    padding:16px 0;
+    min-height:160px;
+    margin:0;
+    user-select:text;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;
+  }
+  #codeView:empty{
+    display:block;
+    padding:16px 18px;
+    white-space:pre-wrap;
+  }
+  #codeView:empty::before{
+    content:"// 源代码将显示在这里，输入网址后点击「抓取」";
+    color: var(--gray-text-2);
+  }
+
+  #codeView.no-ln{
+    display:block;
+    padding:16px 18px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .line{display:contents;}
+
+  .ln{
+    padding: 0 0.5px;
+    text-align: right;
+    white-space: nowrap;
+    color: var(--gray-text-2);
+    border-right: 1px solid var(--gray-2);
+    user-select: none;-webkit-user-select: none;-moz-user-select: none;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+  }
+
+  .code{
+    padding: 0 14px 0 6px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+  .code:empty::after{content:"\00a0";}
+
+  .toolbar{margin-top:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .tool-btn{
+    height:38px;padding:0 18px;font-size:13px;font-weight:500;
+    border:1px solid var(--ink);border-radius:8px;background:var(--ink);color:#fff;
+    cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:7px;
+    -webkit-appearance:none;appearance:none;
+  }
+  .tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .tool-btn:hover:not(:disabled){opacity:.82;}
+  .tool-btn:active:not(:disabled){transform:scale(.97);}
+  .tool-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--gray-2);font-size:12px;color:var(--gray-text-2);line-height:1.8;}
+  .footer-copy{margin-top:10px;text-align:center;font-variant-numeric:tabular-nums;}
+  .footer-copy .ver{margin-left:18px;}
+
+  @media (max-width:640px){
+    .container{padding:32px 16px 48px;padding-bottom:calc(48px + env(safe-area-inset-bottom, 0px));}
+  }
+</style>
+<script>
+(function(){
+  var prefs = { minify: false, linenums: true, encoding: 'auto' };
+  try{
+    var mn = localStorage.getItem('gkcy_minify');
+    var ln = localStorage.getItem('gkcy_linenums');
+    var en = localStorage.getItem('gkcy_encoding');
+    if(mn === '1') prefs.minify = true;
+    else if(mn === '0') prefs.minify = false;
+    if(ln === '0') prefs.linenums = false;
+    else if(ln === '1') prefs.linenums = true;
+    if(en) prefs.encoding = en;
+  }catch(e){}
+  window.__GKCY_PREFS = prefs;
+})();
+</script>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>GeKeCy-网页查源</h1>
+    <p>抓取网页源代码</p>
+  </header>
+
+  <section class="panel">
+    <label class="field-label" for="urlInput">目标网址</label>
+
+    <div class="lock-area" id="lockArea">
+      <div class="input-row">
+        <input id="urlInput" type="text" spellcheck="false" autocomplete="off"
+               autocapitalize="off" autocorrect="off"
+               placeholder="https://example.com">
+        <button id="fetchBtn">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <span id="fetchBtnLabel">抓取</span>
+        </button>
+      </div>
+
+      <div class="compress-row" title="从 HTML 源代码中去除注释与多余空白">
+        <input type="checkbox" id="autoMinify">
+        <label for="autoMinify" style="cursor:pointer;">压缩</label>
+        <span class="tip">从 HTML 源代码中去除注释与多余空白</span>
+      </div>
+
+      <div class="compress-row" title="在源代码的左侧标注行号">
+        <input type="checkbox" id="showLineNumbers" checked>
+        <label for="showLineNumbers" style="cursor:pointer;">行号</label>
+        <span class="tip">在源代码的左侧标注行号</span>
+      </div>
+
+      <div class="encoding-row" id="encodingRow">
+        <span class="group-label">编码</span>
+        <label title="按 BOM → 响应头/meta 声明 → 转义编码拦截 → UTF-16 空字节画像 → UTF-8 严格试解 → chardet 统计引擎（Firefox 同款）→ 文字体系复核 自动识别（含日/韩/俄/阿/泰等外文编码），之外一律回退 UTF-8 并提示"><input type="radio" name="encoding" value="auto" checked><span>自动识别</span></label>
+        <label><input type="radio" name="encoding" value="utf-8"><span>UTF-8</span></label>
+        <label><input type="radio" name="encoding" value="gbk"><span>GBK</span></label>
+        <label><input type="radio" name="encoding" value="gb18030"><span>GB18030</span></label>
+        <label><input type="radio" name="encoding" value="big5"><span>BIG5</span></label>
+        <label><input type="radio" name="encoding" value="iso-8859-1"><span>ISO-8859-1</span></label>
+        <label><input type="radio" name="encoding" value="utf-16le"><span>UTF-16LE</span></label>
+        <label><input type="radio" name="encoding" value="utf-16be"><span>UTF-16BE</span></label>
+        <span class="tip">其它的编码格式请选「自动识别」</span>
+      </div>
+
+      <div class="lock-overlay" id="lockOverlay"></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span>抓取进度</span>
+        <span id="progressText">0%</span>
+      </div>
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-move" id="progressMove">
+          <div id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="statusLine"></div>
+  </section>
+
+  <script>
+  (function(){
+    var P = window.__GKCY_PREFS || { minify:false, linenums:true, encoding:'auto' };
+    var mn = document.getElementById('autoMinify');
+    var ln = document.getElementById('showLineNumbers');
+    if(mn) mn.checked = !!P.minify;
+    if(ln) ln.checked = P.linenums !== false;
+    var radios = document.querySelectorAll('input[name="encoding"]');
+    var enc = P.encoding || 'auto';
+    var hit = false;
+    for(var i=0;i<radios.length;i++){
+      radios[i].checked = (radios[i].value === enc);
+      if(radios[i].checked) hit = true;
+    }
+    if(!hit && radios.length) radios[0].checked = true; // 旧版本记住的手动编码已不在可见选项 → 回退“自动识别”
+  })();
+  </script>
+
+  <section class="output-panel">
+    <div class="output-label-row">
+      <label class="field-label">目标网址源代码</label>
+      <div class="code-stats" id="codeStats">
+        <span>大小 <b id="statSize">0 B</b></span>
+        <span>行数 <b id="statLines">0</b></span>
+        <span>压缩率 <b id="statRatio">—</b></span>
+        <span>耗时 <b id="statTime">—</b></span>
+      </div>
+    </div>
+    <div id="codeBox"><pre id="codeView"></pre></div>
+
+    <div class="toolbar">
+      <button class="tool-btn" id="copyBtn" disabled>
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        <span class="btn-label">复制</span>
+      </button>
+      <button class="tool-btn" id="downloadBtn" disabled>
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="btn-label">下载文件</span>
+      </button>
+      <button class="tool-btn" id="clearBtn">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        清空
+      </button>
+    </div>
+  </section>
+
+  <footer>
+    提示:受浏览器跨域(CORS)限制,抓取源码通过 Supabase 边缘节点执行网络请求,服务器端所有数据不做持久化储存。
+    <div class="footer-copy">GeKeCy-Source-viewer © 2026<span class="ver">v1.6.87</span></div>
+  </footer>
+</div>
+
+<script src="./htmlminifier.umd.bundle.js"></script>
+<script src="./chardet.umd.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  var urlInput        = document.getElementById('urlInput');
+  var fetchBtn        = document.getElementById('fetchBtn');
+  var fetchLabel      = document.getElementById('fetchBtnLabel');
+  var codeView        = document.getElementById('codeView');
+  var progressBar     = document.getElementById('progressBar');
+  var progressMove    = document.getElementById('progressMove');
+  var progressTxt     = document.getElementById('progressText');
+  var progressTk      = document.getElementById('progressTrack');
+  var statusLine      = document.getElementById('statusLine');
+  var copyBtn         = document.getElementById('copyBtn');
+  var downloadBtn     = document.getElementById('downloadBtn');
+  var clearBtn        = document.getElementById('clearBtn');
+  var autoMinify      = document.getElementById('autoMinify');
+  var showLineNumbers = document.getElementById('showLineNumbers');
+  var encodingRadios  = document.querySelectorAll('input[name="encoding"]');
+
+  var lockArea    = document.getElementById('lockArea');
+
+  var rawSource    = "";
+  var viewSource   = "";
+  var viewBytes    = 0;
+  var lastUrl      = "";
+  var lastMs       = null;
+  var lastBuffer   = null;
+  var lastContentType = "";
+  var fetching     = false;
+  var fetchSession = 0;
+  var processToken = 0;
+  var copyToken    = 0;
+  var currentAbort = null;
+  var lastDetected = null;
+
+  var LS_MINIFY   = 'gkcy_minify';
+  var LS_LINENUMS = 'gkcy_linenums';
+  var LS_ENCODING = 'gkcy_encoding';
+
+  function saveMinifyPref(){
+    try{ localStorage.setItem(LS_MINIFY, autoMinify.checked ? '1' : '0'); }catch(e){}
+  }
+  function saveLineNumsPref(){
+    try{ localStorage.setItem(LS_LINENUMS, showLineNumbers.checked ? '1' : '0'); }catch(e){}
+  }
+  function saveEncodingPref(){
+    try{ localStorage.setItem(LS_ENCODING, getEncoding()); }catch(e){}
+  }
+
+  function getEncoding(){
+    var sel = document.querySelector('input[name="encoding"]:checked');
+    return sel ? sel.value : 'auto';
+  }
+
+  function resetResult(){
+    rawSource = ""; viewSource = ""; viewBytes = 0;
+    lastUrl = ""; lastMs = null; lastBuffer = null;
+    lastContentType = ""; lastDetected = null;
+
+    codeView.textContent = "";
+    codeView.className = "";
+    codeView.style.removeProperty('--ln-w');
+
+    document.getElementById('statSize').textContent  = "0 B";
+    document.getElementById('statLines').textContent = "0";
+    document.getElementById('statRatio').textContent = "—";
+    document.getElementById('statTime').textContent  = "—";
+
+    progressReset();
+    setStatus("");
+    copyBtn.disabled = downloadBtn.disabled = true;
+  }
+
+  function setLocking(on, opts){
+    opts = opts || {};
+    if(on){
+      lockArea.classList.add('locked');
+      urlInput.disabled = true;
+      autoMinify.disabled = true;
+      showLineNumbers.disabled = true;
+      for(var i=0;i<encodingRadios.length;i++) encodingRadios[i].disabled = true;
+
+      fetchBtn.disabled = true;
+      fetchLabel.textContent = opts.label || '处理中…';
+    }else{
+      lockArea.classList.remove('locked');
+      urlInput.disabled = false;
+      autoMinify.disabled = false;
+      showLineNumbers.disabled = false;
+      for(var j=0;j<encodingRadios.length;j++) encodingRadios[j].disabled = false;
+
+      fetchBtn.disabled = false;
+      fetchLabel.textContent = '抓取';
+    }
+  }
+
+  function unlockSoon(){
+    setTimeout(function(){
+      setLocking(false);
+      fetching = false;
+    }, 0);
+  }
+
+  function frame2(fn){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        try { fn(); }
+        catch(e){
+          progressReset();
+          setStatus("处理失败：" + (e && e.message ? e.message : String(e)), "err");
+          unlockSoon();
+        }
+      });
+    });
+  }
+
+  function normalizeUrl(u){
+    u = u.trim();
+    if(!u) return "";
+    if(!/^https?:\/\//i.test(u)){
+      if(/^(localhost|127\.0\.0\.1)(:\d+)?([/?#]|$)/i.test(u)) u = "http://" + u;
+      else u = "https://" + u;
+    }
+    return u;
+  }
+
+  var NON_HTML_EXTS = [
+    "js","mjs","cjs","jsx","ts","tsx","css","scss","sass","less","json",
+    "xml","yaml","yml",
+    "py","rb","go","java","c","cpp","h","sh","bat","wasm","map",
+    "png","jpg","jpeg","gif","svg","webp","ico","bmp","tiff","tif",
+    "avif","heic","heif","jfif","psd","ai","eps","raw",
+    "mp3","wav","ogg","flac","aac","m4a","wma","mp4","webm","mkv",
+    "avi","mov","flv","wmv","m4v","mpg","mpeg","3gp",
+    "woff","woff2","ttf","otf","eot",
+    "zip","rar","7z","tar","gz","bz2","xz","zst","apk","dmg","iso",
+    "jar","war","cab","lzh",
+    "pdf","doc","docx","xls","xlsx","ppt","pptx","odt","ods","odp",
+    "rtf","md","epub","mobi","azw3",
+    "txt","csv","log","sql","ini","toml","conf"
+  ];
+
+  function isLikelyNonHtml(url){
+    try {
+      var pathname = new URL(url).pathname;
+      var lastSeg = pathname.split("/").pop() || "";
+      if(lastSeg.indexOf(".") === -1) return false;
+      var ext = lastSeg.split(".").pop().toLowerCase();
+      return NON_HTML_EXTS.indexOf(ext) !== -1;
+    } catch(e){
+      return false;
+    }
+  }
+
+  // 按 Content-Type 判断是否明确不是 HTML：无扩展名的 .js/.css/图片等若按 HTML 压缩会损坏内容
+  function isNonHtmlContentType(ct){
+    var mime = String(ct || '').split(';')[0].trim().toLowerCase();
+    if(!mime) return false;
+    if(mime === 'application/json' || mime === 'text/css' || mime === 'application/javascript' ||
+       mime === 'text/javascript' || mime === 'application/pdf' || mime === 'text/xml' || mime === 'application/xml') return true;
+    return mime.indexOf('image/') === 0 || mime.indexOf('font/') === 0 || mime.indexOf('audio/') === 0 || mime.indexOf('video/') === 0;
+  }
+
+  function fmtBytes(n){
+    if(n < 1024) return n + " B";
+    if(n < 1024*1024) return (n/1024).toFixed(1) + " KB";
+    return (n/1024/1024).toFixed(2) + " MB";
+  }
+
+  function escapeHTML(s){
+    if(s.indexOf('&') === -1 && s.indexOf('<') === -1 && s.indexOf('>') === -1) return s;
+    return s.replace(/[&<>]/g, function(c){
+      return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;';
+    });
+  }
+
+  // 无指定语言（通用/中文）优先判断，外文编码最后判断；第一个为兜底格式
+  // 覆盖 TextDecoder 全部 38 种真实编码（replacement/x-user-defined 非真实文本编码，不收录）
+  var KNOWN_ENCODINGS = ['utf-8','gbk','gb18030','big5','iso-8859-1','utf-16le','utf-16be','shift_jis','euc-jp','iso-2022-jp','euc-kr','windows-1251','koi8-r','koi8-u','ibm866','x-mac-cyrillic','windows-1250','windows-1253','windows-1254','windows-1255','windows-1256','windows-1257','windows-1258','windows-874','iso-8859-2','iso-8859-3','iso-8859-4','iso-8859-5','iso-8859-6','iso-8859-7','iso-8859-8','iso-8859-8-i','iso-8859-10','iso-8859-13','iso-8859-14','iso-8859-15','iso-8859-16','macintosh'];
+
+  // TextDecoder 会将别名规范化：utf8→utf-8、gb2312→gbk、shift-jis→shift_jis、iso-8859-1→windows-1252、utf-16→utf-16le、latin1→windows-1252
+  var CANON_TO_KNOWN = { 'utf-8':'utf-8', 'gbk':'gbk', 'gb18030':'gb18030', 'big5':'big5', 'windows-1252':'iso-8859-1', 'utf-16le':'utf-16le', 'utf-16be':'utf-16be', 'shift_jis':'shift_jis', 'euc-jp':'euc-jp', 'iso-2022-jp':'iso-2022-jp', 'euc-kr':'euc-kr', 'windows-1251':'windows-1251', 'koi8-r':'koi8-r', 'koi8-u':'koi8-u', 'ibm866':'ibm866', 'x-mac-cyrillic':'x-mac-cyrillic', 'windows-1250':'windows-1250', 'windows-1253':'windows-1253', 'windows-1254':'windows-1254', 'windows-1255':'windows-1255', 'windows-1256':'windows-1256', 'windows-1257':'windows-1257', 'windows-1258':'windows-1258', 'windows-874':'windows-874', 'iso-8859-2':'iso-8859-2', 'iso-8859-3':'iso-8859-3', 'iso-8859-4':'iso-8859-4', 'iso-8859-5':'iso-8859-5', 'iso-8859-6':'iso-8859-6', 'iso-8859-7':'iso-8859-7', 'iso-8859-8':'iso-8859-8', 'iso-8859-8-i':'iso-8859-8-i', 'iso-8859-10':'iso-8859-10', 'iso-8859-13':'iso-8859-13', 'iso-8859-14':'iso-8859-14', 'iso-8859-15':'iso-8859-15', 'iso-8859-16':'iso-8859-16', 'macintosh':'macintosh' };
+
+  function canonicalEncoding(label){
+    try { return new TextDecoder(String(label).trim().toLowerCase()).encoding; } catch(e){ return null; }
+  }
+
+  function sniffMetaCharset(buf){
+    var head = new TextDecoder('iso-8859-1').decode(buf.slice(0, Math.min(buf.byteLength, 8192)));
+    var m = head.match(/<meta[^>]+charset\s*=\s*["']?\s*([a-z0-9._:\-]+)/i);
+    return m ? m[1] : '';
+  }
+
+  function headerCharsetOf(ct){
+    var m = String(ct || '').match(/charset\s*=\s*["']?([^;"'\s]+)/i);
+    return m ? m[1] : '';
+  }
+
+  var COMMON_HANZI = "的一是不了人我在有他这中大来上国个地说生以年着就那和要她出也得里后自天会好可而对去学心都你多能如文本时到所事现";
+  var COMMON_HANGUL = "이은는을를에의가도다하한서로지수있없않그저우나너것같때년월일대전중국사람데고기세며게으";
+  // 各文字体系高频字母表：误码解码出的随机字符极少命中高频区，可稳定区分同族编码（如 IBM866/KOI8-R/windows-1251 互判）
+  var FREQ_THAI  = "รานงทกมลยเเสอวดบสคไพหจขตฟปชผ";
+  var FREQ_CYR   = "оеаинтсрвлкмдпуяыьгзбчй";
+  var FREQ_GREEK = "αετοινρσκηπμςυλω";
+  var FREQ_HEB   = "והילרבתמאשנכעדקגצפ";
+  var FREQ_ARAB  = "الوهينيملكعرسةتقدبمصف";
+
+  // 编码 → 目标文字体系（拉丁系等单字节编码不在此列，交由统计引擎的置信度区分）
+  var SCRIPT_OF_ENC = {
+    'shift_jis':'ja', 'euc-jp':'ja', 'iso-2022-jp':'ja',
+    'euc-kr':'ko',
+    'gbk':'zh', 'gb18030':'zh', 'big5':'zh',
+    'windows-874':'th',
+    'windows-1251':'cyr', 'koi8-r':'cyr', 'koi8-u':'cyr', 'ibm866':'cyr', 'iso-8859-5':'cyr', 'x-mac-cyrillic':'cyr',
+    'iso-8859-7':'greek', 'windows-1253':'greek',
+    'iso-8859-8':'heb', 'iso-8859-8-i':'heb', 'windows-1255':'heb',
+    'iso-8859-6':'arab', 'windows-1256':'arab'
+  };
+
+  // 文字特征统计：各体系计数 + 高频字命中 + 误码信号（U+FFFD 替换符 / C1 控制符）；只扫前 4 万字符，毫秒级
+  function tallyScripts(text){
+    var sample = text.length > 40000 ? text.slice(0, 40000) : text;
+    var t = { len: Math.max(1, sample.length), bad:0,
+      kana:0, hangulC:0, hanziC:0, thai:0, thaiC:0,
+      cyr:0, cyrC:0, greek:0, greekC:0, heb:0, hebC:0, arab:0, arabC:0 };
+    for(var i = 0; i < sample.length; i++){
+      var c = sample.charCodeAt(i);
+      if(c === 0xFFFD){ t.bad += 3; continue; }
+      if(c >= 0x80 && c <= 0x9F){ t.bad += 2; continue; }
+      if(c < 0x20 && c !== 9 && c !== 10 && c !== 13){ t.bad += 2; continue; }
+      if(c < 0x80) continue;
+      var ch = sample.charAt(i);
+      // 假名只统计全角（0x3040–0x30FF）：GBK/BIG5 高字节恰好落在 Shift_JIS 半角假名字节区间，计半角会被误码污染
+      if((c >= 0x3040 && c <= 0x30FF) || c === 0x3005) t.kana++;
+      else if(c >= 0xAC00 && c <= 0xD7AF){ if(COMMON_HANGUL.indexOf(ch) !== -1) t.hangulC++; }
+      else if(c >= 0x4E00 && c <= 0x9FFF){ if(COMMON_HANZI.indexOf(ch) !== -1) t.hanziC++; }
+      else if(c >= 0x0E00 && c <= 0x0E7F){ t.thai++; if(FREQ_THAI.indexOf(ch) !== -1) t.thaiC++; }
+      else if(c >= 0x0400 && c <= 0x04FF){ t.cyr++; if(FREQ_CYR.indexOf(ch) !== -1) t.cyrC++; }
+      else if(c >= 0x0370 && c <= 0x03FF){ t.greek++; if(FREQ_GREEK.indexOf(ch) !== -1) t.greekC++; }
+      else if(c >= 0x0590 && c <= 0x05FF){ t.heb++; if(FREQ_HEB.indexOf(ch) !== -1) t.hebC++; }
+      else if(c >= 0x0600 && c <= 0x06FF){ t.arab++; if(FREQ_ARAB.indexOf(ch) !== -1) t.arabC++; }
+    }
+    return t;
+  }
+
+  // 目标文字体系匹配度（误码信号扣分；非目标体系编码返回负分或 0）
+  function scriptScore(enc, t){
+    var script = SCRIPT_OF_ENC[enc];
+    var L = t.len;
+    var s = 0;
+    if(script === 'ja')        s = (t.kana / L) * 600;
+    else if(script === 'ko')   s = (t.hangulC / L) * 500;
+    else if(script === 'zh')   s = (t.hanziC / L) * 500;
+    else if(script === 'th')   s = (t.thai / L) * 100 + (t.thaiC / L) * 600;
+    else if(script === 'cyr')  s = (t.cyr / L) * 150 + (t.cyrC / L) * 450;
+    else if(script === 'greek')s = (t.greek / L) * 150 + (t.greekC / L) * 450;
+    else if(script === 'heb')  s = (t.heb / L) * 150 + (t.hebC / L) * 450;
+    else if(script === 'arab') s = (t.arab / L) * 150 + (t.arabC / L) * 450;
+    return s - (t.bad / L) * 800;
+  }
+
+  // 专业识别管线（八层）：BOM → 声明（响应头/meta）→ 7 位转义拦截（ISO-2022/HZ）→ UTF-16 空字节画像
+  // → UTF-8 严格试解 → chardet 统计引擎（Mozilla universalchardet，Firefox 同款内核）
+  // → 文字体系高频字复核（修正引擎在同族单字节/弱模型语种上的误判）→ UTF-8 兜底并提示
+  // 识别结果必定落在 KNOWN_ENCODINGS 内；之外一律回退第一个已知格式（UTF-8）并提示
+  function detectEncoding(buf, ct){
+    var b = new Uint8Array(buf);
+    // 1) BOM 嗅探
+    if(b.length >= 3 && b[0] === 0xEF && b[1] === 0xBB && b[2] === 0xBF) return { enc:'utf-8',    from:'bom' };
+    if(b.length >= 2 && b[0] === 0xFF && b[1] === 0xFE)                     return { enc:'utf-16le', from:'bom' };
+    if(b.length >= 2 && b[0] === 0xFE && b[1] === 0xFF)                     return { enc:'utf-16be', from:'bom' };
+
+    // 2) 显式声明（响应头 charset、meta charset）
+    var candidates = [];
+    var hc = headerCharsetOf(ct);
+    if(hc) candidates.push(hc);
+    var mc = sniffMetaCharset(buf);
+    if(mc) candidates.push(mc);
+
+    var bad = '';
+    for(var i = 0; i < candidates.length; i++){
+      var raw = String(candidates[i]).trim().toLowerCase();
+      if(!raw) continue;
+      var canon = canonicalEncoding(raw);
+      if(canon && CANON_TO_KNOWN[canon]) return { enc: CANON_TO_KNOWN[canon], from:'declared' };
+      if(!bad) bad = raw;
+    }
+    if(bad) return { enc: KNOWN_ENCODINGS[0], from:'fallback', bad: bad };
+
+    // 3) 7 位转义编码拦截：ISO-2022 系列 / HZ 全是 ASCII 字节，必须先于 UTF-8 严格试解，否则会被误判为 UTF-8
+    var headStr = new TextDecoder('iso-8859-1').decode(b.length > 4096 ? b.subarray(0, 4096) : b);
+    if(headStr.indexOf('\x1b') !== -1){
+      if(/\x1b\$[@B]|\x1b\([BJ]|\x1b\$\(D/.test(headStr)) return { enc:'iso-2022-jp', from:'guess' };
+      if(/\x1b\$\)C/.test(headStr))                       return { enc: KNOWN_ENCODINGS[0], from:'fallback', bad:'ISO-2022-KR' };
+      if(/\x1b\$\)[AG]|\x1b\$\*H/.test(headStr))          return { enc: KNOWN_ENCODINGS[0], from:'fallback', bad:'ISO-2022-CN' };
+    }
+    // HZ-GB-2312：~{ 与 ~} 成对、中间是偶数个可打印 ASCII（一段正文通常只有一对转义）
+    if(/~\{[\x21-\x7e]{2,}~\}/.test(headStr)){
+      return { enc: KNOWN_ENCODINGS[0], from:'fallback', bad:'HZ-GB-2312' };
+    }
+
+    // 4) UTF-16 空字节画像（无 BOM）：ASCII 为主的内容约一半字节是 0x00，统计引擎对此无能，确定性画像解决
+    if(b.length >= 8){
+      var pairs = Math.floor(Math.min(b.length, 4096) / 2);
+      var even0 = 0, odd0 = 0;
+      for(var zi = 0; zi < pairs; zi++){
+        if(b[zi * 2] === 0) even0++;
+        if(b[zi * 2 + 1] === 0) odd0++;
+      }
+      if(odd0 / pairs > 0.35 && even0 / pairs < 0.05) return { enc:'utf-16le', from:'guess' };
+      if(even0 / pairs > 0.35 && odd0 / pairs < 0.05) return { enc:'utf-16be', from:'guess' };
+    }
+
+    // 5) UTF-8 严格试解（纯 ASCII 也在此归属 UTF-8）
+    try { new TextDecoder('utf-8', { fatal:true }).decode(buf); return { enc:'utf-8', from:'guess' }; } catch(e){}
+
+    // 6) chardet 统计引擎（只分析前 256KB），结果规范化为本工具支持的编码；引擎文件缺失时自动降级为纯启发式
+    var confOf = {};
+    var engineOrder = [];
+    var engineUnsupported = '';
+    var CH = null;
+    try { CH = window.chardet || null; } catch(e){}
+    if(CH && typeof CH.analyse === 'function'){
+      try {
+        var res = CH.analyse(b.length > 262144 ? b.subarray(0, 262144) : b);
+        for(var ri = 0; ri < res.length && engineOrder.length < 6; ri++){
+          var canon2 = canonicalEncoding(res[ri].name);
+          if(canon2 && CANON_TO_KNOWN[canon2]){
+            var known = CANON_TO_KNOWN[canon2];
+            if(confOf[known] == null){ confOf[known] = res[ri].confidence || 0; engineOrder.push(known); }
+          } else if(ri === 0 && !engineUnsupported){
+            engineUnsupported = res[ri].name; // 引擎最确信但本工具不支持解码（如 ISO-2022-CN）
+          }
+        }
+      } catch(e){}
+    }
+
+    // 引擎高置信直接采信：CJK 双字节几乎全部落在泰文等单字节区间内，复核会产生高分假阳性，故复核只在引擎不确定时启用
+    if(engineOrder.length && confOf[engineOrder[0]] >= 60) return { enc: engineOrder[0], from:'guess' };
+
+    // 7) 文字体系复核：引擎候选 + 固定外文候选统一试解（只解前 64KB 样本），按体系匹配度排名，引擎置信度作同分决胜
+    var FIXED_TRIALS = ['gbk', 'gb18030', 'big5', 'shift_jis', 'euc-jp', 'euc-kr',
+                        'windows-874', 'windows-1251', 'koi8-r', 'ibm866', 'iso-8859-5',
+                        'windows-1256', 'iso-8859-7', 'windows-1255'];
+    var trialSet = [];
+    var seen = {};
+    var ei, enc2;
+    for(ei = 0; ei < engineOrder.length; ei++){ enc2 = engineOrder[ei]; if(!seen[enc2]){ seen[enc2] = 1; trialSet.push(enc2); } }
+    for(ei = 0; ei < FIXED_TRIALS.length; ei++){ enc2 = FIXED_TRIALS[ei]; if(!seen[enc2]){ seen[enc2] = 1; trialSet.push(enc2); } }
+
+    var sampleBuf = b.length > 65532 ? buf.slice(0, 65532) : buf;
+    var best = null, bestScript = 0, bestTotal = 0;
+    var scOf = {};
+    for(var ti = 0; ti < trialSet.length; ti++){
+      var enc3 = trialSet[ti];
+      var text = null;
+      try { text = new TextDecoder(enc3).decode(sampleBuf); } catch(e){ continue; }
+      var sc = scriptScore(enc3, tallyScripts(text));
+      scOf[enc3] = sc;
+      var total = sc + (confOf[enc3] || 0);
+      if(total > bestTotal){ bestTotal = total; bestScript = sc; best = enc3; }
+    }
+    // 泰文假阳性保护：泰文是单字节编码，CJK 双字节全部落在其字节区间内会被误读为高分泰文；
+    // 只要存在体系分 >=80 的 CJK 候选且泰文分未达其 3 倍，优先判 CJK
+    if(best === 'windows-874'){
+      var CJK_SET = ['gbk','gb18030','big5','shift_jis','euc-jp','euc-kr'];
+      for(var ci = 0; ci < CJK_SET.length; ci++){
+        var cs = scOf[CJK_SET[ci]] || 0;
+        if(cs >= 80 && cs * 3 >= bestScript){ best = CJK_SET[ci]; bestScript = cs; break; }
+      }
+    }
+    // 复核翻案条件：体系证据足够强（>=120）且显著强于引擎首选的体系分（>=2 倍），否则以引擎首选为准
+    if(best && bestScript >= 120){
+      var topScript = engineOrder.length ? (scOf[engineOrder[0]] || 0) : 0;
+      if(bestScript >= topScript * 2) return { enc: best, from:'guess' };
+    }
+    if(engineOrder.length) return { enc: engineOrder[0], from:'guess' };
+    // 降级模式（无引擎）：纯启发式结论
+    if(best && bestScript >= 120) return { enc: best, from:'guess' };
+
+    // 8) 兜底：回退 UTF-8；引擎最确信但无法解码的编码带上原名提示
+    if(engineUnsupported) return { enc: KNOWN_ENCODINGS[0], from:'fallback', bad: engineUnsupported };
+    return { enc: KNOWN_ENCODINGS[0], from:'fallback' };
+  }
+
+  function autoDetectMessage(d){
+    var fb = "已按 " + KNOWN_ENCODINGS[0].toUpperCase() + " 解码";
+    if(!d) return "已自动识别编码";
+    if(d.from === 'fallback'){
+      return d.bad ? "无法识别的编码「" + d.bad + "」，" + fb : "无法识别编码，" + fb;
+    }
+    return "已自动识别编码：" + d.enc.toUpperCase();
+  }
+
+  function decodeBuffer(buf, enc){
+    if(enc === 'auto'){
+      var d = detectEncoding(buf, lastContentType);
+      lastDetected = d;
+      try {
+        return new TextDecoder(d.enc).decode(buf);
+      } catch(e) {
+        return new TextDecoder(KNOWN_ENCODINGS[0]).decode(buf);
+      }
+    }
+    lastDetected = null;
+    try {
+      return new TextDecoder(enc).decode(buf);
+    } catch(e) {
+      return new TextDecoder(KNOWN_ENCODINGS[0]).decode(buf);
+    }
+  }
+
+  async function minifyHTML(src){
+    if(typeof HTMLMinifier === 'undefined' || !HTMLMinifier || typeof HTMLMinifier.minify !== 'function'){
+      throw new Error('压缩库未加载，请检查 htmlminifier.umd.bundle.js 是否与页面同目录');
+    }
+    return await HTMLMinifier.minify(src, {
+      collapseWhitespace: true,
+      removeComments: true
+    });
+  }
+
+  function fileNameFromUrl(url){
+    try {
+      var u = new URL(url);
+      var pathSegs = u.pathname.replace(/\/+$/, "").split("/").filter(Boolean);
+
+      if(pathSegs.length === 0){
+        var h = String(u.hostname || "").replace(/[^a-zA-Z0-9._-]/g, "_");
+        if(!h) h = "source";
+        return h + ".html";
+      }
+
+      var last = String(pathSegs[pathSegs.length - 1]).replace(/[^a-zA-Z0-9._-]/g, "_");
+      if(!last) last = "source";
+
+      if(/\.(html?|xhtml)$/i.test(last)) return last;
+      if(isLikelyNonHtml(url)) return last;
+      return last + ".html";
+    } catch(e){
+      return "source.html";
+    }
+  }
+
+  function mimeFromName(name){
+    var ext = String(name || "").split(".").pop().toLowerCase();
+    var map = {
+      html:'text/html', htm:'text/html', xhtml:'application/xhtml+xml',
+      css:'text/css', js:'text/javascript', mjs:'text/javascript',
+      json:'application/json', xml:'application/xml',
+      txt:'text/plain', md:'text/markdown', csv:'text/csv',
+      svg:'image/svg+xml'
+    };
+    return map[ext] || 'text/plain';
+  }
+
+  var _measureCanvas = null;
+  function measureLineNumWidth(total){
+    if(!_measureCanvas){
+      _measureCanvas = document.createElement('canvas');
+    }
+    var ctx = _measureCanvas.getContext('2d');
+    ctx.font = '12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+    var w = ctx.measureText(String(total)).width;
+    return w + 2;
+  }
+
+  function progressReset(){
+    progressTk.classList.remove('loading');
+    progressBar.style.transform = 'scaleX(0)';
+    progressMove.style.transform = 'translateX(0%)';
+    progressTxt.textContent = '0%';
+  }
+  function progressLoading(text){
+    progressTk.classList.add('loading');
+    if(text != null) progressTxt.textContent = text;
+  }
+  function progressComplete(){
+    progressTk.classList.remove('loading');
+    progressBar.style.transform = 'scaleX(1)';
+    progressMove.style.transform = 'translateX(0%)';
+    progressTxt.textContent = '100%';
+  }
+
+  function setStatus(msg, type){
+    statusLine.textContent = msg || "";
+    statusLine.className = type ? type : "";
+  }
+
+  function updateStats(ms){
+    document.getElementById('statSize').textContent  = fmtBytes(viewBytes);
+    document.getElementById('statLines').textContent = viewSource ? viewSource.split("\n").length : 0;
+    if(rawSource && viewSource && rawSource !== viewSource){
+      var r = Math.max(0, Math.round((1 - viewSource.length / rawSource.length) * 100));
+      document.getElementById('statRatio').textContent = r + "%";
+    }else{
+      document.getElementById('statRatio').textContent = "—";
+    }
+    document.getElementById('statTime').textContent = (ms != null) ? ms + " ms" : "—";
+  }
+
+  function render(view, onProgress){
+    view = view.replace(/\r\n?/g, "\n");
+    viewSource = view;
+    viewBytes = new Blob([view]).size;
+
+    codeView.textContent = "";
+    codeView.className = "";
+
+    var has = view.length > 0;
+    copyBtn.disabled = !has;
+    downloadBtn.disabled = !has;
+    if(!has){
+      if(onProgress) onProgress(1);
+      return;
+    }
+
+    if(showLineNumbers.checked){
+      var lines = view.split("\n");
+      var total = lines.length;
+      var lnW = measureLineNumWidth(total);
+      codeView.style.setProperty('--ln-w', lnW + 'px');
+
+      var parts = new Array(total);
+      for(var i = 0; i < total; i++){
+        parts[i] =
+          '<div class="line">' +
+            '<span class="ln">' + (i + 1) + '</span>' +
+            '<span class="code">' + escapeHTML(lines[i]) + '</span>' +
+          '</div>';
+      }
+      codeView.innerHTML = parts.join('');
+    } else {
+      codeView.className = "no-ln";
+      codeView.style.removeProperty('--ln-w');
+      codeView.textContent = view;
+    }
+
+    if(onProgress) onProgress(1);
+  }
+
+  function fetchWithTimeout(url, ms){
+    var ctrl = new AbortController();
+    currentAbort = ctrl;
+    var timer = setTimeout(function(){ ctrl.abort(); }, ms);
+    return fetch(url, { signal: ctrl.signal }).finally(function(){
+      clearTimeout(timer);
+      if(currentAbort === ctrl) currentAbort = null;
+    });
+  }
+
+  async function fetchSource(url, isCancelled){
+    var encoded = encodeURIComponent(url);
+    var SITE_TOOLS = "https://xmokyimajkzuvbzbyqqb.supabase.co/functions/v1/site-tools?action=fetch&url=";
+
+    var channels = [
+      { name: "服务端", json: true,  fn: function(){ return fetchWithTimeout(SITE_TOOLS + encoded, 30000); } },
+      { name: "本地",   json: false, fn: function(){ return fetchWithTimeout(url, 18000); } }
+    ];
+
+    var errors = [];
+
+    for(var i = 0; i < channels.length; i++){
+      if(isCancelled && isCancelled()) throw new Error("cancelled");
+
+      var ch = channels[i];
+      try {
+        var res = await ch.fn();
+        if(isCancelled && isCancelled()) throw new Error("cancelled");
+        if(!res.ok) throw new Error("HTTP " + res.status);
+
+        var buf = await res.arrayBuffer();
+        if(isCancelled && isCancelled()) throw new Error("cancelled");
+
+        var ct = res.headers.get('content-type') || '';
+
+        if(ct.indexOf('application/json') !== -1){
+          var probe = new TextDecoder('utf-8').decode(buf);
+          if(ch.json){
+            var j = null;
+            try { j = JSON.parse(probe); } catch(e){}
+            if(j && typeof j === 'object'){
+              if(j.error) throw new Error(j.error);
+              if(j.success === false) throw new Error(j.message || "服务端返回失败");
+              if(typeof j.html === 'string'){
+                lastBuffer = null;
+                lastContentType = '';
+                return j.html;
+              }
+            }
+            throw new Error("服务端返回了无法识别的 JSON 响应");
+          }
+          // 本地直连：application/json 即目标文件本身（如 .json 资源），仍走统一编码管线（JSON 也可能是 GBK 等非 UTF-8）
+          lastBuffer = buf;
+          lastContentType = ct;
+          return decodeBuffer(buf, getEncoding());
+        }
+
+        lastBuffer = buf;
+        lastContentType = ct;
+        return decodeBuffer(buf, getEncoding());
+      } catch(e){
+        if(isCancelled && isCancelled()) throw new Error("cancelled");
+        errors.push(ch.name + "：" + (e && e.message ? e.message : String(e)));
+      }
+    }
+
+    var err = new Error("all-failed");
+    err.details = errors;
+    throw err;
+  }
+
+  async function applyAndRender(successMsg){
+    if(!rawSource) return;
+    var my = ++processToken;
+
+    setLocking(true, { label: autoMinify.checked ? '压缩中…' : '渲染中…' });
+
+    var finalText = rawSource;
+    var note = "";
+    var noteType = "ok";
+
+    if(autoMinify.checked){
+      if(isLikelyNonHtml(lastUrl) || isNonHtmlContentType(lastContentType)){
+        note = "当前文件为非 HTML 格式，HTML 压缩器不适用，已保留原始代码。";
+      } else {
+        progressLoading("压缩中…");
+        setStatus("正在压缩…");
+        try {
+          finalText = await minifyHTML(rawSource);
+        } catch(e){
+          finalText = rawSource;
+          var em = (e && e.message) ? e.message : "";
+          note = (em.indexOf("压缩库未加载") !== -1)
+            ? em
+            : "压缩失败（可能不是标准 HTML 文件），已显示原始代码。";
+          noteType = "err";
+        }
+        if(my !== processToken) return;
+      }
+    }
+
+    setLocking(true, { label: '渲染中…' });
+    progressLoading("渲染中…");
+    setStatus("渲染中…");
+
+    frame2(function(){
+      if(my !== processToken) return;
+      render(finalText, function(progress){
+        if(progress >= 1 && my === processToken){
+          progressComplete();
+          setStatus(note || successMsg || "已完成", note ? noteType : "ok");
+          unlockSoon();
+        }
+      });
+      updateStats(lastMs);
+    });
+  }
+
+  function reRender(msg){
+    var my = ++processToken;
+    setLocking(true, { label: '渲染中…' });
+    progressLoading("渲染中…");
+    setStatus("渲染中…");
+
+    frame2(function(){
+      if(my !== processToken) return;
+      render(viewSource, function(progress){
+        if(progress >= 1 && my === processToken){
+          progressComplete();
+          setStatus(msg || "已更新", "ok");
+          unlockSoon();
+        }
+      });
+      updateStats(lastMs);
+    });
+  }
+
+  async function doFetch(){
+    if(fetching) return;
+    var url = normalizeUrl(urlInput.value);
+    if(!url){
+      setStatus("请输入目标网址", "err");
+      urlInput.focus();
+      return;
+    }
+
+    var session = ++fetchSession;
+    fetching = true;
+
+    if(currentAbort){ try { currentAbort.abort(); } catch(e){} currentAbort = null; }
+
+    processToken++;
+    copyToken++;
+    clearFlash();
+    resetResult();
+
+    setLocking(true, { label: '抓取中…' });
+    setStatus("正在连接 " + url + " …");
+    progressLoading("抓取中…");
+
+    var t0 = performance.now();
+
+    try {
+      var text = await fetchSource(url, function(){ return session !== fetchSession; });
+      if(session !== fetchSession) return;
+
+      text = text.replace(/\r\n?/g, "\n");
+      rawSource = text;
+      lastUrl = url;
+      lastMs = Math.round(performance.now() - t0);
+
+      var finalText  = text;
+      var note       = "";
+      var noteType   = "ok";
+
+      if(autoMinify.checked && (isLikelyNonHtml(url) || isNonHtmlContentType(lastContentType))){
+        note = "当前文件为非 HTML 格式，HTML 压缩器不适用，已保留原始代码。";
+      } else if(autoMinify.checked){
+        setLocking(true, { label: '压缩中…' });
+        progressLoading("压缩中…");
+        setStatus("正在压缩…");
+        try {
+          finalText = await minifyHTML(text);
+          if(session !== fetchSession) return;
+        } catch(e){
+          if(session !== fetchSession) return;
+          finalText = text;
+          var em = (e && e.message) ? e.message : "";
+          note = (em.indexOf("压缩库未加载") !== -1)
+            ? em
+            : "压缩失败（可能不是标准 HTML 文件），已显示原始代码。";
+          noteType = "err";
+        }
+      }
+
+      setLocking(true, { label: '渲染中…' });
+      progressLoading("渲染中…");
+      setStatus("渲染中…");
+
+      var sizeStr = fmtBytes(new Blob([text]).size);
+
+      var encNote = "";
+      var encNoteType = "ok";
+      if(getEncoding() === 'auto' && lastDetected){
+        encNote = autoDetectMessage(lastDetected) + "。";
+        if(lastDetected.from === 'fallback') encNoteType = "err";
+      }
+
+      frame2(function(){
+        if(session !== fetchSession) return;
+        render(finalText, function(progress){
+          if(progress >= 1 && session === fetchSession){
+            progressComplete();
+            var msgs = [note || ("抓取成功（" + sizeStr + "）")];
+            if(encNote) msgs.push(encNote);
+            setStatus(msgs.join(" "), note ? noteType : encNoteType);
+            unlockSoon();
+          }
+        });
+        updateStats(lastMs);
+      });
+
+    } catch(err){
+      if(session !== fetchSession) return;
+      progressReset();
+      var reason = "目标网站拒绝跨域访问、网络不通或服务端不可用。";
+      if(err && err.name === "AbortError"){
+        reason = "请求超时或已中止。";
+      } else if(err && err.message){
+        if(err.message.indexOf("timeout") !== -1){
+          reason = "请求超时，可能是网络不通或服务端响应过慢。";
+        } else if(err.message.indexOf("HTTP") !== -1){
+          reason = "目标服务器拒绝访问（" + err.message + "），该网站可能设有反爬限制。";
+        } else if(err.message === "all-failed"){
+          var d = (err.details && err.details.length) ? "（" + err.details.join("；") + "）" : "";
+          reason = "服务端接口和本地直连均已尝试，均无法获取该网页内容" + d + "。";
+        }
+      }
+      setStatus("抓取失败：" + reason, "err");
+      unlockSoon();
+    }
+  }
+
+  function copyText(){
+    if(!viewSource) return;
+
+    var my = ++copyToken;
+
+    function done(){
+      if(my !== copyToken) return;
+      setStatus("已复制到剪贴板", "ok");
+      flash(copyBtn);
+    }
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(viewSource).then(done, function(){
+        if(my !== copyToken) return;
+        if(legacyCopy()) done();
+        else setStatus("复制失败，请手动选中复制", "err");
+      });
+    }else{
+      if(legacyCopy()) done();
+      else setStatus("复制失败，请手动选中复制", "err");
+    }
+  }
+  function legacyCopy(){
+    var ta = document.createElement('textarea');
+    ta.value = viewSource;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function downloadFile(){
+    if(!viewSource) return;
+    var name = fileNameFromUrl(lastUrl);
+    try {
+      var bl = new Blob([viewSource], { type: mimeFromName(name) });
+      var a = document.createElement('a');
+      a.download = name;
+      a.href = URL.createObjectURL(bl);
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 0);
+      setStatus("已开始下载：" + name, "ok");
+      flash(downloadBtn);
+    } catch(e) {
+      setStatus("下载失败：" + (e && e.message ? e.message : e), "err");
+    }
+  }
+
+  function clearAll(){
+    fetchSession++;
+    processToken++;
+    copyToken++;
+    if(currentAbort){ try { currentAbort.abort(); } catch(e){} currentAbort = null; }
+    fetching = false;
+    setLocking(false);
+
+    clearFlash();
+    resetResult();
+    urlInput.value = "";
+    urlInput.focus();
+  }
+
+  var flashTimers = {};
+  var flashOriginal = {};
+
+  function flash(btn){
+    var label = btn.querySelector('.btn-label');
+    if(!label) return;
+    var key = btn.id;
+    if(flashTimers[key]){ clearTimeout(flashTimers[key]); flashTimers[key] = null; }
+    if(flashOriginal[key] == null) flashOriginal[key] = label.textContent;
+    label.textContent = "✓已完成";
+    flashTimers[key] = setTimeout(function(){
+      label.textContent = flashOriginal[key];
+      flashTimers[key] = null;
+    }, 900);
+  }
+
+  function clearFlash(){
+    for(var key in flashTimers){
+      if(flashTimers[key]){ clearTimeout(flashTimers[key]); flashTimers[key] = null; }
+    }
+    for(var id in flashOriginal){
+      var btn = document.getElementById(id);
+      if(!btn) continue;
+      var label = btn.querySelector('.btn-label');
+      if(label) label.textContent = flashOriginal[id];
+    }
+  }
+
+  fetchBtn.addEventListener('click', doFetch);
+  urlInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') doFetch(); });
+  copyBtn.addEventListener('click', copyText);
+  downloadBtn.addEventListener('click', downloadFile);
+  clearBtn.addEventListener('click', clearAll);
+
+  autoMinify.addEventListener('change', function(){
+    saveMinifyPref();
+    if(!rawSource) return;
+    applyAndRender(autoMinify.checked ? "已按「压缩」处理" : "已恢复原始代码");
+  });
+
+  showLineNumbers.addEventListener('change', function(){
+    saveLineNumsPref();
+    if(!rawSource) return;
+    reRender(showLineNumbers.checked ? "已显示行号" : "已隐藏行号");
+  });
+
+  for(var k = 0; k < encodingRadios.length; k++){
+    encodingRadios[k].addEventListener('change', function(){
+      saveEncodingPref();
+      if(!lastBuffer){
+        if(rawSource) setStatus("当前内容不支持切换编码，请重新抓取。", "err");
+        return;
+      }
+      var enc = getEncoding();
+      rawSource = decodeBuffer(lastBuffer, enc);
+      applyAndRender(enc === 'auto' ? autoDetectMessage(lastDetected) : "已按 " + enc.toUpperCase() + " 重新解码");
+    });
+  }
+})();
+</script>
+</body>
+</html>
