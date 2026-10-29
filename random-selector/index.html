@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GeKeCy-随机抽取</title>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --text: #1c1c1e;
+    --text-secondary: #8e8e93;
+    --accent: #007aff;
+    --pill-bg: #e5e5ea;
+    --pill-active: #ffffff;
+    --pill-text: #8e8e93;
+    --pill-text-active: #1c1c1e;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --border: rgba(0,0,0,0.06);
+    --input-bg: #ffffff;
+    --input-border: rgba(0,0,0,0.1);
+    --check-border: rgba(0,0,0,0.2);
+  }
+
+  .rs-container.dark {
+    --bg: #000000;
+    --text: #f5f5f7;
+    --text-secondary: #8e8e93;
+    --accent: #0a84ff;
+    --pill-bg: #1c1c1e;
+    --pill-active: #2c2c2e;
+    --pill-text: #8e8e93;
+    --pill-text-active: #f5f5f7;
+    --shadow: 0 2px 16px rgba(0,0,0,0.5);
+    --border: rgba(255,255,255,0.06);
+    --input-bg: #2c2c2e;
+    --input-border: rgba(255,255,255,0.1);
+    --check-border: rgba(255,255,255,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.01s ease, color 0.3s ease;
+  }
+
+  .rs-container {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 24px 60px;
+    color: var(--text);
+    position: relative;
+    transition: background 0.01s ease, color 0.3s ease;
+    overflow: hidden;
+  }
+
+
+  .app-title {
+    width: 100%;
+    text-align: left;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    padding: 20px 0 0;
+  }
+
+
+  footer {
+    width: 100%;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-copy {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+  .footer-copy .ver { margin-left: 18px; }
+
+  .theme-btn {
+    position: absolute;
+    top: 56px;
+    left: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--pill-bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.01s ease;
+    color: var(--text);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 10;
+  }
+
+  .theme-btn:hover { transform: scale(1.08); }
+  .theme-btn:active { transform: scale(0.92); }
+  .theme-btn svg { width: 20px; height: 20px; }
+
+  .mode-switch {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    height: auto;
+    padding: 4px;
+    background: var(--pill-bg);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.01s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    border: 1px solid var(--border);
+    outline: none;
+    z-index: 10;
+  }
+
+  .mode-switch:active { transform: translateX(-50%); }
+
+  .pill-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pill-option {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    transition: all 0.01s linear;
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--pill-text);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 12px;
+  }
+
+  .pill-option.active { color: var(--pill-text-active); }
+
+  .pill-slider {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    background: var(--pill-active);
+    border-radius: 18px;
+    transition: all 0.04s linear;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    z-index: 1;
+  }
+
+  .rs-container.dark .pill-slider {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .draw-btn {
+    width: 116px;
+    height: 44px;
+    background: var(--pill-bg);
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    color: var(--pill-text-active);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.01s ease;
+    letter-spacing: 0.5px;
+    font-family: inherit;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .draw-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  .rs-container.dark .draw-btn:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  .draw-btn:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow);
+  }
+
+  .main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 146px;
+  }
+
+  .hint-text {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 0.3px;
+    transition: color 0.01s ease;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .hint-text .hint-label {
+    color: var(--text-secondary);
+  }
+
+  .count-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .count-input {
+    width: 52px;
+    height: 32px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    font-family: inherit;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: all 0.01s ease;
+    padding: 0 4px;
+  }
+
+  .count-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+  }
+
+  .rs-container.dark .count-input:focus {
+    box-shadow: 0 0 0 3px rgba(10,132,255,0.15);
+  }
+
+  .count-input::-webkit-outer-spin-button,
+  .count-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .count-input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  .count-suffix {
+    color: var(--text-secondary);
+    font-size: 15px;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 48px;
+    padding-right: 4px;
+  }
+
+  .checkbox-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .checkbox-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--check-border);
+    background: var(--input-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.01s ease;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  .checkbox-box .check-char {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.01s ease;
+  }
+
+  .checkbox-box.checked .check-char {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: color 0.01s ease;
+  }
+
+  .result-area {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
+    width: 100%;
+  }
+
+  .result-text {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    letter-spacing: 0;
+    line-height: 1.6;
+    transition: color 0.01s ease;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: "SF Mono", "Courier New", monospace;
+  }
+
+  .result-text.placeholder {
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 17px;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+  }
+
+  .result-text.error {
+    color: #ff3b30;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+  }
+
+  .rs-container.dark .result-text.error {
+    color: #ff453a;
+  }
+
+  .spacer {
+    flex: 1;
+    min-height: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="rs-container" id="app">
+  <div class="app-title">GeKeCy-随机抽取</div>
+  <div class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+    <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+    <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </div>
+
+  <div class="mode-switch" id="modeSwitch" onclick="toggleMode(event)">
+    <div class="pill-slider" id="modeSlider"></div>
+    <div class="pill-track">
+      <div class="pill-option active" id="modeOpt0" onclick="event.stopPropagation(); setMode(0)">数字</div>
+      <div class="pill-option" id="modeOpt1" onclick="event.stopPropagation(); setMode(1)">字母1</div>
+      <div class="pill-option" id="modeOpt2" onclick="event.stopPropagation(); setMode(2)">字母2</div>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <div class="hint-text" id="hintNumber" style="display:none">
+      <span class="hint-label">从</span>
+      <input type="number" class="count-input" id="numStart" value="1">
+      <span class="hint-label">~</span>
+      <input type="number" class="count-input" id="numEnd" value="50">
+      <span class="hint-label">中随机抽</span>
+      <input type="number" class="count-input" id="numCount" value="1">
+      <span class="hint-label">次</span>
+    </div>
+
+    <div class="hint-text" id="hintLetter1" style="display:none">
+      <span class="hint-label">从 A B C D 中随机抽</span>
+      <input type="number" class="count-input" id="countInput" value="5">
+      <span class="hint-label">次</span>
+    </div>
+
+    <div class="hint-text" id="hintLetter2" style="display:none">
+      <span class="hint-label" id="hintL2Text">从 A B C D E F 中随机抽5个并打乱</span>
+    </div>
+
+    <div class="checkbox-row" id="disableFRow" style="display:none">
+      <div class="checkbox-wrap" onclick="toggleDisableF()">
+        <div class="checkbox-box" id="disableFBox">
+          <span class="check-char">&#x2713;</span>
+        </div>
+        <span class="checkbox-label">选中以禁动F</span>
+      </div>
+    </div>
+
+    <div class="result-area">
+      <div class="result-text placeholder" id="resultText">点击按钮开始</div>
+    </div>
+
+    <button class="draw-btn" id="drawBtn" onclick="doRandom()">抽取</button>
+
+    <div class="spacer"></div>
+  </div>
+
+  <footer>
+    <div class="footer-copy">GeKeCy-Random-selector © 2026<span class="ver">v0.3.20</span></div>
+  </footer>
+</div>
+
+<script>
+  const STORAGE_KEY = 'randomSelector_v1';
+  let currentMode = 0;
+  let isDark = false;
+  let disableF = false;
+
+  function saveState() {
+    const state = {
+      theme: isDark ? 'dark' : 'light',
+      mode: currentMode,
+      numStart: document.getElementById('numStart').value,
+      numEnd: document.getElementById('numEnd').value,
+      numCount: document.getElementById('numCount').value,
+      countInput: document.getElementById('countInput').value
+    };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch(e) { return null; }
+  }
+
+  function detectSystemTheme() {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return true;
+    }
+    return false;
+  }
+
+  function init() {
+    const saved = loadState();
+    if (saved) {
+      isDark = saved.theme === 'dark';
+      currentMode = (typeof saved.mode === 'number') ? saved.mode : 0;
+      if (saved.numStart !== undefined) document.getElementById('numStart').value = saved.numStart;
+      if (saved.numEnd !== undefined) document.getElementById('numEnd').value = saved.numEnd;
+      if (saved.numCount !== undefined) document.getElementById('numCount').value = saved.numCount;
+      if (saved.countInput !== undefined) document.getElementById('countInput').value = saved.countInput;
+    } else {
+      isDark = detectSystemTheme();
+      currentMode = 0;
+    }
+    applyTheme();
+    updateModeSlider();
+    updateHint();
+  }
+
+  function applyTheme() {
+    const app = document.getElementById('app');
+    const sun = document.getElementById('sunIcon');
+    const moon = document.getElementById('moonIcon');
+    if (isDark) {
+      app.classList.add('dark');
+      moon.style.display = 'none';
+      sun.style.display = 'block';
+    } else {
+      app.classList.remove('dark');
+      moon.style.display = 'block';
+      sun.style.display = 'none';
+    }
+  }
+
+  function positionSlider(switchEl, sliderEl, activeIndex) {
+    const options = switchEl.querySelectorAll('.pill-option');
+    const activeOpt = options[activeIndex];
+    const switchRect = switchEl.getBoundingClientRect();
+    const activeRect = activeOpt.getBoundingClientRect();
+    sliderEl.style.left = (activeRect.left - switchRect.left - 2) + 'px';
+    sliderEl.style.width = (activeRect.width + 4) + 'px';
+    options.forEach((opt, i) => opt.classList.toggle('active', i === activeIndex));
+  }
+
+  function updateModeSlider() {
+    positionSlider(
+      document.getElementById('modeSwitch'),
+      document.getElementById('modeSlider'),
+      currentMode
+    );
+  }
+
+  function setMode(mode) {
+    if (mode === currentMode) return;
+    currentMode = mode;
+    updateModeSlider();
+    updateHint();
+    clearResult();
+    saveState();
+  }
+
+  function toggleMode(e) {
+    if (e.target.closest('.pill-option')) return;
+    setMode((currentMode + 1) % 3);
+  }
+
+  function updateHint() {
+    document.getElementById('hintNumber').style.display = currentMode === 0 ? 'flex' : 'none';
+    document.getElementById('hintLetter1').style.display = currentMode === 1 ? 'flex' : 'none';
+    document.getElementById('hintLetter2').style.display = currentMode === 2 ? 'flex' : 'none';
+    document.getElementById('disableFRow').style.display = currentMode === 2 ? 'flex' : 'none';
+  }
+
+  function toggleDisableF() {
+    disableF = !disableF;
+    const box = document.getElementById('disableFBox');
+    const hint = document.getElementById('hintL2Text');
+    box.classList.toggle('checked', disableF);
+    hint.textContent = disableF ? '随机打乱ABCDE' : '从 A B C D E F 中随机抽5个并打乱';
+    clearResult();
+  }
+
+  function clearResult() {
+    const rt = document.getElementById('resultText');
+    rt.textContent = '点击按钮开始';
+    rt.className = 'result-text placeholder';
+  }
+
+  function toggleTheme() {
+    isDark = !isDark;
+    applyTheme();
+    saveState();
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function pickRandom(arr, n) {
+    return shuffle(arr).slice(0, n);
+  }
+
+  function formatLetters(results) {
+    const str = results.join('');
+    if (str.length === 0) return '';
+    const groups = [];
+    for (let i = 0; i < str.length; i += 5) {
+      groups.push(str.slice(i, i + 5));
+    }
+    const lines = [];
+    for (let i = 0; i < groups.length; i += 2) {
+      lines.push(groups.slice(i, i + 2).join(' '));
+    }
+    return lines.join('\n');
+  }
+
+  // 数字格式化：一个数字一组，每组隔2空格，一行最多3组
+  function formatNumbers(results) {
+    if (results.length === 0) return '';
+    const lines = [];
+    for (let i = 0; i < results.length; i += 3) {
+      lines.push(results.slice(i, i + 3).join('  '));
+    }
+    return lines.join('\n');
+  }
+
+  function doRandom() {
+    let results;
+
+    if (currentMode === 0) {
+      let rawStart = document.getElementById('numStart').value.trim();
+      let rawEnd = document.getElementById('numEnd').value.trim();
+      let rawCount = document.getElementById('numCount').value.trim();
+      let start = parseInt(rawStart, 10);
+      let end = parseInt(rawEnd, 10);
+      let count = parseInt(rawCount, 10);
+
+      if (rawStart === '' || rawEnd === '' || rawCount === '' ||
+          isNaN(start) || isNaN(end) || isNaN(count) ||
+          count < 1 || start > end) {
+        const rt = document.getElementById('resultText');
+        rt.textContent = '输入的值无效';
+        rt.className = 'result-text error';
+        return;
+      }
+
+      const options = [];
+      for (let i = start; i <= end; i++) options.push(String(i));
+      results = [];
+      for (let i = 0; i < count; i++) {
+        results.push(pickRandom(options, 1)[0]);
+      }
+
+      const rt = document.getElementById('resultText');
+      rt.textContent = formatNumbers(results);
+      rt.className = 'result-text';
+      saveState();
+      return;
+    } else if (currentMode === 1) {
+      let raw = document.getElementById('countInput').value.trim();
+      let count = parseInt(raw, 10);
+      if (raw === '' || isNaN(count) || count < 1) {
+        const rt = document.getElementById('resultText');
+        rt.textContent = '输入的值无效';
+        rt.className = 'result-text error';
+        return;
+      }
+      results = [];
+      for (let i = 0; i < count; i++) {
+        results.push(pickRandom(['A','B','C','D'], 1)[0]);
+      }
+    } else {
+      const options = disableF ? ['A','B','C','D','E'] : ['A','B','C','D','E','F'];
+      results = pickRandom(options, 5);
+    }
+
+    const rt = document.getElementById('resultText');
+    rt.textContent = formatLetters(results);
+    rt.className = 'result-text';
+    saveState();
+  }
+
+  // 监听输入框变化自动保存
+  ['numStart','numEnd','numCount','countInput'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', saveState);
+  });
+
+  window.addEventListener('resize', updateModeSlider);
+
+  init();
+</script>
+</body>
+</html>
