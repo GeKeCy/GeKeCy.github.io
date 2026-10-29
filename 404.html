@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 16px;
+            text-align: center;
+            /* 整体在垂直居中基础上往上移一点，视觉更平衡 */
+            /* 在 -6vh 基础上再叠 4px，约 1 毫米多，想再多就调大这个 px */
+            transform: translateY(calc(-6vh - 4px));
+        }
+
+        .logo-container {
+            width: 168px;
+            height: 168px;
+        }
+
+        .logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .text-container {
+            max-width: 400px;
+        }
+
+        .title1 {
+            font-family: MiSans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-weight: 700;              /* 大标题需要更重的字重，400 太细 */
+            font-style: normal;            /* Regular 不是合法值，改为 normal */
+            font-size: clamp(48px, 12vw, 120px);  /* 响应式：手机 48px，桌面最大 120px */
+            line-height: 1.1;              /* 大字行高要收紧，22px 会太松 */
+            letter-spacing: -0.02em;       /* 大字略微负字距更紧实 */
+            text-align: center;
+            vertical-align: middle;
+            color: inherit;                /* 与副标同色，不单独指定 */
+            opacity: 0.7;
+            margin-bottom: 16px;
+        }
+
+        .title2 {
+            font-family: MiSans;
+            font-weight: 400;
+            font-style: normal;            /* Regular 不是合法值，改为 normal */
+            font-size: 14px;
+            line-height: 22px;
+            letter-spacing: 0%;
+            text-align: center;
+            vertical-align: middle;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+
+        .continue-button {
+            margin-top: 12px;
+            background: linear-gradient(124.94deg, #191A1D 11.04%, #747689 96.98%, #191A1D 164.2%);
+            width: 88px;
+            height: 40px;
+            min-width: 64px;
+            opacity: 1;
+            border-radius: 8px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F8FAFC;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .continue-button:hover {
+            background: linear-gradient(124.94deg, #2A2B2F 11.04%, #8A8B9E 96.98%, #2A2B2F 164.2%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Logo：SVG Base64 内嵌，不依赖外部链接 -->
+        <div class="logo-container">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTY4IiBoZWlnaHQ9IjE2OCIgdmlld0JveD0iMCAwIDE2OCAxNjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8yMDY0XzEyMikiPgo8cmVjdCB3aWR0aD0iMTY4IiBoZWlnaHQ9IjE2OCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjY0IiBmaWxsPSIjRTRFOUY0Ii8+CjxjaXJjbGUgY3g9IjI0IiBjeT0iMTMxIiByPSI2IiBmaWxsPSIjRTRFOUY0Ii8+CjxjaXJjbGUgY3g9IjE3LjUiIGN5PSIxMDguNSIgcj0iMi41IiBmaWxsPSIjRTBFNkYxIi8+CjxjaXJjbGUgY3g9IjE0NyIgY3k9IjM2IiByPSI2IiBmaWxsPSIjRTRFOUY0Ii8+CjxjaXJjbGUgY3g9IjE1NiIgY3k9IjU1IiByPSIzIiBmaWxsPSIjRTBFNkYxIi8+CjxnIGZpbHRlcj0idXJsKCNmaWx0ZXIwX2RfMjA2NF8xMjIpIj4KPHBhdGggZD0iTTE1LjM3MjggNTkuOTQwM0MxNC40ODE0IDU3LjMxODUgMTUuODkwNyA1NC40NzE1IDE4LjUxNiA1My41OTA1TDYyLjU0MzIgMzguODE3MUw4OC4wMzMgNTAuNTk4NUwxMTAuMjk2IDExNi42MjFDMTExLjE3NiAxMTkuMjMzIDEwOS43NzcgMTIyLjA2NSAxMDcuMTY3IDEyMi45NTJMNDguODIyMyAxNDIuNzlDNDYuMjA3OSAxNDMuNjc4IDQzLjM2NzkgMTQyLjI4IDQyLjQ3OSAxMzkuNjY1TDE1LjM3MjggNTkuOTQwM1oiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8yMDY0XzEyMikiLz4KPHBhdGggZD0iTTYwLjE2NzcgOTEuMTYwMUM1OS42NzA3IDkwLjEzNjggNTkuNDMzIDg5LjE3NDUgNTkuNDU0MyA4OC4yNzNDNTkuNTAyNCA4Ny4zNjI1IDU5LjY5OCA4Ni40OTEyIDYwLjA0MSA4NS42NTkzQzYwLjQxMDggODQuODE4MiA2MC44NTIyIDg0LjAxMjQgNjEuMzY1MiA4My4yNDE5QzYxLjkwNDkgODIuNDYyMyA2Mi4zOTU3IDgxLjcxNDIgNjIuODM3NiA4MC45OTc2QzYzLjMwNjIgODAuMjcyIDYzLjY1IDc5LjU3MzggNjMuODY5MSA3OC45MDMyQzY0LjA4ODIgNzguMjMyNiA2NC4wODg4IDc3LjU3NjcgNjMuODcwNyA3Ni45MzU1QzYzLjU5ODIgNzYuMTM0IDYzLjE2NjIgNzUuNTIwOCA2Mi41NzQ3IDc1LjA5NkM2MS45ODMyIDc0LjY3MTIgNjEuMjUgNzQuNDQzNiA2MC4zNzUzIDc0LjQxMzFDNTkuNTI3MyA3NC4zNzM2IDU4LjU2OSA3NC41MzU1IDU3LjUwMDMgNzQuODk4OEM1Ni4yNzEzIDc1LjMxNjcgNTUuMjQgNzUuOTY1NCA1NC40MDY0IDc2Ljg0NDlDNTMuNTcyOCA3Ny43MjQ0IDUyLjgzODkgNzguODUzMiA1Mi4yMDQ2IDgwLjIzMTNMNDcuODgyOCA3OC4zMDI5QzQ4LjY2NTYgNzYuMzk3NCA0OS43NzU1IDc0LjcwODYgNTEuMjEyMyA3My4yMzY1QzUyLjY2NjggNzEuNzI4NSA1NC40NDk0IDcwLjYxNTggNTYuNTYwMSA2OS44OTgxQzU4LjUxMDUgNjkuMjM1IDYwLjMzMzcgNjguOTQzIDYyLjAyOTcgNjkuMDIyMUM2My43NTI0IDY5LjA5MjEgNjUuMjQ1NiA2OS41ODI5IDY2LjUwOTQgNzAuNDk0NUM2Ny43OTA3IDcxLjM3MDMgNjguNzM1NyA3Mi43MDMyIDY5LjM0NDMgNzQuNDkzM0M2OS42ODA0IDc1LjQ4MTggNjkuNzYxOSA3Ni40MjI4IDY5LjU4ODggNzcuMzE2MkM2OS40MzMzIDc4LjE3MzkgNjkuMTIxNSA3OS4wMTAxIDY4LjY1MzQgNzkuODI1QzY4LjIwMyA4MC42MDQxIDY3LjcwNzkgODEuMzgzNCA2Ny4xNjgyIDgyLjE2M0M2Ni42MTk0IDgyLjkxNTkgNjYuMTMzMSA4My42Nzc0IDY1LjcwOTQgODQuNDQ3NEM2NS4yODU3IDg1LjIxNzQgNjUuMDE4MiA4Ni4wMDg3IDY0LjkwNzEgODYuODIxNUM2NC43OTU5IDg3LjYzNDIgNjQuOTM5NCA4OC40OTQ1IDY1LjMzNzUgODkuNDAyNEw2MC4xNjc3IDkxLjE2MDFaTTY2LjM5NzEgMTAwLjkzNUM2NS4zODE4IDEwMS4yOCA2NC40MjY3IDEwMS4yMzIgNjMuNTMxNiAxMDAuNzkxQzYyLjYzNjYgMTAwLjM1IDYyLjAxNjUgOTkuNjIyMyA2MS42NzEzIDk4LjYwN0M2MS4zMTcgOTcuNTY1IDYxLjM2MDMgOTYuNTk2NSA2MS44MDEyIDk1LjcwMTVDNjIuMjQyIDk0LjgwNjUgNjIuOTcgOTQuMTg2NCA2My45ODUzIDkzLjg0MTJDNjUuMDAwNiA5My40OTYgNjUuOTU1NyA5My41NDM4IDY2Ljg1MDcgOTMuOTg0N0M2Ny43NDU4IDk0LjQyNTUgNjguMzcwNCA5NS4xNjY5IDY4LjcyNDcgOTYuMjA4OUM2OS4wNjk5IDk3LjIyNDIgNjkuMDIyMSA5OC4xNzkzIDY4LjU4MTIgOTkuMDc0M0M2OC4xNDA0IDk5Ljk2OTQgNjcuNDEyMyAxMDAuNTg5IDY2LjM5NzEgMTAwLjkzNVoiIGZpbGw9IiM2RjdDOTUiLz4KPHBhdGggZD0iTTg4LjI2NTQgNTAuNjY5NUw2Mi40NjI5IDM4LjU2MDFMNjcuMjE3NiA1Mi41NDQ1QzY4LjEwNjUgNTUuMTU5IDcwLjk0NjUgNTYuNTU3OCA3My41NjA5IDU1LjY2ODlMODguMjY1NCA1MC42Njk1WiIgZmlsbD0iI0M0Q0NEQyIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNmaWx0ZXIxX2RfMjA2NF8xMjIpIj4KPHBhdGggZD0iTTg3LjMzMTggMzYuMDExNEM4OC4wMjAxIDMzLjMyOTEgOTAuNzU3NSAzMS43MTcxIDkzLjQzNyAzMi40MTYxTDE0MC43MDcgNDQuNzQ3NEwxNTYuMjk1IDY5LjY3MTFMMTM3LjkyOCAxNDAuNTAzQzEzNy4yMzYgMTQzLjE3MSAxMzQuNTE2IDE0NC43NzYgMTMxLjg0NiAxNDQuMDkxTDY4LjkwMzYgMTI3LjkzOUM2Ni4yMjg5IDEyNy4yNTMgNjQuNjE3IDEyNC41MjggNjUuMzAzNCAxMjEuODUzTDg3LjMzMTggMzYuMDExNFoiIGZpbGw9InVybCgjcGFpbnQxX2xpbmVhcl8yMDY0XzEyMikiLz4KPHBhdGggZD0iTTEwNS41MzggOTUuNDY1M0MxMDUuNjg5IDk0LjI4NCAxMDYuMDMxIDkzLjMwNDUgMTA2LjU2NiA5Mi41MjY4QzEwNy4xMyA5MS43NTY1IDEwNy44MDEgOTEuMTA1IDEwOC41NzggOTAuNTcyNUMxMDkuMzgzIDkwLjA0NzMgMTEwLjIzMiA4OS41OTQgMTExLjEyMyA4OS4yMTI2QzExMi4wNDIgODguODM4NiAxMTIuOTAxIDg4LjQ2NDEgMTEzLjY5OCA4OC4wODk0QzExNC41MjUgODcuNzIxOSAxMTUuMjI2IDg3LjMwNzEgMTE1LjgwMiA4Ni44NDVDMTE2LjM3OCA4Ni4zODI4IDExNi43NTQgODUuODA4MyAxMTYuOTMgODUuMTIxNkMxMTcuMTUxIDg0LjI2MzEgMTE3LjEyMyA4My40Nzg0IDExNi44NDggODIuNzY3M0MxMTYuNTczIDgyLjA1NjMgMTE2LjA2MSA4MS40MzY5IDExNS4zMTIgODAuOTA5MkMxMTQuNTkyIDgwLjM4ODggMTEzLjY1OSA3OS45ODE4IDExMi41MTQgNzkuNjg4QzExMS4xOTggNzkuMzUwMyAxMDkuOTIzIDc5LjMyOCAxMDguNjg5IDc5LjYyMTNDMTA3LjQ1NSA3OS45MTQ1IDEwNi4xNjUgODAuNDgzMyAxMDQuODIgODEuMzI3NkwxMDIuMTM3IDc3LjE2MjNDMTAzLjkxNSA3NS45NDEgMTA1Ljg1NCA3NS4wOTY4IDEwNy45NTcgNzQuNjI5OEMxMTAuMDk1IDc0LjE0MTUgMTEyLjI5NCA3NC4xODc0IDExNC41NTUgNzQuNzY3NUMxMTYuNjQ0IDc1LjMwMzYgMTE4LjQwOSA3Ni4wOTIgMTE5Ljg1IDc3LjEzMjdDMTIxLjMxOSA3OC4xODA4IDEyMi4zNDYgNzkuNDY2MiAxMjIuOTMyIDgwLjk4ODhDMTIzLjU1MyA4Mi40OTAyIDEyMy42MTcgODQuMTk5NSAxMjMuMTI1IDg2LjExNjdDMTIyLjg1NCA4Ny4xNzU0IDEyMi4zODYgODguMDQ2NiAxMjEuNzIzIDg4LjczMDRDMTIxLjA5NSA4OS4zOTI4IDEyMC4zNDMgODkuOTQ3IDExOS40NjYgOTAuMzkzQzExOC42MjUgOTAuODE3NyAxMTcuNzQ1IDkxLjIxNyAxMTYuODI2IDkxLjU5MTFDMTE1LjkxMyA5MS45MzY1IDExNS4wNTEgOTIuMzI1MiAxMTQuMjM5IDkyLjc1NzJDMTEzLjQyNyA5My4xODkyIDExMi43MzkgOTMuNzI5NSAxMTIuMTc2IDk0LjM3OEMxMTEuNjEzIDk1LjAyNjYgMTExLjI0NiA5NS44NjI2IDExMS4wNzUgOTYuODg2MkwxMDUuNTM4IDk1LjQ2NTNaTTEwNS4zOTggMTA3LjU5OUMxMDQuMzExIDEwNy4zMiAxMDMuNTAxIDEwNi43MzEgMTAyLjk2OSAxMDUuODMyQzEwMi40MzcgMTA0LjkzMyAxMDIuMzExIDEwMy45MzkgMTAyLjU5IDEwMi44NTJDMTAyLjg3NiAxMDEuNzM2IDEwMy40NjkgMTAwLjkxMiAxMDQuMzY4IDEwMC4zOEMxMDUuMjY3IDk5Ljg0ODcgMTA2LjI2IDk5LjcyMjMgMTA3LjM0OCAxMDAuMDAxQzEwOC40MzUgMTAwLjI4IDEwOS4yNDQgMTAwLjg2OSAxMDkuNzc2IDEwMS43NjhDMTEwLjMwOCAxMDIuNjY3IDExMC40MzEgMTAzLjY3NSAxMTAuMTQ0IDEwNC43OTFDMTA5Ljg2NSAxMDUuODc4IDEwOS4yNzYgMTA2LjY4OCAxMDguMzc3IDEwNy4yMTlDMTA3LjQ3OCAxMDcuNzUxIDEwNi40ODUgMTA3Ljg3OCAxMDUuMzk4IDEwNy41OTlaIiBmaWxsPSIjNkY3Qzk1Ii8+CjxwYXRoIGQ9Ik0xNTYuNDU3IDY5Ljg2NjdMMTQwLjc4MyA0NC40NzY2TDEzNi44ODEgNTkuNjgxMkMxMzYuMTk1IDYyLjM1NiAxMzcuODA3IDY1LjA4MDcgMTQwLjQ4MSA2NS43NjcxTDE1Ni40NTcgNjkuODY2N1oiIGZpbGw9IiNDNENDREMiLz4KPC9nPgo8L2c+CjxkZWZzPgo8ZmlsdGVyIGlkPSJmaWx0ZXIwX2RfMjA2NF8xMjIiIHg9Ii0wLjg5NDc3NSIgeT0iMjYuNTYwMSIgd2lkdGg9IjEyNy40NTQiIGhlaWdodD0iMTM2LjQ5NyIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR5PSI0Ii8+CjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjgiLz4KPGZlQ29tcG9zaXRlIGluMj0iaGFyZEFscGhhIiBvcGVyYXRvcj0ib3V0Ii8+CjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAuNzY4NjI3IDAgMCAwIDAgMC44IDAgMCAwIDAgMC44NjI3NDUgMCAwIDAgMSAwIi8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0iZWZmZWN0MV9kcm9wU2hhZG93XzIwNjRfMTIyIi8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iZWZmZWN0MV9kcm9wU2hhZG93XzIwNjRfMTIyIiByZXN1bHQ9InNoYXBlIi8+CjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJmaWx0ZXIxX2RfMjA2NF8xMjIiIHg9IjQ5LjE0NTMiIHk9IjIwLjI1MjkiIHdpZHRoPSIxMjMuMzEyIiBoZWlnaHQ9IjE0My45OTYiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlQ29sb3JNYXRyaXggaW49IlNvdXJjZUFscGhhIiB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMTI3IDAiIHJlc3VsdD0iaGFyZEFscGhhIi8+CjxmZU9mZnNldCBkeT0iNCIvPgo8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI4Ii8+CjxmZUNvbXBvc2l0ZSBpbjI9ImhhcmRBbHBoYSIgb3BlcmF0b3I9Im91dCIvPgo8ZmVDb2xvck1hdHJpeCB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAwLjc2ODYyNyAwIDAgMCAwIDAuOCAwIDAgMCAwIDAuODYyNzQ1IDAgMCAwIDEgMCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9ImVmZmVjdDFfZHJvcFNoYWRvd18yMDY0XzEyMiIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9ImVmZmVjdDFfZHJvcFNoYWRvd18yMDY0XzEyMiIgcmVzdWx0PSJzaGFwZSIvPgo8L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzIwNjRfMTIyIiB4MT0iNjkuNDgxMiIgeTE9IjQ0LjE1MDMiIHgyPSI3Ny45ODg5IiB5Mj0iMTMyLjg3MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRjRGNkY4Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0id2hpdGUiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDFfbGluZWFyXzIwNjRfMTIyIiB4MT0iMTQzLjczMSIgeTE9IjUzLjM5NDYiIHgyPSIxMDAuMzY5IiB5Mj0iMTM2LjAxMyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRjRGNkY4Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0id2hpdGUiLz4KPC9saW5lYXJHcmFkaWVudD4KPGNsaXBQYXRoIGlkPSJjbGlwMF8yMDY0XzEyMiI+CjxyZWN0IHdpZHRoPSIxNjgiIGhlaWdodD0iMTY4IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt="404 Logo" class="logo" />
+        </div>
+
+        <!-- 文字 -->
+        <div class="text-container">
+            <p class="title1">
+                404 Not Found
+            </p>
+            <p class="title2">
+                 Sorry, This Page or File Does Not Exist
+            </p>
+            <p class="title2">
+                 抱歉，页面或文件不存在
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
