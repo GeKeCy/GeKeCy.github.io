@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gekecy-v1.8.357';
+const CACHE_NAME = 'gekecy-v1.7.367';
 
 const CORE_ASSETS = [
   './',
@@ -29,26 +29,47 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+function putToCache(request, response) {
+  if (response && response.ok) {
+    var clone = response.clone();
+    caches.open(CACHE_NAME).then(function(cache) { cache.put(request, clone); });
+  }
+}
+
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
 
+  // 带 _t= 的破缓存请求：完全绕过 Service Worker，直接走网络，防止被喂回旧页面
+  try {
+    if (new URL(e.request.url).searchParams.has('_t')) return;
+  } catch (err) {}
+
+  // 页面导航：网络优先，避免老用户长期停留在旧版本；离线时回退缓存
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).then(function(networkRes) {
+        putToCache(e.request, networkRes);
+        return networkRes;
+      }).catch(function() {
+        return caches.match(e.request).then(function(cached) {
+          return cached || caches.match('./index.html');
+        });
+      })
+    );
+    return;
+  }
+
+  // 静态资源：缓存优先，后台静默更新
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       if (cached) {
         fetch(e.request).then(function(networkRes) {
-          if (networkRes && networkRes.ok) {
-            var clone = networkRes.clone();
-            caches.open(CACHE_NAME).then(function(cache) { cache.put(e.request, clone); });
-          }
+          putToCache(e.request, networkRes);
         }).catch(function() {});
         return cached;
       }
-
       return fetch(e.request).then(function(networkRes) {
-        if (networkRes && networkRes.ok) {
-          var clone = networkRes.clone();
-          caches.open(CACHE_NAME).then(function(cache) { cache.put(e.request, clone); });
-        }
+        putToCache(e.request, networkRes);
         return networkRes;
       }).catch(function() {
         return caches.match('./index.html');
