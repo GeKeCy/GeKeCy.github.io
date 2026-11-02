@@ -14,16 +14,16 @@
     <link rel="icon" type="image/png" href="1774103627050.png">
     <link rel="apple-touch-icon" href="1774103627050.png">
  <!-- 基础 SEO -->
-    <title>GeKeCy主页</title>
-    <!-- Ver: 1.7.356 -->
-    <meta name="keywords" content="GeKeCy,GeKeCy主页,极简主页,导航页,无广告导航页,无广告主页,好用的手机主页,自定义网页导航,多引擎搜索,AI搜索网站,极速主页,纯净版主页">
-    <meta name="description" content="GeKeCy主页,一个极简主义,可自定义,多搜索引擎,极速,纯净的浏览器主页">
+    <title>GeKeCy主页 - 无广告极简纯净导航 | 极速多引擎与AI搜索</title>
+    <!-- Ver: 1.8.357 -->
+    <meta name="keywords" content="GeKeCy,GeKeCy主页,极简主页,无广告主页,好用的手机主页,自定义网页导航,多引擎搜索,AI搜索网站,极速主页,纯净版主页">
+    <meta name="description" content="受够了臃肿和广告？GeKeCy主页 是一款极致纯净、完全无广告的主页。秒速启动不占内存，一键自由切换百度、谷歌、秘塔及各种AI大模型！支持自定义常用网址导航，给你最畅快的极速上网体验。">
 
     <!-- 规范网址：告诉搜索引擎这是你的唯一权威入口 -->
     <meta property="og:url" content="https://gekecy.github.io/homepage">
     <!-- 社交媒体/分享预览 (Open Graph)：在微信、QQ、知乎分享时的美观卡片 -->
-    <meta property="og:title" content="GeKeCy主页">
-    <meta property="og:description" content="极速启动,多引擎切换,懂你的网站导航。GeKeCy主页,给你最畅快的上网体验。">
+    <meta property="og:title" content="GeKeCy主页 - 无广告极简纯净导航">
+    <meta property="og:description" content="极速启动，多引擎切换，懂你的AI导航。GeKeCy主页，给你最畅快的上网体验。">
     <meta property="og:type" content="website">
     <!-- 分享预览图：微信/QQ/Twitter 等转发时显示的 logo -->
     <meta property="og:image" content="https://gekecy.github.io/homepage/1774103627050.png">
@@ -60,7 +60,7 @@ body.font-loading .logo {
 
 
     <style>
-        :root { --bg: #ffffff; --text: #1d1d1f; --box: #f2f2f7; --accent: #007aff; --bor: #e5e5ea; --trans: cubic-bezier(0.4, 0, 0.2, 1); --safe-top: env(safe-area-inset-top, 0px); --eng-wrap: nowrap; }[data-theme="dark"] { --bg: #000000; --text: #f2f2f7; --box: #1c1c1e; --accent: #0a84ff; --bor: #38383a; }
+        :root { --bg: #ffffff; --text: #1d1d1f; --box: #f2f2f7; --accent: #007aff; --bor: #e5e5ea; --trans: cubic-bezier(0.4, 0, 0.2, 1); --safe-top: env(safe-area-inset-top, 0px); --eng-wrap: nowrap; }[data-theme="dark"] { --bg: #0d0d11; --text: #f2f2f7; --box: #2c2c31; --accent: #0a84ff; --bor: #4e4e54; }
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent !important; outline: none; }
         
         a, button, input, select, .circle-tool, .e-item, .v-opt, .theme-opt, .n-link, .help-icon, .brand-help-icon, label { touch-action: manipulation; }
@@ -207,7 +207,8 @@ body.font-loading .logo {
         .sort-row { display: flex; align-items: center; justify-content: space-between; background: var(--box); padding: 14px 10px; margin-bottom: 12px; border-radius: 8px; font-size: 13px; }
         .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1.5px solid var(--text); border-radius: 50%; font-size: 12px; font-weight: bold; margin-left: 8px; cursor: pointer; color: var(--text); }
         .help-icon:hover { background: var(--box); }
-        #ctx-menu .ctx-item:active { background: var(--box); filter: brightness(0.9); }
+        #ctx-menu .ctx-item:active { background: var(--bor); }
+        #ctx-menu .ctx-item:hover { background: var(--bor); }
         
         /* 仅对功能按键防选中以保护交互体验，保留输入框正常打字 */
         .e-item, .n-link, .n-link a, .circle-tool, .text-btn, .v-opt, .theme-opt, .drag-handle, .ctx-item {
@@ -230,6 +231,26 @@ body.font-loading .logo {
         [data-theme="dark"] .side-menu { box-shadow: 5px 0 20px rgba(0,0,0,0.5); }
         [data-theme="dark"] .overlay { background: rgba(0,0,0,0.5); }
         [data-theme="dark"] .modal { box-shadow: 0 15px 50px rgba(0,0,0,0.6); }
+
+        /* v1.8.357 暗色模式可读性修复：盒元素统一描边，杜绝黑底黑块 */
+        [data-theme="dark"] .s-box { border: 1px solid var(--bor); box-shadow: none; }
+        [data-theme="dark"] .n-link { border: 1px solid var(--bor); }
+        [data-theme="dark"] .n-link:hover { box-shadow: none; border-color: var(--accent); }
+        [data-theme="dark"] .text-btn { border: 1px solid var(--bor); }
+        [data-theme="dark"] .v-switcher, [data-theme="dark"] .theme-switcher, [data-theme="dark"] .perf-switcher { border: 1px solid var(--bor); }
+        [data-theme="dark"] .modal { border: 1px solid var(--bor); box-shadow: 0 15px 50px rgba(0,0,0,0.8); }
+        [data-theme="dark"] .side-menu { border-right: 1px solid var(--bor); }
+        [data-theme="dark"] .in-wrap, [data-theme="dark"] .sort-row { border: 1px solid var(--bor); }
+        [data-theme="dark"] .gekecy-help-box { border: 1px solid var(--bor); }
+        [data-theme="dark"] .gekecy-help-overlay { background: rgba(0,0,0,0.65); }
+        [data-theme="dark"] .overlay { background: rgba(0,0,0,0.55); }
+        [data-theme="dark"] input::placeholder { color: #8e8e93; }
+        [data-theme="dark"] .m-h { color: #aeaeb2; }
+        [data-theme="dark"] .m-desc { color: #8e8e93; }
+        [data-theme="dark"] .s-clear { color: #8e8e93; }
+        [data-theme="dark"] .e-item:not(.active) { opacity: 0.92; }
+        [data-theme="dark"] .n-link:active { border-color: var(--bor); }
+
     </style>
 </head>
 <body data-theme="light" class="font-loading">
@@ -314,7 +335,7 @@ body.font-loading .logo {
             <div class="m-h m-blue" id="menu-dev-txt">开发者说明 Dev Note</div>
             <div class="m-desc m-blue" id="dev-desc" style="font-weight:bold;">如果你对我们的开发有所兴趣或想参与我们的开发，那么请联系 forest2580@qq.com，感谢你们的热情！</div>
             
-            <div style="text-align:center; color:#999; margin-top:20px; padding-bottom:20px; font-size:11px; line-height:1.4;">GeKeCy-homepage © 2026<br>v1.7.356</div>
+            <div style="text-align:center; color:#999; margin-top:20px; padding-bottom:20px; font-size:11px; line-height:1.4;">GeKeCy-homepage © 2026<br>v1.8.357</div>
         </div>
 
         <div class="main-view" id="main-view">
@@ -543,7 +564,7 @@ body.font-loading .logo {
     };
     const engNames={bd:{zh:'百度',zt:'百度',en:'Baidu'},gg:{zh:'Google',zt:'Google',en:'Google'},qk:{zh:'夸克',zt:'夸克',en:'Quark'},bi:{zh:'必应',zt:'必應',en:'Bing'},dg:{zh:'DuckDuckGo',zt:'DuckDuckGo',en:'DuckDuckGo'},s360:{zh:'360搜索',zt:'360搜索',en:'360 Search'},yh:{zh:'Yahoo',zt:'Yahoo',en:'Yahoo'},tt:{zh:'头条',zt:'頭條',en:'Toutiao'},dy:{zh:'抖音搜索',zt:'抖音搜索',en:'Douyin'},gh:{zh:'GitHub',zt:'GitHub',en:'GitHub'},zh:{zh:'知乎',zt:'知乎',en:'Zhihu'},mt:{zh:'秘塔AI',zt:'秘塔AI',en:'MetasoAI'},sg:{zh:'搜狗',zt:'搜狗',en:'Sogou'},sm:{zh:'神马',zt:'神馬',en:'Shenma'}};
     const defEngs=[{id:'bd',u:'https://www.baidu.com/s?wd=%s'},{id:'gg',u:'https://www.google.com/search?q=%s'},{id:'qk',u:'https://m.quark.cn/s?q=%s'},{id:'bi',u:'https://www.bing.com/search?q=%s'},{id:'dg',u:'https://duckduckgo.com/?q=%s'},{id:'s360',u:'https://www.so.com/s?q=%s'},{id:'yh',u:'https://search.yahoo.com/search?p=%s'},{id:'tt',u:'https://so.toutiao.com/search?keyword=%s'},{id:'dy',u:'https://www.douyin.com/search/%s'},{id:'gh',u:'https://github.com/search?q=%s'},{id:'zh',u:'https://www.zhihu.com/search?q=%s'},{id:'mt',u:'https://metaso.cn/?q=%s'},{id:'sg',u:'https://www.sogou.com/web?query=%s'},{id:'sm',u:'https://m.sm.cn/s?q=%s'}];
-    const ultraData=[{k:{zh:'Google专栏', zt:'Google專欄', en:'Google Column'}, d:[{n:{zh:'Gemini',zt:'Gemini',en:'Gemini'}, u:'https://gemini.google.com/app'},{n:{zh:'AI Studio',zt:'AI Studio',en:'AI Studio'}, u:'https://aistudio.google.com/'},{n:{zh:'Gmail',zt:'Gmail',en:'Gmail'}, u:'https://mail.google.com/'},{n:{zh:'Drive',zt:'Drive',en:'Drive'}, u:'https://drive.google.com/'},{n:{zh:'Maps',zt:'Maps',en:'Maps'}, u:'https://www.google.com/maps'},{n:{zh:'YouTube',zt:'YouTube',en:'YouTube'}, u:'https://www.youtube.com/'},{n:{zh:'Waze',zt:'Waze',en:'Waze'}, u:'https://www.waze.com/'},{n:{zh:'Google Play',zt:'Google Play',en:'Google Play'}, u:'https://play.google.com/store/games'},{n:{zh:'翻译',zt:'翻譯',en:'Translate'}, u:'https://translate.google.com/'},{n:{zh:'Google搜索',zt:'Google搜索',en:'Google Search'}, u:'https://www.google.com'}]},{k:{zh:'AI 网页版', zt:'AI 網頁版', en:'AI Web'}, d:[{n:{zh:'Trae',zt:'Trae',en:'Trae'}, u:'https://solo.trae.cn/'},{n:{zh:'Kimi',zt:'Kimi',en:'Kimi'}, u:'https://www.kimi.com/'},{n:{zh:'DeepSeek',zt:'DeepSeek',en:'DeepSeek'}, u:'https://chat.deepseek.com/'},{n:{zh:'千问',zt:'千問',en:'QwenAI'}, u:'https://tongyi.aliyun.com/'},{n:{zh:'文心',zt:'文心',en:'ERNIE Bot'}, u:'https://yiyan.baidu.com/'},{n:{zh:'豆包',zt:'豆包',en:'Doubao'}, u:'https://www.doubao.com/'},{n:{zh:'秘塔AI',zt:'秘塔AI',en:'MetasoAI'}, u:'https://metaso.cn/'},{n:{zh:'ChatGPT',zt:'ChatGPT',en:'ChatGPT'}, u:'https://chat.openai.com/'},{n:{zh:'Claude',zt:'Claude',en:'Claude'}, u:'https://claude.ai/new'}]},{k:{zh:'世界热门', zt:'世界熱門', en:'World Trends'}, d:[{n:{zh:'GitHub',zt:'GitHub',en:'GitHub'}, u:'https://github.com/'},{n:{zh:'X/Twitter',zt:'X/Twitter',en:'X/Twitter'}, u:'https://x.com/'},{n:{zh:'Facebook',zt:'Facebook',en:'Facebook'}, u:'https://m.facebook.com'},{n:{zh:'Yahoo!',zt:'Yahoo!',en:'Yahoo!'}, u:'https://tw.yahoo.com/'},{n:{zh:'Wikipedia',zt:'Wikipedia',en:'Wikipedia'}, u:'https://www.wikipedia.org/'},{n:{zh:'Reddit',zt:'Reddit',en:'Reddit'}, u:'https://www.reddit.com/'},{n:{zh:'OpenStreetMap',zt:'OpenStreetMap',en:'OpenStreetMap'}, u:'https://www.openstreetmap.org/'},{n:{zh:'HERE WeGo',zt:'HERE WeGo',en:'HERE WeGo'}, u:'https://wego.here.com/'}]},{k:{zh:'财经', zt:'財經', en:'Finance'}, d:[{n:{zh:'同花顺',zt:'同花順',en:'Flush'}, u:'https://www.10jqka.com.cn/'},{n:{zh:'东方财富',zt:'東方財富',en:'Eastmoney'}, u:'https://wap.eastmoney.com/'},{n:{zh:'雪球网',zt:'雪球網',en:'Xueqiu'}, u:'https://xueqiu.com/'},{n:{zh:'腾讯财经',zt:'騰訊財經',en:'Tencent Finance'}, u:'https://finance.qq.com/'},{n:{zh:'新浪财经',zt:'新浪財經',en:'Sina Finance'}, u:'https://finance.sina.com.cn/'}]},{k:{zh:'实时新闻', zt:'實時新聞', en:'Live News'}, d:[{n:{zh:'财联社',zt:'財聯社',en:'CLS News'}, u:'https://m.cls.cn/'},{n:{zh:'华尔街见闻',zt:'華爾街見聞',en:'Wallstreetcn'}, u:'https://wallstreetcn.com/'},{n:{zh:'36氪',zt:'36氪',en:'36Kr'}, u:'https://36kr.com/'},{n:{zh:'澎湃新闻',zt:'澎湃新聞',en:'The Paper'}, u:'https://www.thepaper.cn/'},{n:{zh:'新华社',zt:'新華社',en:'Xinhua'}, u:'https://www.xinhuanet.com/'},{n:{zh:'中国新闻网',zt:'中國新聞網',en:'Chinanews'}, u:'https://www.chinanews.com/'}]},{k:{zh:'天气服务', zt:'天氣服務', en:'Weather'}, d:[{n:{zh:'彩云天气',zt:'彩雲天氣',en:'Caiyun'}, u:'https://www.caiyunapp.com/map/'},{n:{zh:'墨迹天气',zt:'墨跡天氣',en:'Moji'}, u:'https://tianqi.moji.com/'},{n:{zh:'中国天气网',zt:'中國天氣網',en:'Weather China'}, u:'https://m.weather.com.cn/'},{n:{zh:'和风天气',zt:'和風天氣',en:'QWeather'}, u:'https://www.qweather.com/'},{n:{zh:'The Weather Channel',zt:'The Weather Channel',en:'The Weather Channel'}, u:'https://weather.com/'},{n:{zh:'AccuWeather',zt:'AccuWeather',en:'AccuWeather'}, u:'https://www.accuweather.com/'}]},{k:{zh:'在线地图', zt:'在線地圖', en:'Maps'}, d:[{n:{zh:'百度地图',zt:'百度地圖',en:'Baidu Maps'}, u:'https://map.baidu.com/'},{n:{zh:'高德地图',zt:'高德地圖',en:'Amap'}, u:'https://www.amap.com/'},{n:{zh:'腾讯地图',zt:'騰訊地圖',en:'Tencent Maps'}, u:'https://map.qq.com/'},{n:{zh:'Bing Maps',zt:'Bing Maps',en:'Bing Maps'}, u:'https://www.bing.com/maps'}]},{k:{zh:'生活', zt:'生活', en:'Life'}, d:[{n:{zh:'美团',zt:'美團',en:'Meituan'}, u:'https://i.meituan.com/mttouch/page/home'},{n:{zh:'58同城',zt:'58同城',en:'58.com'}, u:'https://m.58.com'},{n:{zh:'大众点评',zt:'大眾點評',en:'Dianping'}, u:'https://www.dianping.com'},{n:{zh:'携程',zt:'攜程',en:'Ctrip'}, u:'https://m.ctrip.com'}]},{k:{zh:'体育', zt:'體育', en:'Sports'}, d:[{n:{zh:'直播吧',zt:'直播吧',en:'Zhibo8'}, u:'https://www.zhibo8.com'},{n:{zh:'懂球帝',zt:'懂球帝',en:'Dongqiudi'}, u:'https://www.dongqiudi.com'},{n:{zh:'腾讯体育',zt:'騰訊體育',en:'Tencent Sports'}, u:'https://sports.qq.com'},{n:{zh:'网易体育',zt:'網易體育',en:'NetEase Sports'}, u:'https://m.163.com/touch/sports/'},{n:{zh:'新浪体育',zt:'新浪體育',en:'Sina Sports'}, u:'https://sports.sina.cn/'}]},{k:{zh:'看剧必备', zt:'看劇必備', en:'Streaming'}, d:[{n:{zh:'哔哩哔哩',zt:'嗶哩嗶哩',en:'Bilibili'}, u:'https://www.bilibili.com/'},{n:{zh:'爱奇艺',zt:'愛奇藝',en:'iQiyi'}, u:'https://www.iqiyi.com/'},{n:{zh:'腾讯视频',zt:'騰訊視頻',en:'Tencent Video'}, u:'https://v.qq.com/'},{n:{zh:'芒果tv',zt:'芒果tv',en:'Mango TV'}, u:'https://www.mgtv.com/'},{n:{zh:'优酷视频',zt:'優酷視頻',en:'Youku'}, u:'https://www.youku.com/'}]},{k:{zh:'游戏', zt:'遊戲', en:'Games'}, d:[{n:{zh:'4399',zt:'4399',en:'4399'}, u:'https://h.4399.com/?topc'},{n:{zh:'7723',zt:'7723',en:'7723'}, u:'https://3g.7723.cn'},{n:{zh:'TapTap',zt:'TapTap',en:'TapTap'}, u:'https://www.taptap.cn'},{n:{zh:'游明星空',zt:'遊明星空',en:'Gamersky'}, u:'https://wap.gamersky.com/'}]}];
+    const ultraData=[{k:{zh:'Google专栏', zt:'Google專欄', en:'Google Column'}, d:[{n:{zh:'Gemini',zt:'Gemini',en:'Gemini'}, u:'https://gemini.google.com/app'},{n:{zh:'AI Studio',zt:'AI Studio',en:'AI Studio'}, u:'https://aistudio.google.com/'},{n:{zh:'Gmail',zt:'Gmail',en:'Gmail'}, u:'https://mail.google.com/'},{n:{zh:'Drive',zt:'Drive',en:'Drive'}, u:'https://drive.google.com/'},{n:{zh:'Maps',zt:'Maps',en:'Maps'}, u:'https://www.google.com/maps'},{n:{zh:'YouTube',zt:'YouTube',en:'YouTube'}, u:'https://www.youtube.com/'},{n:{zh:'Waze',zt:'Waze',en:'Waze'}, u:'https://www.waze.com/'},{n:{zh:'Google Play',zt:'Google Play',en:'Google Play'}, u:'https://play.google.com/store/games'},{n:{zh:'翻译',zt:'翻譯',en:'Translate'}, u:'https://translate.google.com/'},{n:{zh:'Google搜索',zt:'Google搜索',en:'Google Search'}, u:'https://www.google.com'}]},{k:{zh:'AI 网页版', zt:'AI 網頁版', en:'AI Web'}, d:[{n:{zh:'Trae',zt:'Trae',en:'Trae'}, u:'https://work.trae.cn/'},{n:{zh:'Kimi',zt:'Kimi',en:'Kimi'}, u:'https://www.kimi.com/'},{n:{zh:'DeepSeek',zt:'DeepSeek',en:'DeepSeek'}, u:'https://chat.deepseek.com/'},{n:{zh:'千问',zt:'千問',en:'QwenAI'}, u:'https://tongyi.aliyun.com/'},{n:{zh:'文心',zt:'文心',en:'ERNIE Bot'}, u:'https://yiyan.baidu.com/'},{n:{zh:'豆包',zt:'豆包',en:'Doubao'}, u:'https://www.doubao.com/'},{n:{zh:'秘塔AI',zt:'秘塔AI',en:'MetasoAI'}, u:'https://metaso.cn/'},{n:{zh:'ChatGPT',zt:'ChatGPT',en:'ChatGPT'}, u:'https://chat.openai.com/'},{n:{zh:'Claude',zt:'Claude',en:'Claude'}, u:'https://claude.ai/new'}]},{k:{zh:'世界热门', zt:'世界熱門', en:'World Trends'}, d:[{n:{zh:'GitHub',zt:'GitHub',en:'GitHub'}, u:'https://github.com/'},{n:{zh:'X/Twitter',zt:'X/Twitter',en:'X/Twitter'}, u:'https://x.com/'},{n:{zh:'Facebook',zt:'Facebook',en:'Facebook'}, u:'https://m.facebook.com'},{n:{zh:'Yahoo!',zt:'Yahoo!',en:'Yahoo!'}, u:'https://tw.yahoo.com/'},{n:{zh:'Wikipedia',zt:'Wikipedia',en:'Wikipedia'}, u:'https://www.wikipedia.org/'},{n:{zh:'Reddit',zt:'Reddit',en:'Reddit'}, u:'https://www.reddit.com/'},{n:{zh:'OpenStreetMap',zt:'OpenStreetMap',en:'OpenStreetMap'}, u:'https://www.openstreetmap.org/'},{n:{zh:'HERE WeGo',zt:'HERE WeGo',en:'HERE WeGo'}, u:'https://wego.here.com/'}]},{k:{zh:'财经', zt:'財經', en:'Finance'}, d:[{n:{zh:'同花顺',zt:'同花順',en:'Flush'}, u:'https://www.10jqka.com.cn/'},{n:{zh:'东方财富',zt:'東方財富',en:'Eastmoney'}, u:'https://wap.eastmoney.com/'},{n:{zh:'雪球网',zt:'雪球網',en:'Xueqiu'}, u:'https://xueqiu.com/'},{n:{zh:'腾讯财经',zt:'騰訊財經',en:'Tencent Finance'}, u:'https://finance.qq.com/'},{n:{zh:'新浪财经',zt:'新浪財經',en:'Sina Finance'}, u:'https://finance.sina.com.cn/'}]},{k:{zh:'实时新闻', zt:'實時新聞', en:'Live News'}, d:[{n:{zh:'财联社',zt:'財聯社',en:'CLS News'}, u:'https://m.cls.cn/'},{n:{zh:'华尔街见闻',zt:'華爾街見聞',en:'Wallstreetcn'}, u:'https://wallstreetcn.com/'},{n:{zh:'36氪',zt:'36氪',en:'36Kr'}, u:'https://36kr.com/'},{n:{zh:'澎湃新闻',zt:'澎湃新聞',en:'The Paper'}, u:'https://www.thepaper.cn/'},{n:{zh:'新华社',zt:'新華社',en:'Xinhua'}, u:'https://www.xinhuanet.com/'},{n:{zh:'中国新闻网',zt:'中國新聞網',en:'Chinanews'}, u:'https://www.chinanews.com/'}]},{k:{zh:'天气服务', zt:'天氣服務', en:'Weather'}, d:[{n:{zh:'彩云天气',zt:'彩雲天氣',en:'Caiyun'}, u:'https://www.caiyunapp.com/map/'},{n:{zh:'墨迹天气',zt:'墨跡天氣',en:'Moji'}, u:'https://tianqi.moji.com/'},{n:{zh:'中国天气网',zt:'中國天氣網',en:'Weather China'}, u:'https://m.weather.com.cn/'},{n:{zh:'和风天气',zt:'和風天氣',en:'QWeather'}, u:'https://www.qweather.com/'},{n:{zh:'The Weather Channel',zt:'The Weather Channel',en:'The Weather Channel'}, u:'https://weather.com/'},{n:{zh:'AccuWeather',zt:'AccuWeather',en:'AccuWeather'}, u:'https://www.accuweather.com/'}]},{k:{zh:'在线地图', zt:'在線地圖', en:'Maps'}, d:[{n:{zh:'百度地图',zt:'百度地圖',en:'Baidu Maps'}, u:'https://map.baidu.com/'},{n:{zh:'高德地图',zt:'高德地圖',en:'Amap'}, u:'https://www.amap.com/'},{n:{zh:'腾讯地图',zt:'騰訊地圖',en:'Tencent Maps'}, u:'https://map.qq.com/'},{n:{zh:'Bing Maps',zt:'Bing Maps',en:'Bing Maps'}, u:'https://www.bing.com/maps'}]},{k:{zh:'生活', zt:'生活', en:'Life'}, d:[{n:{zh:'美团',zt:'美團',en:'Meituan'}, u:'https://i.meituan.com/mttouch/page/home'},{n:{zh:'58同城',zt:'58同城',en:'58.com'}, u:'https://m.58.com'},{n:{zh:'大众点评',zt:'大眾點評',en:'Dianping'}, u:'https://www.dianping.com'},{n:{zh:'携程',zt:'攜程',en:'Ctrip'}, u:'https://m.ctrip.com'}]},{k:{zh:'体育', zt:'體育', en:'Sports'}, d:[{n:{zh:'直播吧',zt:'直播吧',en:'Zhibo8'}, u:'https://www.zhibo8.com'},{n:{zh:'懂球帝',zt:'懂球帝',en:'Dongqiudi'}, u:'https://www.dongqiudi.com'},{n:{zh:'腾讯体育',zt:'騰訊體育',en:'Tencent Sports'}, u:'https://sports.qq.com'},{n:{zh:'网易体育',zt:'網易體育',en:'NetEase Sports'}, u:'https://m.163.com/touch/sports/'},{n:{zh:'新浪体育',zt:'新浪體育',en:'Sina Sports'}, u:'https://sports.sina.cn/'}]},{k:{zh:'看剧必备', zt:'看劇必備', en:'Streaming'}, d:[{n:{zh:'哔哩哔哩',zt:'嗶哩嗶哩',en:'Bilibili'}, u:'https://www.bilibili.com/'},{n:{zh:'爱奇艺',zt:'愛奇藝',en:'iQiyi'}, u:'https://www.iqiyi.com/'},{n:{zh:'腾讯视频',zt:'騰訊視頻',en:'Tencent Video'}, u:'https://v.qq.com/'},{n:{zh:'芒果tv',zt:'芒果tv',en:'Mango TV'}, u:'https://www.mgtv.com/'},{n:{zh:'优酷视频',zt:'優酷視頻',en:'Youku'}, u:'https://www.youku.com/'}]},{k:{zh:'游戏', zt:'遊戲', en:'Games'}, d:[{n:{zh:'4399',zt:'4399',en:'4399'}, u:'https://h.4399.com/?topc'},{n:{zh:'7723',zt:'7723',en:'7723'}, u:'https://3g.7723.cn'},{n:{zh:'TapTap',zt:'TapTap',en:'TapTap'}, u:'https://www.taptap.cn'},{n:{zh:'游明星空',zt:'遊明星空',en:'Gamersky'}, u:'https://wap.gamersky.com/'}]}];
 
     var st = { langMode: 'auto', themeMode: 'auto', perfMode: 'compatible', curE: 'bd', Engs: defEngs.slice(), v: 1, custom:[], highlighted:[], logoMode:'cycle', logoColor:'#ff0055' };
     const dbSaveKey = 'geke_cy_perfect_ver_max_zero';
@@ -1778,7 +1799,7 @@ function init() {
       navigator.serviceWorker.register('sw.js').catch(function() {});
     }
 </script>
-<div id="ctx-menu" style="display:none;position:fixed;z-index:9999;background:var(--bg);border:1px solid var(--bor);border-radius:12px;padding:6px 0;box-shadow:0 10px 40px rgba(0,0,0,0.25);min-width:110px;">
+<div id="ctx-menu" style="display:none;position:fixed;z-index:9999;background:var(--box);border:1px solid var(--bor);border-radius:12px;padding:6px 0;box-shadow:0 10px 40px rgba(0,0,0,0.25);min-width:110px;">
     <div id="ctx-hl" class="ctx-item" style="padding:10px 18px;font-size:14px;color:var(--text);cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;white-space:nowrap;">重点标记</div>
     <div id="ctx-ac" class="ctx-item" style="padding:10px 18px;font-size:14px;color:var(--text);cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;white-space:nowrap;display:none;">添加到自定义</div>
     <div id="ctx-mod" class="ctx-item" style="padding:10px 18px;font-size:14px;color:var(--text);cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;white-space:nowrap;">修改</div>
