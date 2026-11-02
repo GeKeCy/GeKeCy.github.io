@@ -124,7 +124,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     cursor: pointer;
     box-shadow: var(--shadow);
     transition: all 0.01s ease;
@@ -464,7 +463,7 @@
   </div>
 
   <footer>
-    <div class="footer-copy">GeKeCy-Random-selector © 2026<span class="ver">v0.3.20</span></div>
+    <div class="footer-copy">GeKeCy-Random-selector © 2026<span class="ver">v0.3.21</span></div>
   </footer>
 </div>
 
@@ -505,7 +504,7 @@
     const saved = loadState();
     if (saved) {
       isDark = saved.theme === 'dark';
-      currentMode = (typeof saved.mode === 'number') ? saved.mode : 0;
+      currentMode = (typeof saved.mode === 'number' && saved.mode >= 0 && saved.mode < 3) ? saved.mode : 0;
       if (saved.numStart !== undefined) document.getElementById('numStart').value = saved.numStart;
       if (saved.numEnd !== undefined) document.getElementById('numEnd').value = saved.numEnd;
       if (saved.numCount !== undefined) document.getElementById('numCount').value = saved.numCount;
