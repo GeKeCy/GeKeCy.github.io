@@ -171,7 +171,7 @@
     white-space:pre-wrap;
   }
   #codeView:empty::before{
-    content:"// 源代码将显示在这里，输入网址后点击「抓取」";
+    content:"// 源代码将显示在这里, 输入网址后点击「抓取」";
     color: var(--gray-text-2);
   }
 
@@ -277,7 +277,7 @@
 
       <div class="encoding-row" id="encodingRow">
         <span class="group-label">编码</span>
-        <label title="按 BOM → 响应头/meta 声明 → 转义编码拦截 → UTF-16 空字节画像 → UTF-8 严格试解 → chardet 统计引擎（Firefox 同款）→ 文字体系复核 自动识别（含日/韩/俄/阿/泰等外文编码），之外一律回退 UTF-8 并提示"><input type="radio" name="encoding" value="auto" checked><span>自动识别</span></label>
+        <label title="按 BOM → 响应头/meta 声明 → 转义编码拦截 → UTF-16 空字节画像 → UTF-8 严格试解 → chardet 统计引擎 (Firefox 同款)→ 文字体系复核 自动识别 (含日/韩/俄/阿/泰等外文编码), 之外一律回退 UTF-8 并提示。注意: 经代理通道抓取时, 代理已把源码解码为 UTF-8 文本返回, 本地识别无从介入, 结果以服务端解码为准; 仅本地直连原始字节时才执行上述完整识别管线"><input type="radio" name="encoding" value="auto" checked><span>自动识别</span></label>
         <label><input type="radio" name="encoding" value="utf-8"><span>UTF-8</span></label>
         <label><input type="radio" name="encoding" value="gbk"><span>GBK</span></label>
         <label><input type="radio" name="encoding" value="gb18030"><span>GB18030</span></label>
@@ -352,8 +352,12 @@
     </div>
   </section>
 
-  <footer>
-    提示:受浏览器跨域(CORS)限制,抓取源码通过 Supabase 边缘节点执行网络请求,服务器端所有数据不做持久化储存。
+  <footer style="line-height:1.7">
+    <div class="fc-title">提示:本服务由3条通道组成,失败时依次尝试1→2→3</div>
+    <div>1. Cloudflare Worker 代理 (20秒超时)</div>
+    <div>2. Supabase 边缘节点代理 (20秒超时)</div>
+    <div>3. 浏览器本地直连 (15秒超时)</div>
+    <div>前两个通道为服务器端代理,最后一个为本地试探,服务器端所有数据不做持久化储存。</div>
     <div class="footer-copy">GeKeCy-Source-viewer © 2026<span class="ver">v1.6.87</span></div>
   </footer>
 </div>
@@ -396,6 +400,7 @@
   var copyToken    = 0;
   var currentAbort = null;
   var lastDetected = null;
+  var lastServerDecoded = false; // true = 本次内容经代理通道由服务器端解码为 UTF-8
 
   var LS_MINIFY   = 'gkcy_minify';
   var LS_LINENUMS = 'gkcy_linenums';
@@ -419,7 +424,7 @@
   function resetResult(){
     rawSource = ""; viewSource = ""; viewBytes = 0;
     lastUrl = ""; lastMs = null; lastBuffer = null;
-    lastContentType = ""; lastDetected = null;
+    lastContentType = ""; lastDetected = null; lastServerDecoded = false;
 
     codeView.textContent = "";
     codeView.className = "";
@@ -471,7 +476,7 @@
         try { fn(); }
         catch(e){
           progressReset();
-          setStatus("处理失败：" + (e && e.message ? e.message : String(e)), "err");
+          setStatus("处理失败: " + (e && e.message ? e.message : String(e)), "err");
           unlockSoon();
         }
       });
@@ -626,7 +631,7 @@
   // 专业识别管线（八层）：BOM → 声明（响应头/meta）→ 7 位转义拦截（ISO-2022/HZ）→ UTF-16 空字节画像
   // → UTF-8 严格试解 → chardet 统计引擎（Mozilla universalchardet，Firefox 同款内核）
   // → 文字体系高频字复核（修正引擎在同族单字节/弱模型语种上的误判）→ UTF-8 兜底并提示
-  // 识别结果必定落在 KNOWN_ENCODINGS 内；之外一律回退第一个已知格式（UTF-8）并提示
+  // 识别结果必定落在 KNOWN_ENCODINGS 内；之外一律回退第一个已知格式(UTF-8)并提示
   function detectEncoding(buf, ct){
     var b = new Uint8Array(buf);
     // 1) BOM 嗅探
@@ -751,9 +756,9 @@
     var fb = "已按 " + KNOWN_ENCODINGS[0].toUpperCase() + " 解码";
     if(!d) return "已自动识别编码";
     if(d.from === 'fallback'){
-      return d.bad ? "无法识别的编码「" + d.bad + "」，" + fb : "无法识别编码，" + fb;
+      return d.bad ? "无法识别的编码" + d.bad + ", " + fb : "无法识别编码, " + fb;
     }
-    return "已自动识别编码：" + d.enc.toUpperCase();
+    return "已自动识别编码: " + d.enc.toUpperCase();
   }
 
   function decodeBuffer(buf, enc){
@@ -776,7 +781,7 @@
 
   async function minifyHTML(src){
     if(typeof HTMLMinifier === 'undefined' || !HTMLMinifier || typeof HTMLMinifier.minify !== 'function'){
-      throw new Error('压缩库未加载，请检查 htmlminifier.umd.bundle.js 是否与页面同目录');
+      throw new Error('压缩库未加载, 请检查 htmlminifier.umd.bundle.js 是否与页面同目录');
     }
     return await HTMLMinifier.minify(src, {
       collapseWhitespace: true,
@@ -824,7 +829,7 @@
       _measureCanvas = document.createElement('canvas');
     }
     var ctx = _measureCanvas.getContext('2d');
-    ctx.font = '12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+    ctx.font = "12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
     var w = ctx.measureText(String(total)).width;
     return w + 2;
   }
@@ -913,65 +918,65 @@
     });
   }
 
-  async function fetchSource(url, isCancelled){
+  // 代理通道（Worker / site-tools）在服务器端已把源码解码为 UTF-8 文本返回，前端只收到文本、拿不到原始字节：
+  // 此时「自动识别」与手动编码切换均无法在本地重新解码，结果以服务端解码为准。
+  // 仅本地直连通道返回原始字节（lastBuffer），才走 detectEncoding 完整识别管线。
+  function fetchSource(url, isCancelled){
     var encoded = encodeURIComponent(url);
     var SITE_TOOLS = "https://xmokyimajkzuvbzbyqqb.supabase.co/functions/v1/site-tools?action=fetch&url=";
+    var WORKER_API = "https://api.st.longmoon.top/?url=";
 
     var channels = [
-      { name: "服务端", json: true,  fn: function(){ return fetchWithTimeout(SITE_TOOLS + encoded, 30000); } },
-      { name: "本地",   json: false, fn: function(){ return fetchWithTimeout(url, 18000); } }
+      { name: "Worker",   proxy: true, fn: function(){ return fetchWithTimeout(WORKER_API + encoded, 20000); } },
+      { name: "服务端",   proxy: true, fn: function(){ return fetchWithTimeout(SITE_TOOLS + encoded, 20000); } },
+      { name: "本地",     proxy: false, fn: function(){ return fetchWithTimeout(url, 15000); } }
     ];
 
     var errors = [];
 
-    for(var i = 0; i < channels.length; i++){
-      if(isCancelled && isCancelled()) throw new Error("cancelled");
-
-      var ch = channels[i];
-      try {
-        var res = await ch.fn();
-        if(isCancelled && isCancelled()) throw new Error("cancelled");
-        if(!res.ok) throw new Error("HTTP " + res.status);
-
-        var buf = await res.arrayBuffer();
+    async function run(){
+      for(var i = 0; i < channels.length; i++){
         if(isCancelled && isCancelled()) throw new Error("cancelled");
 
-        var ct = res.headers.get('content-type') || '';
+        var ch = channels[i];
+        try {
+          var res = await ch.fn();
+          if(isCancelled && isCancelled()) throw new Error("cancelled");
+          if(!res.ok) throw new Error("HTTP " + res.status);
 
-        if(ct.indexOf('application/json') !== -1){
-          var probe = new TextDecoder('utf-8').decode(buf);
-          if(ch.json){
+          var buf = await res.arrayBuffer();
+          if(isCancelled && isCancelled()) throw new Error("cancelled");
+
+          var ct = res.headers.get('content-type') || '';
+
+          // 代理通道协议约定：代理自身抓取失败时返回 application/json 错误体（实测两个代理均如此），
+          // 而它们成功时透传目标真实 Content-Type。因此这里只信响应头、绝不信 body 内容——
+          // 若目标本来就是 JSON API，它会以原始字节 + 非 JSON 声明到达，或经本地通道原样展示，不会被误判。
+          if(ch.proxy && ct.indexOf('application/json') !== -1){
             var j = null;
-            try { j = JSON.parse(probe); } catch(e){}
-            if(j && typeof j === 'object'){
-              if(j.error) throw new Error(j.error);
-              if(j.success === false) throw new Error(j.message || "服务端返回失败");
-              if(typeof j.html === 'string'){
-                lastBuffer = null;
-                lastContentType = '';
-                return j.html;
-              }
+            try { j = JSON.parse(new TextDecoder('utf-8').decode(buf)); } catch(e){}
+            if(j && typeof j === 'object' && (j.error || j.success === false)){
+              throw new Error(String(j.error || j.message || "代理抓取失败"));
             }
-            throw new Error("服务端返回了无法识别的 JSON 响应");
+            // 无法识别为代理错误的 JSON → 仍视为目标内容，走统一解码管线
           }
-          // 本地直连：application/json 即目标文件本身（如 .json 资源），仍走统一编码管线（JSON 也可能是 GBK 等非 UTF-8）
+
           lastBuffer = buf;
           lastContentType = ct;
+          lastServerDecoded = ch.proxy; // 标记本次内容由服务器端解码，供绿色状态提示使用
           return decodeBuffer(buf, getEncoding());
+        } catch(e){
+          if(isCancelled && isCancelled()) throw new Error("cancelled");
+          errors.push(ch.name + ": " + (e && e.message ? e.message : String(e)));
         }
-
-        lastBuffer = buf;
-        lastContentType = ct;
-        return decodeBuffer(buf, getEncoding());
-      } catch(e){
-        if(isCancelled && isCancelled()) throw new Error("cancelled");
-        errors.push(ch.name + "：" + (e && e.message ? e.message : String(e)));
       }
+
+      var err = new Error("all-failed");
+      err.details = errors;
+      throw err;
     }
 
-    var err = new Error("all-failed");
-    err.details = errors;
-    throw err;
+    return run();
   }
 
   async function applyAndRender(successMsg){
@@ -986,7 +991,7 @@
 
     if(autoMinify.checked){
       if(isLikelyNonHtml(lastUrl) || isNonHtmlContentType(lastContentType)){
-        note = "当前文件为非 HTML 格式，HTML 压缩器不适用，已保留原始代码。";
+        note = "当前文件为非 HTML 格式, HTML 压缩器不适用, 已保留原始代码。";
       } else {
         progressLoading("压缩中…");
         setStatus("正在压缩…");
@@ -997,7 +1002,7 @@
           var em = (e && e.message) ? e.message : "";
           note = (em.indexOf("压缩库未加载") !== -1)
             ? em
-            : "压缩失败（可能不是标准 HTML 文件），已显示原始代码。";
+            : "压缩失败 (可能不是标准 HTML 文件), 已显示原始代码。";
           noteType = "err";
         }
         if(my !== processToken) return;
@@ -1079,7 +1084,7 @@
       var noteType   = "ok";
 
       if(autoMinify.checked && (isLikelyNonHtml(url) || isNonHtmlContentType(lastContentType))){
-        note = "当前文件为非 HTML 格式，HTML 压缩器不适用，已保留原始代码。";
+        note = "当前文件为非 HTML 格式, HTML 压缩器不适用, 已保留原始代码。";
       } else if(autoMinify.checked){
         setLocking(true, { label: '压缩中…' });
         progressLoading("压缩中…");
@@ -1093,7 +1098,7 @@
           var em = (e && e.message) ? e.message : "";
           note = (em.indexOf("压缩库未加载") !== -1)
             ? em
-            : "压缩失败（可能不是标准 HTML 文件），已显示原始代码。";
+            : "压缩失败 (可能不是标准 HTML 文件), 已显示原始代码。";
           noteType = "err";
         }
       }
@@ -1106,7 +1111,10 @@
 
       var encNote = "";
       var encNoteType = "ok";
-      if(getEncoding() === 'auto' && lastDetected){
+      if(lastServerDecoded){
+        // 代理通道已在服务器端解码为 UTF-8，本地识别管线未参与，明确告知用户结果来源
+        encNote = "已由服务器端解码 (UTF-8)。";
+      } else if(getEncoding() === 'auto' && lastDetected){
         encNote = autoDetectMessage(lastDetected) + "。";
         if(lastDetected.from === 'fallback') encNoteType = "err";
       }
@@ -1116,7 +1124,7 @@
         render(finalText, function(progress){
           if(progress >= 1 && session === fetchSession){
             progressComplete();
-            var msgs = [note || ("抓取成功（" + sizeStr + "）")];
+            var msgs = [note || ("抓取成功 (" + sizeStr + ")")];
             if(encNote) msgs.push(encNote);
             setStatus(msgs.join(" "), note ? noteType : encNoteType);
             unlockSoon();
@@ -1128,20 +1136,20 @@
     } catch(err){
       if(session !== fetchSession) return;
       progressReset();
-      var reason = "目标网站拒绝跨域访问、网络不通或服务端不可用。";
+      var reason = "目标网站拒绝跨域访问, 网络不通或服务端不可用。";
       if(err && err.name === "AbortError"){
         reason = "请求超时或已中止。";
       } else if(err && err.message){
         if(err.message.indexOf("timeout") !== -1){
-          reason = "请求超时，可能是网络不通或服务端响应过慢。";
+          reason = "请求超时, 可能是网络不通或服务端响应过慢。";
         } else if(err.message.indexOf("HTTP") !== -1){
-          reason = "目标服务器拒绝访问（" + err.message + "），该网站可能设有反爬限制。";
+          reason = "目标服务器拒绝访问 (" + err.message + "), 该网站可能设有反爬限制。";
         } else if(err.message === "all-failed"){
-          var d = (err.details && err.details.length) ? "（" + err.details.join("；") + "）" : "";
-          reason = "服务端接口和本地直连均已尝试，均无法获取该网页内容" + d + "。";
+          var d = (err.details && err.details.length) ? " (" + err.details.join("; ") + ")" : "";
+          reason = "服务端接口和本地直连均已尝试, 均无法获取该网页内容" + d + "。";
         }
       }
-      setStatus("抓取失败：" + reason, "err");
+      setStatus("抓取失败: " + reason, "err");
       unlockSoon();
     }
   }
@@ -1161,11 +1169,11 @@
       navigator.clipboard.writeText(viewSource).then(done, function(){
         if(my !== copyToken) return;
         if(legacyCopy()) done();
-        else setStatus("复制失败，请手动选中复制", "err");
+        else setStatus("复制失败, 请手动选中复制", "err");
       });
     }else{
       if(legacyCopy()) done();
-      else setStatus("复制失败，请手动选中复制", "err");
+      else setStatus("复制失败, 请手动选中复制", "err");
     }
   }
   function legacyCopy(){
@@ -1192,10 +1200,10 @@
       a.click();
       document.body.removeChild(a);
       setTimeout(function(){ URL.revokeObjectURL(a.href); }, 0);
-      setStatus("已开始下载：" + name, "ok");
+      setStatus("已开始下载: " + name, "ok");
       flash(downloadBtn);
     } catch(e) {
-      setStatus("下载失败：" + (e && e.message ? e.message : e), "err");
+      setStatus("下载失败: " + (e && e.message ? e.message : e), "err");
     }
   }
 
@@ -1262,8 +1270,15 @@
   for(var k = 0; k < encodingRadios.length; k++){
     encodingRadios[k].addEventListener('change', function(){
       saveEncodingPref();
+      if(!rawSource) return;
+      // 代理通道返回的是服务器端已解码的 UTF-8 文本，本地没有原始字节，无法真正重新解码；
+      // 若允许按 GBK 等强行重解会把正确内容弄乱，因此明确拒绝并提示用户。
+      if(lastServerDecoded){
+        setStatus("本次内容由服务器端解码(UTF-8), 不支持本地切换编码。", "err");
+        return;
+      }
       if(!lastBuffer){
-        if(rawSource) setStatus("当前内容不支持切换编码，请重新抓取。", "err");
+        setStatus("当前内容不支持切换编码, 请重新抓取。", "err");
         return;
       }
       var enc = getEncoding();
