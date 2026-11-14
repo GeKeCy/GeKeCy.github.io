@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gekecy-v1.7.368'; // 版本号已递增，强制触发浏览器更新SW
+const CACHE_NAME = 'gekecy-v1.7.369'; // 版本号已递增，强制触发浏览器更新SW
 
 const CORE_ASSETS = [
   './',
