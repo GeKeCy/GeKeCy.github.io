@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#ffffff">
+<title>GeKeCy-Kimi资料设置脚本</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#111111;
+    --gray-1:#f5f5f5;
+    --gray-2:#e5e5e5;
+    --gray-3:#d4d4d4;
+    --gray-text:#737373;
+    --gray-text-2:#a3a3a3;
+    --radius:10px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;
+    -webkit-text-size-adjust:100%;
+  }
+  ::selection{background:var(--ink);color:#fff;}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    -webkit-overflow-scrolling:touch;
+    line-height:1.7;
+  }
+  .container{max-width:960px;margin:0 auto;padding:48px 24px 64px;padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px));}
+
+  header{margin-bottom:36px;}
+  header h1{font-size:22px;font-weight:700;letter-spacing:0.5px;line-height:1.3;}
+  header p{font-size:13px;color:var(--gray-text);margin-top:4px;letter-spacing:0.3px;}
+
+  .panel{border:1px solid var(--gray-2);border-radius:var(--radius);padding:20px;background:#fff;margin-bottom:20px;}
+  .field-label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;}
+  .field-desc{font-size:13px;color:var(--gray-text);line-height:1.75;}
+
+  /* 通用列表 */
+  ul.plain,ol.steps{list-style:none;}
+  ul.plain li{
+    position:relative;padding-left:16px;margin-bottom:6px;
+    font-size:13px;color:var(--gray-text);line-height:1.8;
+  }
+  ul.plain li:last-child{margin-bottom:0;}
+  ul.plain li::before{
+    content:'';position:absolute;left:2px;top:.85em;
+    width:4px;height:4px;border-radius:50%;background:var(--gray-3);
+  }
+  ul.plain li b{color:var(--ink);font-weight:600;}
+  ul.plain li code,ol.steps li code{
+    font-family:var(--mono);font-size:12px;
+    background:var(--gray-1);color:var(--ink);
+    padding:1px 5px;border-radius:4px;
+  }
+
+  ol.steps{counter-reset:step;}
+  ol.steps li{
+    counter-increment:step;position:relative;padding-left:26px;
+    margin-bottom:6px;font-size:13px;color:var(--gray-text);line-height:1.8;
+  }
+  ol.steps li:last-child{margin-bottom:0;}
+  ol.steps li::before{
+    content:counter(step);position:absolute;left:0;top:0;
+    font-family:var(--mono);font-size:11px;font-weight:700;color:var(--gray-text-2);
+    line-height:1.9;
+  }
+
+  /* 安装三栏 */
+  .install-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .install-item h4{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+  .install-item p{font-size:13px;color:var(--gray-text);line-height:1.75;}
+  .install-item b{color:var(--ink);font-weight:600;}
+
+  /* 代码输出面板 */
+  .output-panel{margin-top:0;margin-bottom:20px;}
+  .output-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .output-label-row .field-label{margin-bottom:0;}
+  .code-stats{
+    font-size:12px;color:var(--gray-text);
+    font-variant-numeric:tabular-nums;
+    display:flex;gap:14px;flex-wrap:wrap;
+  }
+  .code-stats b{color:var(--ink);font-weight:600;}
+
+  #codeBox{
+    border:1px solid var(--gray-2);border-radius:var(--radius);
+    background:#fafafa;max-height:300px;overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  #codeView{
+    display:grid;
+    grid-template-columns:var(--ln-w,44px) minmax(0,1fr);
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.7;
+    color:#333;
+    padding:16px 0;
+    min-height:160px;
+    margin:0;
+    user-select:text;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;
+  }
+  #codeView:empty{display:block;padding:16px 18px;white-space:pre-wrap;}
+  #codeView:empty::before{content:"// 源代码加载中…";color:var(--gray-text-2);}
+  .line{display:contents;}
+  .ln{
+    padding:0 0.5px;text-align:right;white-space:nowrap;
+    color:var(--gray-text-2);
+    border-right:1px solid var(--gray-2);
+    user-select:none;-webkit-user-select:none;-moz-user-select:none;
+    font-variant-numeric:tabular-nums;overflow:hidden;
+  }
+  .code{padding:0 14px 0 10px;white-space:pre-wrap;overflow-wrap:break-word;overflow-wrap:anywhere;}
+  .code:empty::after{content:"\00a0";}
+
+  /* 工具栏 */
+  .toolbar{margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tool-btn{
+    height:38px;padding:0 18px;font-size:13px;font-weight:500;
+    border:1px solid var(--ink);border-radius:8px;background:var(--ink);color:#fff;
+    cursor:pointer;transition:opacity .15s, transform .15s;
+    display:inline-flex;align-items:center;gap:7px;
+    -webkit-appearance:none;appearance:none;
+  }
+  .tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .tool-btn:hover:not(:disabled){opacity:.82;}
+  .tool-btn:active:not(:disabled){transform:scale(.97);}
+  .tool-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--gray-2);font-size:12px;color:var(--gray-text-2);line-height:1.8;}
+  .footer-copy{margin-top:10px;text-align:center;font-variant-numeric:tabular-nums;}
+  .footer-copy .ver{margin-left:18px;}
+
+  /* 后缀选择弹窗 */
+  .modal-mask{
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(17,17,17,.45);
+    display:none;
+    align-items:center;justify-content:center;
+    padding:20px;
+    -webkit-backdrop-filter:blur(2px);
+    backdrop-filter:blur(2px);
+    animation:maskIn .16s ease;
+  }
+  .modal-mask.show{display:flex;}
+  @keyframes maskIn{from{opacity:0;}to{opacity:1;}}
+  .modal{
+    width:100%;max-width:300px;
+    background:#fff;
+    border:1px solid var(--gray-2);
+    border-radius:var(--radius);
+    padding:22px 20px 20px;
+    box-shadow:0 8px 32px rgba(0,0,0,.14);
+    animation:modalIn .18s ease;
+  }
+  @keyframes modalIn{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;transform:none;}}
+  .modal h3{
+    font-size:15px;font-weight:600;color:var(--ink);
+    margin-bottom:16px;letter-spacing:.3px;
+  }
+  /* 三个后缀按钮并排一行，黑底白字 */
+  .modal-actions{display:flex;flex-direction:row;gap:8px;}
+  .modal-btn{
+    flex:1;
+    height:40px;
+    font-size:12px;font-family:var(--mono);
+    border:1px solid var(--ink);border-radius:8px;
+    background:var(--ink);color:#fff;
+    cursor:pointer;
+    transition:opacity .15s, transform .15s;
+    -webkit-appearance:none;appearance:none;
+    padding:0 4px;
+    white-space:nowrap;
+  }
+  .modal-btn:hover{opacity:.82;}
+  .modal-btn:active{transform:scale(.97);}
+  .modal-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+
+  @media (max-width:640px){
+    .container{padding:32px 16px 48px;padding-bottom:calc(48px + env(safe-area-inset-bottom, 0px));}
+    .install-grid{grid-template-columns:1fr;gap:14px;}
+    .modal-btn{font-size:11px;}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>GeKeCy-Kimi资料设置脚本</h1>
+    <p>修改 Kimi 昵称、简介与头像</p>
+  </header>
+
+  <!-- 01 简介 -->
+  <section class="panel">
+    <span class="field-label">脚本说明</span>
+    <p class="field-desc" style="margin-bottom:12px;">
+      运行在浏览器的**油猴脚本**。在浏览器打开 kimi.com 并登录，安装并启用脚本后在 kimi.com 页面右下角会出现可拖拽按钮，点按该按钮后将展开一个面板，用于修改昵称、简介与头像，
+      绕过前端 昵称简介 长度限制，并支持上传动态头像。
+    </p>
+    <ul class="plain">
+      <li>昵称、简介超长输入，不受前端字符上限约束，与「昵称超长」「简介超长」说拜拜</li>
+      <li>头像上传，支持 GIF 动态头像</li>
+      <li>内置「检测登录状态」，在日志区可读出当前 Kimi 账号的昵称、简介与**头像链接**</li>
+      <li>脚本面板可拖拽、可折叠；日志支持复制与清空</li>
+      <li>**脚本开源**：本脚本全量开源，脚本所做全部可查</li>
+      <li>**脚本原理**：脚本本质上是模拟了 Kimi App 的上传请求，用浏览器原生接口实现，绕过了前端对 昵称与简介的长度限制 和 头像上传的 GIF 文件限制。</li>
+    </ul>
+  </section>
+
+  <!-- 02 安装 -->
+  <section class="panel">
+    <span class="field-label">安装</span>
+    <div class="install-grid">
+      <div class="install-item">
+        <h4>Android</h4>
+        <p>VIA 浏览器 → 设置 → 脚本 → 右上角 <b>+</b> → 新建 → 粘贴代码 → 保存。<br>其他可选：Kiwi + Tampermonkey、Edge + Tampermonkey、Firefox + Violentmonkey。</p>
+      </div>
+      <div class="install-item">
+        <h4>iOS</h4>
+        <p>App Store 安装 <b>Stay</b> 或 <b>Userscripts</b> → 设置 → Safari → 扩展 → 启用 → 新建脚本 → 粘贴代码 → 保存。</p>
+      </div>
+      <div class="install-item">
+        <h4>桌面端</h4>
+        <p>Chrome / Edge / Firefox 安装 <b>Tampermonkey</b> 或 <b>Violentmonkey</b> → 创建新脚本 → 粘贴代码 → 保存。也可直接下载下方 <b>.user.js</b> 文件，脚本管理器会自动识别。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 代码 -->
+  <section class="output-panel">
+    <div class="output-label-row">
+      <label class="field-label">脚本源代码</label>
+      <div class="code-stats">
+        <span>大小 <b id="statSize">0 B</b></span>
+        <span>行数 <b id="statLines">0</b></span>
+        <span>版本 <b>v1.3.16</b></span>
+      </div>
+    </div>
+    <div id="codeBox"><pre id="codeView"></pre></div>
+    <div class="toolbar">
+      <button class="tool-btn" id="copyBtn">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        <span class="btn-label">复制脚本</span>
+      </button>
+      <button class="tool-btn" id="downloadBtn">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="btn-label">下载脚本</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 04 使用 -->
+  <section class="panel">
+    <span class="field-label">使用</span>
+    <ol class="steps">
+      <li>在浏览器中打开 kimi.com，登录账号</li>
+      <li>安装并启用脚本，刷新页面，右下角出现黑色「修改 Kimi 资料」按钮</li>
+      <li>点击按钮展开脚本面板，填写昵称或简介后点对应的修改按钮；修改头像则点「修改头像」选择文件</li>
+      <li>日志区会逐条输出包涵 成功/失败的提示 的日志，可根据提示适当调整</li>
+      <li>遇到问题可「复制日志」，将这些日志反馈给我们</li>
+      <li>**感谢您的使用**</li>
+    </ol>
+  </section>
+
+  <!-- 05 注意 -->
+  <section class="panel">
+    <span class="field-label">注意</span>
+    <ul class="plain">
+      <li>头像和名字 30 天内合计最多修改 10 次，这是服务端限制，客户端脚本无法绕过</li>
+      <li>返回 <b>401 / 403</b> 表示未登录或 Token 失效，重新登录后再试</li>
+      <li>头像上传返回 <b>413</b> 表示文件过大，压缩后重试</li>
+      <li>脚本只在 kimi.com 及其子域触发，其他网页不会出现脚本按钮</li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>本脚本运行在浏览器油猴管理器中，数据仅在本地与 kimi.com 之间传输，不收集任何信息，脚本代码全量开源，全部所做可查</div>
+    <div class="footer-copy">GeKeCy-Kimi-user-js  ©  2026<span class="ver">v1.3.16</span></div>
+  </footer>
+
+</div>
+
+<!-- 后缀选择弹窗 -->
+<div class="modal-mask" id="extModal" role="dialog" aria-modal="true" aria-labelledby="extModalTitle">
+  <div class="modal">
+    <h3 id="extModalTitle">请选择后缀名</h3>
+    <div class="modal-actions">
+      <button class="modal-btn" type="button" data-ext=".user.js">.user.js</button>
+      <button class="modal-btn" type="button" data-ext=".js">.js</button>
+      <button class="modal-btn" type="button" data-ext=".txt">.txt</button>
+    </div>
+  </div>
+</div>
+
+<!-- 脚本原文，纯文本，不参与 HTML 解析 -->
+<script type="text/plain" id="src">
+// ==UserScript==
+// @name         GeKeCy-Kimi资料设置器
+// @namespace    https://viayoo.com/
+// @version      v1.3.16
+// @description  1:1 复刻 Kimi Android 3.1.8 APP 的资料修改请求：名字/简介走网关 UpdateProfile(Connect-RPC JSON)，头像走 /apiv2/user/file/upload/avatar，旧版 REST 保留为兜底
+// @author       You
+// @run-at       document-idle
+// @match        https://www.kimi.com/*
+// @match        https://kimi.com/*
+// @match        https://*.kimi.com/*
+// @noframes
+// @grant        none
+// ==/UserScript==
+
+/*
+ * ── v1.3.16 变更：探测日志补头像链接 ────────────────────────────────────
+ *  1) 登录探测成功后的「当前资料 → 昵称… | 简介…」行尾追加
+ *     「 | 头像链接: xxx」(取 GetCurrentUser 的 user.avatar,缺失显示(空))。
+ *
+ * ── v1.3.15 变更：顶栏标题折叠联动 + 拖拽说明独立行 ────────────────────
+ *  1) 顶栏标题按状态切换:折叠(方框)时只显示「修改 Kimi 资料」,
+ *     展开弹窗后显示「GeKeCy-Kimi资料设置器  v1.3.15」。
+ *  2) 说明区拖拽用法独立一行正常书写,行尾空五格后接蓝色作品链接(同行顺延,不右对齐);
+ *     首句恢复句号收尾,拖拽行本身不带结尾标点。
+ *
+ * ── v1.3.14 变更：面板文案改版 + 交付更名 .user.js ────────────────────────
+ *  1) 简介区「v1.3.12 起 1:1 复刻…」一句移除,替换为蓝色链接「去看看其他GeKeCy作品↗」。
+ *  2) 温馨提示合并为单行,英文标点,新增「遇到问题可带上日志与状态码反馈」。
+ *  3) 「清空列表」改名「清空日志」,新增「复制日志」按钮。
+ *  4) 交付文件更名为 *.user.js,油猴管理器可直接识别安装。
+ *  5) @name 改为「GeKeCy-Kimi资料设置器」,顶栏标题同步并带版本号;
+ *     复制/清空按钮换位;简介区句号改为拖拽用法说明;
+ *     温馨提示收尾改为「遇到问题可发送日志反馈给我们」。
+ *
+ * ── v1.3.13 变更：失败静默重试 ──────────────────────────────────────────
+ *  修改请求（昵称 / 简介 / 头像）失败、且失败原因「看起来像未登录」时
+ *  （401/403、Connect 网关的 unauthenticated 等），第一轮日志整段丢弃、
+ *  不告诉用户，先重新读取一遍本地 token，再按原来的候选顺序重试一次；
+ *  重试那一次的日志才作为最终结果展示（成功失败都原文写出）。
+ *  另外「检测登录状态」按钮也会先刷新一次 token 再验证登录态。
+ *  另含：Base64 错误体翻译——任一通道的错误体里出现 details[0].value 的
+ *  base64（429 resource_exhausted 的中文错误编码，如 CImkARIn...），就在该
+ *  行日志末尾追加（脚本翻译该错误体:<解码原文>，如「昵称修改次数已达上限」）。
+ *
+ * ── v1.3.12 变更：1:1 复刻 APP 请求（Kimi APK 深度逆向）────
+ *  本次把「候选碰运气」升级为「APP 真实通道优先」。APK 内证据链：
+ *
+ *  1) APP 是 Kotlin Multiplatform + ktor-client + Connect-RPC(gRPC 网关)：
+ *     dex 常量 `application/connect+enum_num+json`、`/apiv2`、proto 类名
+ *     `com.moonshot.kimi.proto.kimi.gateway.account.v1.UpdateProfileRequest`。
+ *  2) 名字/简介的 APP 真实请求（唯一写入口）：
+ *       POST https://www.kimi.com/apiv2/kimi.gateway.account.v1.UserService/UpdateProfile
+ *       Content-Type: application/json          ← 线上实测 connect+json 返回 415，网关只收普通 JSON
+ *       body 为 protobuf-JSON：{"nickname":"...","bio":"...","updateMask":{"paths":["nickname","bio"]}}
+ *     字段名证据：toString 片段 `UpdateProfileRequest(_nickname=` `, _bio=` `, _avatar=` `, _updateMask=`，
+ *     以及独立常量 `updateMask`、`paths`。
+ *  3) 头像的 APP 真实请求（classes3.dex 路由表）：
+ *       POST https://www.kimi.com/apiv2/user/file/upload/avatar   multipart 字段名 `file`
+ *     旧版 POST /api/user/avatar 仍保留为兜底通道（你已验证可用）。
+ *  4) 登录探测的 APP 真实请求：
+ *       POST /apiv2/kimi.gateway.account.v1.UserService/GetCurrentUser  body {}
+ *     未登录返回 401 + Connect 标准错误 JSON(code=unauthenticated)；
+ *     已登录返回 {"user":{...}} —— 顺带能把当前昵称/简介读出来显示在日志里。
+ *  5) APP 不发送 Connect-Protocol-Version 头（dex 全文 0 命中），故脚本也不发。
+ *  6) x-msh-version 与 APK 实际版本一致取 3.1.8；若网关拒绝旧版本号，
+ *     兜底通道(旧版 REST)仍按 2.5.1 那套已验证行为工作（脚本自动降级）。
+ *
+ *  ── 旧版通道（v0.2.x，保留为兜底）────────────────────────────────────────
+ *  名字: POST /api/user/name  {"name":...}   （空体 422 "Name is a required field"）
+ *  简介: PUT  /api/user/profile {"bio":...}  （PUT→401，其余方法→405）
+ *
+ *  ── 官方规则 ──────────────────────────────────────────────────────────────
+ *  头像和名字 30 天内合计最多修改 10 次（APK 文案 profile_avatar_edit_limit_reached_hint + 帮助中心一致）。
+ *
+ *  ── 历史变更（v0.2.11 及以前，从略）：Cookie 鉴权探测、按钮布局、简介可空等 ──
+ */
+
+(function () {
+    'use strict';
+    // 运行时双保险：只在 kimi.com 及其子域注入（防止管理器宽松匹配）
+    if (!/(^|\.)kimi\.com$/i.test(location.hostname)) return;
+    if (!document.body) return;
+    // 使用当前 origin，保证同源请求（kimi.com 与 www.kimi.com 的 localStorage/cookie 不互通）
+    var HOST = location.origin;
+
+    // ── APP(3.1.8) 真实请求头：x-msh-* 全套 + ktor 默认头 ──────────────────
+    // 说明：浏览器禁止 JS 覆写 User-Agent，ktor-client 这个 UA 由油猴管理器
+    //       （Tampermonkey @grant + GM_xmlhttpRequest 或修改器）才能真正发出；
+    //       @grant none 时浏览器会静默忽略该项，服务端不校验 UA 所以无碍。
+    var APP_HEADERS = {
+        'R-Timezone': 'Asia/Shanghai',
+        'x-msh-platform': 'android',
+        'x-msh-os-version': 'GOOGLE 10',
+        'x-msh-device-model': 'Google',
+        'x-msh-session-id': '1',
+        'x-msh-device-id': '1',
+        'x-msh-version': '3.1.8',
+        'x-msh-app-channel': 'kimi',
+        'x-msh-android-version': '29',
+        'X-Language': 'zh-CN',
+        'Accept': 'application/json',
+        'Accept-Charset': 'UTF-8',
+        'User-Agent': 'ktor-client'
+    };
+
+    // APP 网关路由（classes2.dex 路由表 / classes3.dex 头像路由）
+    var GW_UPDATE_PROFILE = '/apiv2/kimi.gateway.account.v1.UserService/UpdateProfile';
+    var GW_GET_CURRENT_USER = '/apiv2/kimi.gateway.account.v1.UserService/GetCurrentUser';
+    var AVATAR_NEW = '/apiv2/user/file/upload/avatar';   // APP 3.1.8 真实头像路由
+    var AVATAR_OLD = '/api/user/avatar';                 // 旧版已验证路由（兜底）
+
+    // 查找本地 token（辅助信息，不作为登录判据）
+    function findToken() {
+        var keys = ['access_token', 'token'];
+        var stores = [
+            { name: 'localStorage',   obj: window.localStorage },
+            { name: 'sessionStorage', obj: window.sessionStorage }
+        ];
+        for (var i = 0; i < stores.length; i++) {
+            for (var j = 0; j < keys.length; j++) {
+                var v;
+                try { v = stores[i].obj.getItem(keys[j]); } catch (e) { continue; }
+                if (!v) continue;
+                v = String(v).trim();
+                if (!v) continue;
+                var low = v.toLowerCase();
+                if (low === 'undefined' || low === 'null' || low === 'false'
+                    || low === '0' || v === '{}' || v === '[]') continue;
+                if (v.length < 8) continue;
+                return { value: v, source: stores[i].name + '.' + keys[j] };
+            }
+        }
+        return null;
+    }
+    function getToken() {
+        var t = findToken();
+        return t ? t.value : '';
+    }
+    function headers(extra) {
+        var h = {};
+        for (var k in APP_HEADERS) {
+            if (Object.prototype.hasOwnProperty.call(APP_HEADERS, k)) h[k] = APP_HEADERS[k];
+        }
+        var t = getToken();
+        if (t) h['Authorization'] = 'Bearer ' + t;
+        if (extra) {
+            for (var j in extra) {
+                if (Object.prototype.hasOwnProperty.call(extra, j)) h[j] = extra[j];
+            }
+        }
+        return h;
+    }
+
+    // 统一请求：返回 {ok, status, text, json}
+    function req(url, method, body, isForm) {
+        var opt = { method: method, headers: headers(), credentials: 'include' };
+        if (isForm) {
+            opt.body = body;
+        } else if (body !== undefined) {
+            opt.headers['Content-Type'] = 'application/json';
+            opt.body = JSON.stringify(body);
+        }
+        return fetch(HOST + url, opt).then(function (r) {
+            return r.text().then(function (txt) {
+                var json = null;
+                try { json = JSON.parse(txt); } catch (e) { /* ignore */ }
+                return { ok: r.ok, status: r.status, text: txt.slice(0, 300), json: json };
+            });
+        });
+    }
+
+    /* ── Base64 错误体翻译提示 ────────────────────────────────────────────── */
+    // 网关 429 resource_exhausted 的 details[0].value 是一段 base64（如
+    // CImkARIn...），解码即「昵称修改次数已达上限」。检测到就在该行日志末尾
+    // 追加（脚本翻译该错误体:<解码原文>）。
+    function quotaNote(txt) {
+        if (!txt) return '';
+        var d = '';
+        try {
+            var j = JSON.parse(txt);
+            d = (j && j.details && j.details[0] && j.details[0].value) || '';
+        } catch (e) { /* 错误体可能被截断，走正则兜底 */ }
+        if (typeof d !== 'string' || d.length < 8) {
+            var m = txt.match(/"value"\s*:\s*"([A-Za-z0-9+\/=]{8,})/);
+            d = m ? m[1] : '';
+        }
+        if (!d || !/^[A-Za-z0-9+\/=]+$/.test(d)) return '';
+        try {
+            var bin = atob(d);
+            var bytes = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            var zh = new TextDecoder('utf-8').decode(bytes).replace(/[^\u4e00-\u9fa5]/g, '');
+            if (/上限/.test(zh)) return '（脚本翻译该错误体:' + zh + '）';
+        } catch (e) { /* ignore */ }
+        return '';
+    }
+
+    /* ── 通道表：APP 真实通道在首位，旧版 REST 兜底 ───────────────────────── */
+    // protobuf-JSON 的 FieldMask：只声明本次要写的字段，与 APP 行为一致
+    function nameCandidates(name) {
+        return [
+            { tag: 'APP网关 UpdateProfile(nickname)', url: GW_UPDATE_PROFILE, method: 'POST',
+              body: { nickname: name, updateMask: { paths: ['nickname'] } } },
+            { tag: '旧REST /api/user/name',           url: '/api/user/name',    method: 'POST',
+              body: { name: name } },
+            { tag: '旧REST /api/user/profile PUT',    url: '/api/user/profile', method: 'PUT',
+              body: { name: name, nickname: name } }
+        ];
+    }
+    function bioCandidates(bio) {
+        return [
+            { tag: 'APP网关 UpdateProfile(bio)',      url: GW_UPDATE_PROFILE, method: 'POST',
+              body: { bio: bio, updateMask: { paths: ['bio'] } } },
+            { tag: '旧REST /api/user/profile PUT',    url: '/api/user/profile', method: 'PUT',
+              body: { bio: bio } }
+        ];
+    }
+
+    /* ── 判定 & 重试辅助 ──────────────────────────────────────────────────── */
+    // 这个失败「看起来像没登录」吗？
+    function looksUnauthorized(status, txt) {
+        if (status === 401 || status === 403) return true;
+        if (!txt) return false;
+        var s = String(txt).toLowerCase();
+        return s.indexOf('unauthenticated') !== -1
+            || s.indexOf('unauthorized') !== -1
+            || s.indexOf('"code":401') !== -1
+            || s.indexOf('"code": 401') !== -1
+            || s.indexOf('not logged in') !== -1;
+    }
+    // 重新获取本地 token（token 可能被其他标签页 / 页面刷新流程更新，这里重新读一遍存储）
+    function refreshToken() {
+        return new Promise(function (resolve) {
+            setTimeout(function () {
+                resolve(findToken());
+            }, 300);
+        });
+    }
+
+    // 跑一遍候选通道；返回 {ok, authFail}，不自己输出总结
+    function runCandidatesOnce(list, log) {
+        var authFail = false;
+        var chain = Promise.resolve(false);
+        list.forEach(function (c) {
+            chain = chain.then(function (done) {
+                if (done) return true;
+                log('→ ' + c.tag + '  ' + c.method + ' ' + c.url);
+                var extra = { 'Content-Type': 'application/json' };
+                var opt = {
+                    method: c.method,
+                    headers: headers(extra),
+                    credentials: 'include',
+                    body: JSON.stringify(c.body)
+                };
+                return fetch(HOST + c.url, opt).then(function (r) {
+                    return r.text().then(function (txt) {
+                        if (r.ok) {
+                            log('✔ ' + c.tag + ' 成功 (' + r.status + ') ' + txt.slice(0, 160));
+                            return true;
+                        }
+                        if (looksUnauthorized(r.status, txt)) authFail = true;
+                        log('✖ ' + c.tag + ' ' + r.status + ' ' + txt.slice(0, 160) + quotaNote(txt));
+                        return false;
+                    });
+                }).catch(function (e) {
+                    log('⚠ ' + c.tag + ' 异常: ' + e.message);
+                    return false;
+                });
+            });
+        });
+        return chain.then(function (ok) {
+            return { ok: ok, authFail: authFail };
+        });
+    }
+
+    // 对外入口：第一轮静默；疑似未登录就整段丢弃、重取 token 后重试
+    function runCandidates(list, log) {
+        var buffer = [];
+        function blog(msg) { buffer.push(msg); }
+        return runCandidatesOnce(list, blog).then(function (res) {
+            if (res.ok) {
+                // 成功：把暂存的日志原样补出来
+                buffer.forEach(log);
+                return true;
+            }
+            if (res.authFail) {
+                // 疑似未登录导致失败：第一轮日志整段丢弃，用户完全无感知。
+                // 先重新获取 token，再按原要求重试；重试这一轮的日志才作为结果展示。
+                return refreshToken().then(function () {
+                    return runCandidatesOnce(list, log).then(function (res2) {
+                        if (!res2.ok) {
+                            log('✗ 所有通道均未通过，请看上面日志里的状态码定位原因'
+                                + '（401=未登录/Token 失效）');
+                        }
+                        return res2.ok;
+                    });
+                });
+            }
+            // 不是登录问题：照常把错误刷出来
+            buffer.forEach(log);
+            log('✗ 所有通道均未通过，请看上面日志里的状态码定位原因'
+                + '（401=未登录/Token 失效）');
+            return false;
+        });
+    }
+
+    /* ── 头像：APP 3.1.8 真实路由优先，旧路由兜底（同样支持失败静默重试）───── */
+    function pickAvatar(log) {
+        if (!getToken()) log('（本地未发现 token，将依靠 Cookie 鉴权）');
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
+        fileInput.addEventListener('change', function (e) {
+            var file = e.target.files && e.target.files[0];
+            try { document.body.removeChild(fileInput); } catch (err) { /* ignore */ }
+            if (!file) return;
+
+            // 上传单个路由；返回 {ok, authFail}，日志写进 outLog
+            function send(url, tag, outLog) {
+                var fd = new FormData();
+                fd.append('file', file);
+                outLog('→ ' + tag + ' POST ' + url + '  (' + file.name + ')');
+                return req(url, 'POST', fd, true).then(function (r) {
+                    if (r.ok) {
+                        outLog('✔ 头像上传成功 (' + r.status + ') ' + r.text);
+                        return { ok: true, authFail: false };
+                    }
+                    outLog('✖ ' + tag + ' 失败 ' + r.status + ' ' + r.text + quotaNote(r.text));
+                    return { ok: false, authFail: looksUnauthorized(r.status, r.text) };
+                }).catch(function (err) {
+                    outLog('⚠ 头像异常: ' + err.message);
+                    return { ok: false, authFail: false };
+                });
+            }
+
+            // 跑一轮：APP 路由 → 失败再走旧路由兜底
+            function runRound(outLog) {
+                return send(AVATAR_NEW, 'APP路由', outLog).then(function (r1) {
+                    if (r1.ok) return { ok: true, authFail: false };
+                    return send(AVATAR_OLD, '旧路由兜底', outLog).then(function (r2) {
+                        if (r2.ok) return { ok: true, authFail: false };
+                        return { ok: false, authFail: r1.authFail || r2.authFail };
+                    });
+                });
+            }
+
+            // 对外入口：第一轮静默；疑似未登录就整段丢弃、重取 token 后重试
+            var buffer = [];
+            function blog(msg) { buffer.push(msg); }
+            runRound(blog).then(function (res) {
+                if (res.ok) {
+                    buffer.forEach(log);
+                    return;
+                }
+                if (res.authFail) {
+                    // 疑似未登录导致失败：第一轮日志整段丢弃，用户完全无感知。
+                    return refreshToken().then(function () {
+                        return runRound(log).then(function (res2) {
+                            if (!res2.ok) log('✗ 头像所有通道均未通过');
+                        });
+                    });
+                }
+                buffer.forEach(log);
+                log('✗ 头像所有通道均未通过');
+            });
+        }, { once: true });
+        fileInput.click();
+    }
+
+    /* ── 登录态真实探测：APP 的 GetCurrentUser ────────────────────────────── */
+    // POST /apiv2/.../GetCurrentUser  body {} —— APP 启动即调此接口拉用户信息。
+    // 401=未登录；2xx=已登录，且响应里带当前 nickname/bio，直接显示出来。
+    function probeLogin(log) {
+        log('→ APP探测 GetCurrentUser  POST ' + GW_GET_CURRENT_USER + '  body={}');
+        fetch(HOST + GW_GET_CURRENT_USER, {
+            method: 'POST',
+            headers: headers({ 'Content-Type': 'application/json' }),
+            credentials: 'include',
+            body: '{}'
+        }).then(function (r) {
+            return r.text().then(function (txt) {
+                var snippet = txt.slice(0, 200);
+                if (r.status === 401) {
+                    log('✖ 401 —— 未登录或登录已过期，请先登录 Kimi');
+                    log('（Connect 网关错误体：' + snippet + '）');
+                } else if (r.ok) {
+                    log('✔ ' + r.status + ' —— 已登录（鉴权通过） ' + snippet);
+                    try {
+                        var j = JSON.parse(txt);
+                        var u = j.user || j.data || j;
+                        if (u && (u.nickname !== undefined || u.bio !== undefined)) {
+                            log('当前资料 → 昵称: ' + (u.nickname || '(空)') + ' | 简介: ' + (u.bio || '(空)') + ' | 头像链接: ' + (u.avatar || '(空)'));
+                        }
+                    } catch (e) { /* ignore */ }
+                } else {
+                    log('？ ' + r.status + ' —— 无法确定登录态，请把下面内容反馈 ' + snippet);
+                }
+            });
+        }).catch(function (e) {
+            log('⚠ 探测请求失败：' + e.message);
+        });
+    }
+
+    /* ── 面板 UI ──────────────────────────────────────────────────────────── */
+    var box = document.createElement('div');
+    box.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:2147483647;'
+        + 'background:#111;color:#fff;font:13px/1.5 -apple-system,BlinkMacSystemFont,'
+        + '"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;'
+        + 'overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.25);'
+        + 'border-radius:6px;user-select:none;-webkit-user-select:none;cursor:default;'
+        + 'box-sizing:border-box;';
+    var EXPANDED_W = 330;
+    var COLLAPSED_W = 152;
+    var COLLAPSED_H = 38;
+    var BTN_BASE = 'padding:8px 6px;border-radius:6px;font-size:12px;cursor:pointer;';
+    var BTN_GHOST = 'background:#fff;color:#111;border:1px solid #111;' + BTN_BASE;
+    var BTN_MAIN  = 'background:#111;color:#fff;border:1px solid #111;font-weight:600;' + BTN_BASE;
+    var BTN_DASH  = 'background:#fff;color:#111;border:1px dashed #111;' + BTN_BASE;
+    box.innerHTML =
+        '<div data-h="1" style="padding:0 12px;height:38px;background:#111;color:#fff;'
+        + 'font-weight:600;display:flex;justify-content:space-between;align-items:center;'
+        + 'cursor:grab;border-radius:6px;touch-action:none;">'
+        + '<span data-title-s style="pointer-events:none;">修改 Kimi 资料</span>'
+        + '<span data-title-l style="pointer-events:none;display:none;">GeKeCy-Kimi资料设置器&nbsp;&nbsp;&nbsp;v1.3.16</span>'
+        + '<span data-t="1" style="cursor:pointer;opacity:.7;font-size:16px;width:20px;'
+        + 'text-align:center;pointer-events:auto;">+</span></div>'
+        + '<div data-b="1" style="display:none;width:' + EXPANDED_W + 'px;box-sizing:border-box;'
+        + 'padding:12px;background:#fff;color:#111;border:1px solid #d9d9d9;'
+        + 'border-top:none;border-radius:0 0 10px 10px;">'
+        // 脚本用途说明（温馨提醒上方）——「**不能上传动态头像**」原样显示星号
+        + '<div style="margin-bottom:8px;font-size:12px;line-height:1.6;color:#333;">'
+        + '本 油猴脚本 可解决一些因 Kimi 前端限制造成的「昵称超长」「简介超长」以及**不能上传动态头像**的问题。'
+        + '<div>按住黑色顶栏可拖拽弹窗位置,点一下黑色顶栏可缩为方框(可拖拽)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+        + '<a href="https://gekecy.github.io/" target="_blank" rel="noopener noreferrer" '
+        + 'style="color:#1677ff;cursor:pointer;text-decoration:none;">去看看其他GeKeCy作品↗</a>'
+        + '</div></div>'
+        // 温馨提醒
+        + '<div style="margin-bottom:8px;font-size:12px;line-height:1.5;color:#d4380d;">'
+        + '温馨提醒:头像和名字30天内最多修改10次(服务器端限制,客户端脚本无法绕过限制);所有前端限制已去除,如仍有限制则为服务器端限制;遇到问题可发送日志反馈给我们</div>'
+        + '<label style="display:block;margin-bottom:4px;color:#666;font-size:12px;">昵称</label>'
+        + '<input data-name placeholder="新的 Kimi 名字" style="width:100%;box-sizing:border-box;padding:7px 9px;'
+        + 'border:1px solid #d9d9d9;border-radius:6px;font-size:13px;margin-bottom:10px;'
+        + 'user-select:text;-webkit-user-select:text;">'
+        + '<label style="display:block;margin-bottom:4px;color:#666;font-size:12px;">简介</label>'
+        + '<textarea data-bio rows="3" placeholder="介绍一下你自己(可为空)" style="width:100%;box-sizing:border-box;'
+        + 'padding:7px 9px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;resize:vertical;margin-bottom:10px;'
+        + 'user-select:text;-webkit-user-select:text;"></textarea>'
+        // 第一行：修改昵称 / 修改简介 / 修改头像
+        + '<div style="display:flex;gap:6px;margin-bottom:8px;">'
+        +   '<button data-save-name style="flex:1;' + BTN_GHOST + '">修改昵称</button>'
+        +   '<button data-save-bio style="flex:1;' + BTN_GHOST + '">修改简介</button>'
+        +   '<button data-avatar style="flex:1;' + BTN_MAIN + '">修改头像</button>'
+        + '</div>'
+        // 第二行：检测登录状态 / 复制日志 / 清空日志
+        + '<div style="display:flex;gap:6px;margin-bottom:10px;">'
+        +   '<button data-check style="flex:1;' + BTN_DASH + '">检测登录状态</button>'
+        +   '<button data-copy style="flex:1;' + BTN_DASH + '">复制日志</button>'
+        +   '<button data-clear style="flex:1;' + BTN_DASH + '">清空日志</button>'
+        + '</div>'
+        + '<div data-log style="height:150px;overflow:auto;background:#fafafa;border:1px solid #eee;'
+        + 'border-radius:6px;padding:8px;font:11px/1.6 ui-monospace,Menlo,Consolas,monospace;'
+        + 'white-space:pre-wrap;word-break:break-all;color:#333;user-select:text;-webkit-user-select:text;"></div>'
+        + '</div>';
+    box.style.width = COLLAPSED_W + 'px';
+    box.style.height = COLLAPSED_H + 'px';
+    document.body.appendChild(box);
+    var logEl = box.querySelector('[data-log]');
+    var INITIAL_LOG = '就绪。\n';
+    logEl.textContent = INITIAL_LOG;
+    var SEP = '≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡';
+    function appendLog(text) {
+        logEl.appendChild(document.createTextNode(text));
+        while (logEl.childNodes.length > 800) logEl.removeChild(logEl.firstChild);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+    function log(msg) { appendLog(msg + '\n'); }
+    function divider() { appendLog(SEP + '\n'); }
+    var h = box.querySelector('[data-h]');
+    var b = box.querySelector('[data-b]');
+    var t = box.querySelector('[data-t]');
+    var titleS = box.querySelector('[data-title-s]');
+    var titleL = box.querySelector('[data-title-l]');
+    var isExpanded = false;
+    function clampBox() {
+        var r = box.getBoundingClientRect();
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        var nx = Math.max(0, Math.min(r.left, vw - r.width));
+        var ny = Math.max(0, Math.min(r.top, vh - r.height));
+        if (nx !== r.left || ny !== r.top) {
+            box.style.left = nx + 'px';
+            box.style.top = ny + 'px';
+            box.style.right = 'auto';
+            box.style.bottom = 'auto';
+        }
+    }
+    function toggle() {
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+            var w = Math.min(EXPANDED_W, Math.max(COLLAPSED_W, window.innerWidth - 32));
+            b.style.display = '';
+            b.style.width = w + 'px';
+            t.textContent = '—';
+            titleS.style.display = 'none';
+            titleL.style.display = '';
+            box.style.width = w + 'px';
+            box.style.height = 'auto';
+            box.style.maxHeight = Math.max(160, window.innerHeight - 32) + 'px';
+            box.style.overflow = 'auto';
+            box.style.borderRadius = '10px';
+            h.style.borderRadius = '10px 10px 0 0';
+            h.style.cursor = 'grab';
+        } else {
+            b.style.display = 'none';
+            t.textContent = '+';
+            titleL.style.display = 'none';
+            titleS.style.display = '';
+            box.style.width = COLLAPSED_W + 'px';
+            box.style.height = COLLAPSED_H + 'px';
+            box.style.maxHeight = '';
+            box.style.overflow = 'hidden';
+            box.style.borderRadius = '6px';
+            h.style.borderRadius = '6px';
+            h.style.cursor = 'grab';
+        }
+        clampBox();
+    }
+    /* ── 拖拽 + 点击（移动端优化版） ──────────────────────────────────────── */
+    (function dragAndClick() {
+        var sx = 0, sy = 0;
+        var baseL = 0, baseT = 0;
+        var bw = 0, bh = 0;
+        var dx = 0, dy = 0;
+        var finalL = 0, finalT = 0;
+        var on = false, moved = false;
+        var THRESHOLD = 5;
+        var rafId = 0;
+        function apply() {
+            rafId = 0;
+            if (!on || !moved) return;
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
+            var nx = baseL + dx;
+            var ny = baseT + dy;
+            nx = Math.max(0, Math.min(nx, vw - bw));
+            ny = Math.max(0, Math.min(ny, vh - bh));
+            finalL = nx;
+            finalT = ny;
+            box.style.transform = 'translate(' + (nx - baseL) + 'px,' + (ny - baseT) + 'px)';
+        }
+        function commitPosition() {
+            if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+            box.style.left = finalL + 'px';
+            box.style.top = finalT + 'px';
+            box.style.right = 'auto';
+            box.style.bottom = 'auto';
+            box.style.transform = '';
+            box.style.willChange = '';
+        }
+        function recomputeFinal() {
+            var vw = window.innerWidth, vh = window.innerHeight;
+            finalL = Math.max(0, Math.min(baseL + dx, vw - bw));
+            finalT = Math.max(0, Math.min(baseT + dy, vh - bh));
+        }
+        function onDown(e) {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            var r = box.getBoundingClientRect();
+            box.style.transform = '';
+            box.style.left = r.left + 'px';
+            box.style.top = r.top + 'px';
+            box.style.right = 'auto';
+            box.style.bottom = 'auto';
+            baseL = r.left; baseT = r.top;
+            finalL = baseL; finalT = baseT;
+            bw = box.offsetWidth;
+            bh = box.offsetHeight;
+            sx = e.clientX; sy = e.clientY;
+            dx = 0; dy = 0;
+            on = true; moved = false;
+            h.style.cursor = 'grabbing';
+            try { h.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+            if (e.cancelable) e.preventDefault();
+        }
+        function onMove(e) {
+            if (!on) return;
+            dx = e.clientX - sx;
+            dy = e.clientY - sy;
+            if (!moved) {
+                if (Math.abs(dx) <= THRESHOLD && Math.abs(dy) <= THRESHOLD) return;
+                moved = true;
+                box.style.willChange = 'transform';
+            }
+            if (!rafId) rafId = requestAnimationFrame(apply);
+        }
+        function finishCommon() {
+            on = false;
+            h.style.cursor = 'grab';
+        }
+        function onUp(e) {
+            if (!on) return;
+            var wasMoved = moved;
+            finishCommon();
+            try { h.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+            if (wasMoved) {
+                if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+                recomputeFinal();
+                commitPosition();
+            } else {
+                toggle();
+            }
+        }
+        function onCancel(e) {
+            if (!on) return;
+            finishCommon();
+            try { h.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+            if (moved) {
+                if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+                recomputeFinal();
+                commitPosition();
+            }
+        }
+        h.addEventListener('pointerdown', onDown, { passive: false });
+        h.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        window.addEventListener('pointermove', onMove, { passive: true });
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onCancel);
+    })();
+    window.addEventListener('resize', function () {
+        if (isExpanded) {
+            var w = Math.min(EXPANDED_W, Math.max(COLLAPSED_W, window.innerWidth - 32));
+            box.style.width = w + 'px';
+            b.style.width = w + 'px';
+            box.style.maxHeight = Math.max(160, window.innerHeight - 32) + 'px';
+        }
+        clampBox();
+    });
+    function val(attr) {
+        var el = box.querySelector('[' + attr + ']');
+        return el && el.value ? el.value.trim() : '';
+    }
+    function busy(on) {
+        Array.prototype.forEach.call(box.querySelectorAll('button'), function (btn) {
+            btn.disabled = !!on;
+        });
+    }
+    function runWithBusy(promise) {
+        promise.then(function () { busy(false); }, function () { busy(false); });
+    }
+    // 第一行左：修改昵称
+    box.querySelector('[data-save-name]').onclick = function () {
+        divider();
+        var name = val('data-name');
+        if (!name) { log('✗ 昵称不能为空'); return; }
+        log('—— 设置昵称：' + name);
+        busy(true);
+        runWithBusy(runCandidates(nameCandidates(name), log));
+    };
+    // 第一行中：修改简介（允许为空，空即提交清空简介）
+    box.querySelector('[data-save-bio]').onclick = function () {
+        divider();
+        var bio = val('data-bio');
+        log('—— 设置简介：' + (bio || '(空，将清空简介)'));
+        busy(true);
+        runWithBusy(runCandidates(bioCandidates(bio), log));
+    };
+    // 第一行右：修改头像（黑底白字）
+    box.querySelector('[data-avatar]').onclick = function () {
+        divider();
+        log('—— 选择头像图片');
+        pickAvatar(log);
+    };
+    // 第二行左：检测登录状态（先重取一遍 token，再做 APP 同款 GetCurrentUser）
+    box.querySelector('[data-check]').onclick = function () {
+        divider();
+        refreshToken().then(function (info) {
+            if (info) {
+                var v = info.value;
+                var isJwt = /^[\w-]+\.[\w-]+\.[\w-]+$/.test(v);
+                log('本地 token 来源：' + info.source + '，长度 ' + v.length
+                    + '，形态：' + (isJwt ? 'JWT 三段式' : '非标准 JWT'));
+            } else {
+                log('本地未发现 access_token/token（Kimi 网页版通常靠 Cookie 鉴权，属正常）');
+            }
+            probeLogin(log);
+        });
+    };
+    // 第二行右：清空日志（不输出分隔符，直接回到初始态）
+    box.querySelector('[data-clear]').onclick = function () {
+        logEl.textContent = INITIAL_LOG;
+        logEl.scrollTop = 0;
+    };
+    // 第二行中：复制日志（Clipboard API 优先，execCommand 兜底）
+    box.querySelector('[data-copy]').onclick = function () {
+        var text = logEl.textContent || '';
+        function ok() { log('✔ 日志已复制到剪贴板'); }
+        function legacy() {
+            try {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                var done = document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (done) { ok(); } else { log('✖ 复制失败：浏览器拒绝 execCommand 复制'); }
+            } catch (err) { log('✖ 复制失败：' + err.message); }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(ok, legacy);
+        } else {
+            legacy();
+        }
+    };
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var BASE_NAME = 'GeKeCy-Kimi资料设置器';
+  var raw       = document.getElementById('src').textContent;
+  var CODE      = raw.replace(/^\s*\n/, '').replace(/\s+$/, '');
+  var codeView  = document.getElementById('codeView');
+  var copyBtn   = document.getElementById('copyBtn');
+  var dlBtn     = document.getElementById('downloadBtn');
+  var statSize  = document.getElementById('statSize');
+  var statLines = document.getElementById('statLines');
+  var modal     = document.getElementById('extModal');
+
+  /* ── 基础工具 ─────────────────────────────────────── */
+  function fmtBytes(n){
+    if(n < 1024) return n + " B";
+    if(n < 1024 * 1024) return (n/1024).toFixed(1) + " KB";
+    return (n/1024/1024).toFixed(2) + " MB";
+  }
+  function escapeHTML(s){
+    if(s.indexOf('&') === -1 && s.indexOf('<') === -1 && s.indexOf('>') === -1) return s;
+    return s.replace(/[&<>]/g, function(c){
+      return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;';
+    });
+  }
+  var _measureCanvas = null;
+  function measureLineNumWidth(total){
+    if(!_measureCanvas) _measureCanvas = document.createElement('canvas');
+    var ctx = _measureCanvas.getContext('2d');
+    ctx.font = "12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
+    var w = ctx.measureText(String(total)).width;
+    return w + 2;
+  }
+
+  /* ── 渲染带行号的代码 ─────────────────────────────── */
+  function renderCode(){
+    var view = CODE.replace(/\r\n?/g, "\n");
+    codeView.textContent = "";
+
+    var lines = view.split("\n");
+    var total = lines.length;
+    var lnW = measureLineNumWidth(total);
+    codeView.style.setProperty('--ln-w', lnW + 'px');
+
+    var parts = new Array(total);
+    for(var i = 0; i < total; i++){
+      parts[i] =
+        '<div class="line">' +
+          '<span class="ln">' + (i + 1) + '</span>' +
+          '<span class="code">' + escapeHTML(lines[i]) + '</span>' +
+        '</div>';
+    }
+    codeView.innerHTML = parts.join('');
+  }
+
+  /* ── 更新统计 ─────────────────────────────────────── */
+  function updateStats(){
+    statSize.textContent  = fmtBytes(new Blob([CODE]).size);
+    statLines.textContent = CODE.split("\n").length;
+  }
+
+  /* ── 复制 ─────────────────────────────────────────── */
+  var flashTimer = null;
+  function flash(btn, text){
+    var label = btn.querySelector('.btn-label');
+    if(!label) return;
+    if(flashTimer){ clearTimeout(flashTimer); flashTimer = null; }
+    var orig = label.textContent;
+    label.textContent = text;
+    btn.disabled = true;
+    flashTimer = setTimeout(function(){
+      label.textContent = orig;
+      btn.disabled = false;
+      flashTimer = null;
+    }, 1400);
+  }
+  function legacyCopy(){
+    var ta = document.createElement('textarea');
+    ta.value = CODE;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+    return ok;
+  }
+  copyBtn.addEventListener('click', function(){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(CODE).then(function(){
+        flash(copyBtn, '已复制');
+      }, function(){
+        if(legacyCopy()) flash(copyBtn, '已复制');
+        else flash(copyBtn, '复制失败');
+      });
+    }else{
+      if(legacyCopy()) flash(copyBtn, '已复制');
+      else flash(copyBtn, '复制失败');
+    }
+  });
+
+  /* ── 下载：打开后缀选择弹窗 ───────────────────────── */
+  dlBtn.addEventListener('click', function(){
+    modal.classList.add('show');
+  });
+
+  /* 关闭弹窗：点击遮罩 或 Esc */
+  modal.addEventListener('click', function(e){
+    if(e.target === modal) modal.classList.remove('show');
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && modal.classList.contains('show')){
+      modal.classList.remove('show');
+    }
+  });
+
+  /* 点击后缀按钮开始下载 */
+  Array.prototype.forEach.call(modal.querySelectorAll('.modal-btn'), function(btn){
+    btn.addEventListener('click', function(){
+      var ext = btn.getAttribute('data-ext');
+      modal.classList.remove('show');
+      doDownload(ext);
+    });
+  });
+
+  function doDownload(ext){
+    var type = ext === '.txt' ? 'text/plain;charset=utf-8' : 'text/javascript;charset=utf-8';
+    var name = BASE_NAME + ext;
+    try{
+      var blob = new Blob([CODE], { type: type });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1200);
+      flash(dlBtn, '已下载');
+    }catch(e){
+      flash(dlBtn, '下载失败');
+    }
+  }
+
+  /* ── 初始化 ───────────────────────────────────────── */
+  renderCode();
+  updateStats();
+})();
+</script>
+</body>
+</html>
